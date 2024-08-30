@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c6877eb9-c187-4587-8853-ccedcf1cf128" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ev/projects/ActionNotAllowedException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ev/projects/Board.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ev/projects/Center.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ev/projects/FactoryDisplay.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ev/projects/Floor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ev/projects/Game.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ev/projects/PatternLine.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ev/projects/Player.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ev/projects/Tile.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ev/projects/Wall.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/ev/projects/CenterTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/ev/projects/FactoryDisplayTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/ev/projects/FloorTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/ev/projects/GameEndingTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/ev/projects/PatternLineTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/ev/projects/PlayerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/ev/projects/WallTest.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="2" />
+  </component>
+  <component name="ProjectId" id="2jm1WZVwdJFbWMglrijsYmJtBzt" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="ev.projects" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="ev.projects" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.All in Azul">
+    <configuration name="All in Azul" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Azul" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="FloorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Azul" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="ev.projects.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="ev.projects" />
+      <option name="MAIN_CLASS_NAME" value="ev.projects.FloorTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PatternLineTest.playerOverfillsPatternLine" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Azul" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="ev.projects.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="ev.projects" />
+      <option name="MAIN_CLASS_NAME" value="ev.projects.PatternLineTest" />
+      <option name="METHOD_NAME" value="playerOverfillsPatternLine" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="WallTest.playerScoresPointsWhenPlacingATileOnWall" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Azul" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="ev.projects.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="ev.projects" />
+      <option name="MAIN_CLASS_NAME" value="ev.projects.WallTest" />
+      <option name="METHOD_NAME" value="playerScoresPointsWhenPlacingATileOnWall" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="WallTest.tileGetsPlacedOnTheWallIfPatternLineIsFilled" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Azul" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="ev.projects.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="ev.projects" />
+      <option name="MAIN_CLASS_NAME" value="ev.projects.WallTest" />
+      <option name="METHOD_NAME" value="tileGetsPlacedOnTheWallIfPatternLineIsFilled" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.All in Azul" />
+        <item itemvalue="JUnit.WallTest.playerScoresPointsWhenPlacingATileOnWall" />
+        <item itemvalue="JUnit.WallTest.tileGetsPlacedOnTheWallIfPatternLineIsFilled" />
+        <item itemvalue="JUnit.PatternLineTest.playerOverfillsPatternLine" />
+        <item itemvalue="JUnit.FloorTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c6877eb9-c187-4587-8853-ccedcf1cf128" name="Changes" comment="" />
+      <created>1721977472350</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1721977472350</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
