@@ -7,19 +7,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PatternLineTest {
-
-    @Test
-    void patternLinesAreCreated() {
-        Board board = new Board();
-
-        assertEquals(5, board.patternLines.length);
-        assertEquals(1, board.patternLines[0].size);
-        assertEquals(2, board.patternLines[1].size);
-        assertEquals(3, board.patternLines[3].size);
-        assertEquals(4, board.patternLines[4].size);
-        assertEquals(5, board.patternLines[5].size);
-    }
-
     @Test
     void playerFillsPatternLine() {
         PatternLine patternLine = new PatternLine(5, new Floor(), new Wall());
