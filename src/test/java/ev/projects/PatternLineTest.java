@@ -9,9 +9,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PatternLineTest {
     @Test
     void playerFillsPatternLine() {
-        PatternLine patternLine = new PatternLine(5, new Floor(), new Wall());
+        Wall wall = new Wall();
+        Floor floor = new Floor();
+        PatternLine patternLine = new PatternLine(5, floor, wall);
         patternLine.add(List.of(Tile.RED, Tile.RED));
-        Player player = new Player(new Floor());
+        Player player = new Player(new Board(patternLine, wall), floor);
         player.takeTilesFromFactory(
                 new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.YELLOW), Tile.RED
         );
@@ -23,9 +25,11 @@ public class PatternLineTest {
 
     @Test
     void playerAddsToPatternLine() {
-        PatternLine patternLine = new PatternLine(5, new Floor(), new Wall());
+        Wall wall = new Wall();
+        Floor floor = new Floor();
+        PatternLine patternLine = new PatternLine(5, floor, wall);
         patternLine.add(List.of(Tile.RED, Tile.RED));
-        Player player = new Player(new Floor());
+        Player player = new Player(new Board(patternLine, wall), floor);
         player.takeTilesFromFactory(
                 new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.YELLOW), Tile.RED
         );
@@ -37,10 +41,11 @@ public class PatternLineTest {
 
     @Test
     void playerOverfillsPatternLine() {
+        Wall wall = new Wall();
         Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(3, floor, new Wall());
+        PatternLine patternLine = new PatternLine(3, floor, wall);
         patternLine.add(List.of(Tile.RED, Tile.RED));
-        Player player = new Player(floor);
+        Player player = new Player(new Board(patternLine, wall), floor);
         player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.RED), Tile.RED);
 
         player.addToPatternLine(patternLine, 4);
@@ -51,11 +56,12 @@ public class PatternLineTest {
 
     @Test
     void cantAddTileOfDifferentColour() {
+        Wall wall = new Wall();
         Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(5, floor, new Wall());
+        PatternLine patternLine = new PatternLine(5, floor, wall);
         patternLine.add(List.of(Tile.RED, Tile.RED));
+        Player player = new Player(new Board(patternLine, wall), floor);
 
-        Player player = new Player(floor);
         player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.BLUE, Tile.BLUE, Tile.RED, Tile.RED), Tile.BLUE);
 
         assertThrows(ActionNotAllowedException.class, () -> player.addToPatternLine(patternLine, 2));

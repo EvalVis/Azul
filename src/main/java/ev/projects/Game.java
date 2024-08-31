@@ -1,44 +1,42 @@
 package ev.projects;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Game {
-    private final List<Board> boards;
+    private final List<Player> players;
 
-    public Game(List<Board> boards) {
-        this.boards = boards;
+    public Game(List<Player> players) {
+        this.players = players;
     }
 
     void executeWallTilingPhase() {
-        boards.forEach(b -> {
-            b.moveTileToWall();
-            b.givePlayerFloorPenalty();
+        players.forEach(p -> {
+            p.moveTileToWall();
+            p.giveFloorPenalty();
         });
     }
 
     void executeGameEndingPhase() {
-        boards.forEach(Board::assignGameEndingScore);
+        players.forEach(p -> p.assignGameEndingScore());
     }
 
     List<Player> winners() {
-        int maxScore = boards.stream()
-                .map(Board::playerScore)
+        int maxScore = players.stream()
+                .map(Player::score)
                 .max(Integer::compareTo).get();
-        List<Board> bestBoards = boards.stream().filter(b -> b.playerScore() == maxScore).toList();
+        List<Player> bestPlayers = players.stream().filter(p -> p.score() == maxScore).toList();
 
-        if(bestBoards.size() > 1) {
-            int maxCompletedHorizontalLines = boards.stream()
-                    .map(b -> b.wall().completedHorizontalLines())
+        if(bestPlayers.size() > 1) {
+            int maxCompletedHorizontalLines = players.stream()
+                    .map(p -> p.board().wall().completedHorizontalLines())
                     .max(Integer::compareTo).get();
-            return bestBoards
+            return players
                     .stream()
-                    .filter(b -> b.wall().completedHorizontalLines() == maxCompletedHorizontalLines)
-                    .map(Board::player)
+                    .filter(p -> p.board().wall().completedHorizontalLines() == maxCompletedHorizontalLines)
                     .collect(Collectors.toList());
         }
 
-        return bestBoards.stream().map(Board::player).collect(Collectors.toList());
+        return bestPlayers;
     }
 }

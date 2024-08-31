@@ -10,7 +10,10 @@ public class FactoryDisplayTest {
     void leftOverTilesArePushedToCenter() {
         Center center = new Center();
         FactoryDisplay display = new FactoryDisplay(center, Tile.RED, Tile.RED, Tile.BLUE, Tile.YELLOW);
-        Player player = new Player(new Floor());
+        Wall wall = new Wall();
+        Floor floor = new Floor();
+        PatternLine patternLine = new PatternLine(5, floor, wall);
+        Player player = new Player(new Board(patternLine, wall), floor);
 
         player.takeTilesFromFactory(display, Tile.RED);
 

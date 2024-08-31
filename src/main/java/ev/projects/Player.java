@@ -5,16 +5,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Player {
+    private final Board board;
     private final Floor floor;
     private final List<Tile> tiles;
     private int score;
     private final String name;
 
-    public Player(Floor floor) {
-        this(floor, "Erwin");
+    public Player(Board board, Floor floor) {
+        this(board, floor, "Erwin");
     }
 
-    public Player(Floor floor, String name) {
+    public Player(Board board, Floor floor, String name) {
+        this.board = board;
         this.floor = floor;
         this.tiles = new ArrayList<>();
         this.score = 0;
@@ -37,6 +39,22 @@ public class Player {
         patternLine.add(tiles.stream().limit(count).collect(Collectors.toList()), 0);
     }
 
+    public void giveFloorPenalty() {
+        score = Math.max(0, score + board.floorPenalty());
+    }
+
+    public void assignGameEndingScore() {
+        score += board.gameEndingScore();
+    }
+
+    public void moveTileToWall() {
+        moveTileToWall(0);
+    }
+
+    public void moveTileToWall(int y) {
+        score += board.moveTileToWall(y);
+    }
+
     void addScore(int score) {
         this.score += score;
     }
@@ -47,5 +65,9 @@ public class Player {
 
     String name() {
         return name;
+    }
+
+    Board board() {
+        return board;
     }
 }

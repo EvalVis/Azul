@@ -6,15 +6,9 @@ import java.util.Set;
 import java.util.stream.IntStream;
 
 public class Wall {
-    private final Player player;
     private final WallTile[][] tiles;
 
-    Wall() {
-        this(new Player(new Floor()));
-    }
-
-    public Wall(Player player) {
-        this.player = player;
+    public Wall() {
         tiles = new WallTile[][] {
                 {
                         new WallTile(Tile.BLUE), new WallTile(Tile.YELLOW), new WallTile(Tile.RED), new WallTile(Tile.BLACK),
@@ -39,13 +33,13 @@ public class Wall {
         };
     }
 
-    public void add(Tile tile, int y) {
+    public int add(Tile tile, int y) {
         int x = (tile.ordinal() + y) % 5;
         tiles[y][x].isPlaced = true;
-        player.addScore(score(x, y));
+        return score(x, y);
     }
 
-    public int score(int x, int y) {
+    private int score(int x, int y) {
         int score = 0;
         int horizontalScore = 0;
         int marker = x - 1;

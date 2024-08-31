@@ -5,16 +5,17 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GameEndingTest {
 
     @Test
     void playerScoresForCompletedHorizontalLines() {
+        Wall wall = new Wall();
         Floor floor = new Floor();
-        Player player = new Player(floor);
-        Wall wall = new Wall(player);
-        Game game = new Game(List.of(new Board(player, new PatternLine(5, floor, wall), wall)));
+        PatternLine patternLine = new PatternLine(5, floor, wall);
+        patternLine.add(List.of(Tile.RED, Tile.RED));
+        Player player = new Player(new Board(patternLine, wall), floor);
+        Game game = new Game(List.of(player));
         completeFirstHorizontalLine(wall);
         completeSecondHorizontalLine(wall);
         int currentScore = player.score();
@@ -26,10 +27,12 @@ public class GameEndingTest {
 
     @Test
     void playerScoresForCompletedVerticalLines() {
+        Wall wall = new Wall();
         Floor floor = new Floor();
-        Player player = new Player(floor);
-        Wall wall = new Wall(player);
-        Game game = new Game(List.of(new Board(player, new PatternLine(5, floor, wall), wall)));
+        PatternLine patternLine = new PatternLine(5, floor, wall);
+        patternLine.add(List.of(Tile.RED, Tile.RED));
+        Player player = new Player(new Board(patternLine, wall), floor);
+        Game game = new Game(List.of(player));
         wall.add(Tile.BLUE, 0);
         wall.add(Tile.WHITE, 1);
         wall.add(Tile.BLACK, 2);
@@ -54,10 +57,12 @@ public class GameEndingTest {
 
     @Test
     void playerScoresForCompletedTiles() {
+        Wall wall = new Wall();
         Floor floor = new Floor();
-        Player player = new Player(floor);
-        Wall wall = new Wall(player);
-        Game game = new Game(List.of(new Board(player, new PatternLine(5, floor, wall), wall)));
+        PatternLine patternLine = new PatternLine(5, floor, wall);
+        patternLine.add(List.of(Tile.RED, Tile.RED));
+        Player player = new Player(new Board(patternLine, wall), floor);
+        Game game = new Game(List.of(player));
         wall.add(Tile.BLUE, 0);
         wall.add(Tile.BLUE, 1);
         wall.add(Tile.BLUE, 2);
@@ -79,22 +84,17 @@ public class GameEndingTest {
     void winnerIsDeclared() {
         Wall wall1 = new Wall();
         Floor floor1 = new Floor();
-        Player player1 = new Player(floor1, "Joke");
+        Player player1 = new Player(new Board(new PatternLine(5, floor1, wall1), wall1), floor1, "Joke");
         player1.addScore(10);
         Wall wall2 = new Wall();
         Floor floor2 = new Floor();
-        Player player2 = new Player(new Floor(), "Alfonso");
+        Player player2 = new Player(new Board(new PatternLine(5, floor2, wall2), wall2), floor2, "Alfonso");
         player2.addScore(20);
         Wall wall3 = new Wall();
         Floor floor3 = new Floor();
-        Player player3 = new Player(new Floor(), "Ra");
+        Player player3 = new Player(new Board(new PatternLine(5, floor3, wall3), wall3), floor3, "Ra");
         player3.addScore(15);
-        Game game = new Game(
-                List.of(
-                        new Board(player1, new PatternLine(5, floor1, wall1), wall1),
-                        new Board(player2, new PatternLine(5, floor2, wall2), wall2),
-                        new Board(player1, new PatternLine(5, floor3, wall3), wall3)
-                )
+        Game game = new Game(List.of(player1, player2, player3)
         );
 
         List<Player> winner = game.winners();
@@ -109,18 +109,14 @@ public class GameEndingTest {
         completeFirstHorizontalLine(wall1);
         completeSecondHorizontalLine(wall1);
         Floor floor1 = new Floor();
-        Player player1 = new Player(floor1, "Joke");
+        Player player1 = new Player(new Board(new PatternLine(5, floor1, wall1), wall1), floor1, "Joke");
         player1.addScore(20);
         Wall wall2 = new Wall();
         completeSecondHorizontalLine(wall2);
         Floor floor2 = new Floor();
-        Player player2 = new Player(new Floor(), "Alfonso");
+        Player player2 = new Player(new Board(new PatternLine(5, floor2, wall2), wall2), floor2, "Alfonso");
         player2.addScore(20);
-        Game game = new Game(
-                List.of(
-                        new Board(player1, new PatternLine(5, floor1, wall1), wall1),
-                        new Board(player2, new PatternLine(5, floor2, wall2), wall2)
-                )
+        Game game = new Game(List.of(player1, player2)
         );
 
         List<Player> winner = game.winners();
@@ -134,19 +130,14 @@ public class GameEndingTest {
         Wall wall1 = new Wall();
         completeFirstHorizontalLine(wall1);
         Floor floor1 = new Floor();
-        Player player1 = new Player(floor1, "Joke");
+        Player player1 = new Player(new Board(new PatternLine(5, floor1, wall1), wall1), floor1, "Joke");
         player1.addScore(20);
         Wall wall2 = new Wall();
         completeSecondHorizontalLine(wall2);
         Floor floor2 = new Floor();
-        Player player2 = new Player(new Floor(), "Alfonso");
+        Player player2 = new Player(new Board(new PatternLine(5, floor2, wall2), wall2), floor2, "Alfonso");
         player2.addScore(20);
-        Game game = new Game(
-                List.of(
-                        new Board(player1, new PatternLine(5, floor1, wall1), wall1),
-                        new Board(player2, new PatternLine(5, floor2, wall2), wall2)
-                )
-        );
+        Game game = new Game(List.of(player1, player2));
 
         List<Player> winners = game.winners();
 

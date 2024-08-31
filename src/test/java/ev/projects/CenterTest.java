@@ -2,6 +2,8 @@ package ev.projects;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CenterTest {
@@ -10,8 +12,11 @@ public class CenterTest {
     void playerTakingFromCenterFirstWithEmptyFloorGetsPenalty() {
         Center center = new Center();
         FactoryDisplay display = new FactoryDisplay(center, Tile.RED, Tile.RED, Tile.BLUE, Tile.YELLOW);
+        Wall wall = new Wall();
         Floor floor = new Floor();
-        Player player = new Player(floor);
+        PatternLine patternLine = new PatternLine(5, floor, wall);
+        patternLine.add(List.of(Tile.RED, Tile.RED));
+        Player player = new Player(new Board(patternLine, wall), floor);
         player.takeTilesFromFactory(display, Tile.RED);
 
         player.takeTilesFromCenter(center, Tile.BLUE);
@@ -23,8 +28,11 @@ public class CenterTest {
     void playerTakingFromCenterFirstWithNonEmptyFloorGetsPenalty() {
         Center center = new Center();
         FactoryDisplay display = new FactoryDisplay(center, Tile.RED, Tile.RED, Tile.RED, Tile.BLUE);
+        Wall wall = new Wall();
         Floor floor = new Floor();
-        Player player = new Player(floor);
+        PatternLine patternLine = new PatternLine(5, floor, wall);
+        patternLine.add(List.of(Tile.RED, Tile.RED));
+        Player player = new Player(new Board(patternLine, wall), floor);
         player.takeTilesFromFactory(display, Tile.RED);
         player.addToFloor(floor, 3);
 
@@ -37,13 +45,19 @@ public class CenterTest {
     void playerTakingFromCenterSecondDoesNotGetPenalty() {
         Center center = new Center();
         FactoryDisplay display = new FactoryDisplay(center, Tile.RED, Tile.RED, Tile.BLUE, Tile.YELLOW);
-        Player player1 = new Player(new Floor());
+        Wall wall1 = new Wall();
+        Floor floor1 = new Floor();
+        PatternLine patternLine1 = new PatternLine(5, floor1, wall1);
+        Player player1 = new Player(new Board(patternLine1, wall1), floor1);
         player1.takeTilesFromFactory(display, Tile.RED);
         player1.takeTilesFromCenter(center, Tile.BLUE);
-        Floor player2Floor = new Floor();
+        Wall wall2 = new Wall();
+        Floor floor2 = new Floor();
+        PatternLine patternLine2 = new PatternLine(5, floor2, wall2);
+        Player player2 = new Player(new Board(patternLine2, wall2), floor2);
 
-        new Player(player2Floor).takeTilesFromCenter(center, Tile.YELLOW);
+        player2.takeTilesFromCenter(center, Tile.YELLOW);
 
-        assertEquals(0, player2Floor.score());
+        assertEquals(0, floor2.score());
     }
 }

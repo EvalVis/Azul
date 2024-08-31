@@ -1,44 +1,33 @@
 package ev.projects;
 
 public class Board {
-    private final Player player;
     private final PatternLine patternLine;
     private final Wall wall;
 
-    public Board(Player player, PatternLine patternLine, Wall wall) {
-        this.player = player;
+    public Board(PatternLine patternLine, Wall wall) {
         this.patternLine = patternLine;
         this.wall = wall;
     }
 
-    public void givePlayerFloorPenalty() {
-        if (Math.abs(patternLine.floorPenalty()) > player.score()) {
-            player.addScore(-player.score());
-        }
-        else {
-            player.addScore(patternLine.floorPenalty());
-        }
+    public int floorPenalty() {
+        return patternLine.floorPenalty();
     }
 
-    public void moveTileToWall() {
+    public int moveTileToWall() {
+        return moveTileToWall(0);
+    }
+
+    public int moveTileToWall(int y) {
+        int score = 0;
         if (patternLine.isFilled()) {
-            wall.add(patternLine.colour(), 0);
+            score = wall.add(patternLine.colour(), y);
             patternLine.clear();
         }
+        return score;
     }
 
-    public void assignGameEndingScore() {
-        player.addScore(wall.completedHorizontalLines() * 2);
-        player.addScore(wall.completedVerticalLines() * 7);
-        player.addScore(wall.completedTiles() * 10);
-    }
-
-    public int playerScore() {
-        return player.score();
-    }
-
-    public Player player() {
-        return player;
+    public int gameEndingScore() {
+        return wall.completedHorizontalLines() * 2 + wall.completedVerticalLines() * 7 + wall.completedTiles() * 10;
     }
 
     public Wall wall() {
