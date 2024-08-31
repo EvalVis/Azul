@@ -2,6 +2,7 @@ package ev.projects;
 
 import org.junit.jupiter.api.Test;
 
+import static ev.projects.PatternLineTest.patternLines;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FactoryDisplayTest {
@@ -10,8 +11,7 @@ public class FactoryDisplayTest {
     void leftOverTilesArePushedToCenter() {
         Center center = new Center();
         FactoryDisplay display = new FactoryDisplay(center, Tile.RED, Tile.RED, Tile.BLUE, Tile.YELLOW);
-        PatternLine patternLine = new PatternLine(5);
-        Player player = new Player(new Board(patternLine, new Wall(), new Floor()));
+        Player player = new Player(new Board(new Wall(), new Floor()));
 
         player.takeTilesFromFactory(display, Tile.RED);
 

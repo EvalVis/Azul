@@ -7,40 +7,40 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PatternLineTest {
     @Test
     void playerFillsPatternLine() {
-        PatternLine patternLine = new PatternLine(5);
-        patternLine.add(Tile.RED, 2);
-        Player player = new Player(new Board(patternLine, new Wall(), new Floor()));
+        PatternLine[] patternLines = patternLines();
+        patternLines[4].add(Tile.RED, 2);
+        Player player = new Player(new Board(patternLines, new Wall(), new Floor()));
         player.takeTilesFromFactory(
                 new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.YELLOW), Tile.RED
         );
 
-        player.addToPatternLine(3);
+        player.addTileToPatternLine(3, 4);
 
-        assertTrue(patternLine.isFilled());
+        assertTrue(patternLines[4].isFilled());
     }
 
     @Test
     void playerAddsToPatternLine() {
-        PatternLine patternLine = new PatternLine(5);
-        patternLine.add(Tile.RED, 2);
-        Player player = new Player(new Board(patternLine, new Wall(), new Floor()));
+        PatternLine[] patternLines = patternLines();
+        patternLines[4].add(Tile.RED, 2);
+        Player player = new Player(new Board(patternLines, new Wall(), new Floor()));
         player.takeTilesFromFactory(
                 new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.YELLOW), Tile.RED
         );
 
-        player.addToPatternLine(2);
+        player.addTileToPatternLine(2, 4);
 
-        assertFalse(patternLine.isFilled());
+        assertFalse(patternLines[4].isFilled());
     }
 
     @Test
     void onFilledPatternLineTileIsPlacedInCorrectWallPosition() {
         Wall wall = new Wall();
-        PatternLine patternLine = new PatternLine(3);
-        Board board = new Board(patternLine, wall, new Floor());
+        PatternLine[] patternLines = patternLines();
+        Board board = new Board(patternLines, wall, new Floor());
 
-        patternLine.add(Tile.WHITE, 3);
-        board.moveTileToWall(2);
+        patternLines[2].add(Tile.WHITE, 3);
+        board.moveTilesFromPatternLinesToWall(2);
 
         assertTrue(wall.alreadyHas(Tile.WHITE, 2));
         assertFalse(wall.alreadyHas(Tile.WHITE, 0));
@@ -72,27 +72,34 @@ public class PatternLineTest {
     @Test
     void playerOverfillsPatternLine() {
         Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(3);
-        Board board = new Board(patternLine, new Wall(), floor);
-        board.addTileToPatternLine(Tile.RED, 2);
+        PatternLine[] patternLines = patternLines();
+        Board board = new Board(patternLines, new Wall(), floor);
+        board.addTileToPatternLine(Tile.RED, 2, 2);
         Player player = new Player(board);
         player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.RED), Tile.RED);
 
-        player.addToPatternLine(4);
+        player.addTileToPatternLine(4, 2);
 
-        assertTrue(patternLine.isFilled());
+        assertTrue(patternLines[2].isFilled());
         assertEquals(-4, floor.score());
     }
 
     @Test
     void cantAddTileOfDifferentColour() {
         Wall wall = new Wall();
-        PatternLine patternLine = new PatternLine(5);
-        patternLine.add(Tile.RED, 2);
-        Player player = new Player(new Board(patternLine, wall, new Floor()));
+        PatternLine[] patternLines = patternLines();
+        patternLines[4].add(Tile.RED, 2);
+        Player player = new Player(new Board(patternLines, wall, new Floor()));
 
         player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.BLUE, Tile.BLUE, Tile.RED, Tile.RED), Tile.BLUE);
 
-        assertThrows(ActionNotAllowedException.class, () -> player.addToPatternLine(2));
+        assertThrows(ActionNotAllowedException.class, () -> player.addTileToPatternLine(2, 4));
+    }
+
+    public static PatternLine[] patternLines() {
+        return new PatternLine[] {
+                new PatternLine(1), new PatternLine(2), new PatternLine(3), new PatternLine(4),
+                new PatternLine(5)
+        };
     }
 }

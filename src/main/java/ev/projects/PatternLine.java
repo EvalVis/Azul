@@ -23,10 +23,6 @@ public class PatternLine {
         return overfill;
     }
 
-    public int position() {
-        return size - 1;
-    }
-
     public boolean isFilled() {
         return tileCount == size;
     }
@@ -35,7 +31,7 @@ public class PatternLine {
         return tileCount;
     }
 
-    public Tile colour() {
+    public Tile tile() {
         return tile;
     }
 

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static ev.projects.PatternLineTest.patternLines;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FloorTest {
@@ -11,9 +12,9 @@ public class FloorTest {
     @Test
     void playerCanAddTilesToFloorLine() {
         Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(5);
-        patternLine.add(Tile.RED, 2);
-        Player player = new Player(new Board(patternLine, new Wall(), floor));
+        PatternLine[] patternLines = patternLines();
+        patternLines[4].add(Tile.RED, 2);
+        Player player = new Player(new Board(patternLines(), new Wall(), floor));
         player.takeTilesFromFactory(
                 new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.BLUE, Tile.YELLOW), Tile.RED
         );
@@ -26,9 +27,9 @@ public class FloorTest {
     @Test
     void playerCantOverfillFloor() {
         Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(5);
-        patternLine.add(Tile.RED, 2);
-        Player player = new Player(new Board(patternLine, new Wall(), floor));
+        PatternLine[] patternLines = patternLines();
+        patternLines[4].add(Tile.RED, 2);
+        Player player = new Player(new Board(patternLines(), new Wall(), floor));
         player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.RED), Tile.RED);
         player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.BLUE, Tile.RED, Tile.RED, Tile.RED), Tile.RED);
         player.addToFloor(7);
@@ -42,9 +43,9 @@ public class FloorTest {
     @Test
     void playerScoresPenaltyForFloorTiles() {
         Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(5);
-        patternLine.add(Tile.RED, 2);
-        Player player = new Player(new Board(patternLine, new Wall(), floor));
+        PatternLine[] patternLines = patternLines();
+        patternLines[4].add(Tile.RED, 2);
+        Player player = new Player(new Board(patternLines(), new Wall(), floor));
         player.addScore(5);
         floor.add(3);
         Game game = new Game(List.of(player));
@@ -57,9 +58,9 @@ public class FloorTest {
     @Test
     void floorPenaltyCantMakePlayerScoreNegative() {
         Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(5);
-        patternLine.add(Tile.RED, 2);
-        Player player = new Player(new Board(patternLine, new Wall(), floor));
+        PatternLine[] patternLines = patternLines();
+        patternLines[4].add(Tile.RED, 2);
+        Player player = new Player(new Board(patternLines(), new Wall(), floor));
         player.addScore(3);
         floor.add(3);
         Game game = new Game(List.of(player));
