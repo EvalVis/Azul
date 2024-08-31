@@ -14,7 +14,7 @@ public class WallTest {
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
         patternLine.add(Tile.RED, 5);
-        Game game = new Game(List.of(new Player(new Board(patternLine, wall), floor)));
+        Game game = new Game(List.of(new Player(new Board(patternLine, wall, floor))));
 
         game.executeWallTilingPhase();
 
@@ -28,7 +28,7 @@ public class WallTest {
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
         patternLine.add(Tile.RED, 4);
-        Game game = new Game(List.of(new Player(new Board(patternLine, wall), floor)));
+        Game game = new Game(List.of(new Player(new Board(patternLine, wall, floor))));
 
         game.executeWallTilingPhase();
 
@@ -41,7 +41,7 @@ public class WallTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
-        Player player = new Player(new Board(patternLine, wall), floor);
+        Player player = new Player(new Board(patternLine, wall, floor));
         player.takeTilesFromFactory(
                 new FactoryDisplay(new Center(), Tile.RED, Tile.BLUE, Tile.BLUE, Tile.BLUE), Tile.RED
         );
@@ -56,7 +56,7 @@ public class WallTest {
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(1, floor, wall);
         patternLine.add(Tile.RED, 1);
-        Player player = new Player(new Board(patternLine, wall), floor);
+        Player player = new Player(new Board(patternLine, wall, floor));
 
         player.moveTileToWall();
 
@@ -69,7 +69,7 @@ public class WallTest {
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(3, floor, wall);
         patternLine.add(Tile.YELLOW, 3);
-        Player player = new Player(new Board(patternLine, wall), floor);
+        Player player = new Player(new Board(patternLine, wall, floor));
         wall.add(Tile.BLACK, 2);
         wall.add(Tile.WHITE, 2);
         wall.add(Tile.BLUE, 2);
@@ -88,7 +88,7 @@ public class WallTest {
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(3, floor, wall);
         patternLine.add(Tile.YELLOW, 3);
-        Player player = new Player(new Board(patternLine, wall), floor);
+        Player player = new Player(new Board(patternLine, wall, floor));
         wall.add(Tile.BLACK, 2);
         wall.add(Tile.WHITE, 2);
         wall.add(Tile.BLACK, 0);

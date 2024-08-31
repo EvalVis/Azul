@@ -13,7 +13,7 @@ public class FactoryDisplayTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
-        Player player = new Player(new Board(patternLine, wall), floor);
+        Player player = new Player(new Board(patternLine, wall, floor));
 
         player.takeTilesFromFactory(display, Tile.RED);
 

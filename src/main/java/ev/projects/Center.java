@@ -16,12 +16,12 @@ public class Center {
         tiles.add(tile);
     }
 
-    public List<Tile> giveTiles(Tile tile, Floor floor) {
+    public List<Tile> giveTiles(Tile tile, Board board) {
         List<Tile> tilesToGive = tiles.stream().filter(t -> t.equals(tile)).toList();
         tiles.removeAll(tilesToGive);
         if (nobodyHasTakenFromCenter) {
             nobodyHasTakenFromCenter = false;
-            floor.add(1);
+            board.addTilesToFloorLine(1);
         }
         return tilesToGive;
     }

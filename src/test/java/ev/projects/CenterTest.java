@@ -14,7 +14,7 @@ public class CenterTest {
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
         patternLine.add(Tile.RED, 2);
-        Player player = new Player(new Board(patternLine, wall), floor);
+        Player player = new Player(new Board(patternLine, wall, floor));
         player.takeTilesFromFactory(display, Tile.RED);
 
         player.takeTilesFromCenter(center, Tile.BLUE);
@@ -30,9 +30,9 @@ public class CenterTest {
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
         patternLine.add(Tile.RED, 2);
-        Player player = new Player(new Board(patternLine, wall), floor);
+        Player player = new Player(new Board(patternLine, wall, floor));
         player.takeTilesFromFactory(display, Tile.RED);
-        player.addToFloor(floor, 3);
+        player.addToFloor(3);
 
         player.takeTilesFromCenter(center, Tile.BLUE);
 
@@ -46,13 +46,13 @@ public class CenterTest {
         Wall wall1 = new Wall();
         Floor floor1 = new Floor();
         PatternLine patternLine1 = new PatternLine(5, floor1, wall1);
-        Player player1 = new Player(new Board(patternLine1, wall1), floor1);
+        Player player1 = new Player(new Board(patternLine1, wall1, floor1));
         player1.takeTilesFromFactory(display, Tile.RED);
         player1.takeTilesFromCenter(center, Tile.BLUE);
         Wall wall2 = new Wall();
         Floor floor2 = new Floor();
         PatternLine patternLine2 = new PatternLine(5, floor2, wall2);
-        Player player2 = new Player(new Board(patternLine2, wall2), floor2);
+        Player player2 = new Player(new Board(patternLine2, wall2, floor2));
 
         player2.takeTilesFromCenter(center, Tile.YELLOW);
 

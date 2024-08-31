@@ -14,12 +14,12 @@ public class FloorTest {
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
         patternLine.add(Tile.RED, 2);
-        Player player = new Player(new Board(patternLine, wall), floor);
+        Player player = new Player(new Board(patternLine, wall, floor));
         player.takeTilesFromFactory(
                 new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.BLUE, Tile.YELLOW), Tile.RED
         );
 
-        player.addToFloor(floor, 2);
+        player.addToFloor(2);
 
         assertEquals(-2, floor.score());
     }
@@ -30,13 +30,13 @@ public class FloorTest {
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
         patternLine.add(Tile.RED, 2);
-        Player player = new Player(new Board(patternLine, wall), floor);
+        Player player = new Player(new Board(patternLine, wall, floor));
         player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.RED), Tile.RED);
         player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.BLUE, Tile.RED, Tile.RED, Tile.RED), Tile.RED);
-        player.addToFloor(floor, 7);
+        player.addToFloor(7);
 
         player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.BLUE, Tile.RED, Tile.RED, Tile.RED), Tile.BLUE);
-        player.addToFloor(floor, 1);
+        player.addToFloor(1);
 
         assertEquals(-14, floor.score());
     }
@@ -47,7 +47,7 @@ public class FloorTest {
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
         patternLine.add(Tile.RED, 2);
-        Player player = new Player(new Board(patternLine, wall), floor);
+        Player player = new Player(new Board(patternLine, wall, floor));
         player.addScore(5);
         floor.add(3);
         Game game = new Game(List.of(player));
@@ -63,7 +63,7 @@ public class FloorTest {
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
         patternLine.add(Tile.RED, 2);
-        Player player = new Player(new Board(patternLine, wall), floor);
+        Player player = new Player(new Board(patternLine, wall, floor));
         player.addScore(3);
         floor.add(3);
         Game game = new Game(List.of(player));

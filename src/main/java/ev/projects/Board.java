@@ -3,10 +3,12 @@ package ev.projects;
 public class Board {
     private final PatternLine patternLine;
     private final Wall wall;
+    private final Floor floor;
 
-    public Board(PatternLine patternLine, Wall wall) {
+    public Board(PatternLine patternLine, Wall wall, Floor floor) {
         this.patternLine = patternLine;
         this.wall = wall;
+        this.floor = floor;
     }
 
     public int floorPenalty() {
@@ -28,5 +30,9 @@ public class Board {
 
     public Wall wall() {
         return wall;
+    }
+
+    public void addTilesToFloorLine(int amount) {
+        floor.add(amount);
     }
 }

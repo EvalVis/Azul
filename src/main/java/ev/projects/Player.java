@@ -5,18 +5,16 @@ import java.util.List;
 
 public class Player {
     private final Board board;
-    private final Floor floor;
     private final List<Tile> tiles;
     private int score;
     private final String name;
 
-    public Player(Board board, Floor floor) {
-        this(board, floor, "Erwin");
+    public Player(Board board) {
+        this(board, "Erwin");
     }
 
-    public Player(Board board, Floor floor, String name) {
+    public Player(Board board, String name) {
         this.board = board;
-        this.floor = floor;
         this.tiles = new ArrayList<>();
         this.score = 0;
         this.name = name;
@@ -27,11 +25,11 @@ public class Player {
     }
 
     void takeTilesFromCenter(Center center, Tile tile) {
-        tiles.addAll(center.giveTiles(tile, floor));
+        tiles.addAll(center.giveTiles(tile, board));
     }
 
-    void addToFloor(Floor floor, int count) {
-        floor.add(count);
+    void addToFloor(int amount) {
+        board.addTilesToFloorLine(amount);
     }
 
     void addToPatternLine(PatternLine patternLine, int count) {
