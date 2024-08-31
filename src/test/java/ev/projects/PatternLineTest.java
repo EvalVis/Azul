@@ -2,8 +2,6 @@ package ev.projects;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PatternLineTest {
@@ -11,14 +9,14 @@ public class PatternLineTest {
     void playerFillsPatternLine() {
         Wall wall = new Wall();
         Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(5, floor, wall);
-        patternLine.add(Tile.RED, 2);
+        PatternLine patternLine = new PatternLine(5, wall);
+        patternLine.add(Tile.RED, 2, 0);
         Player player = new Player(new Board(patternLine, wall, floor));
         player.takeTilesFromFactory(
                 new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.YELLOW), Tile.RED
         );
 
-        player.addToPatternLine(patternLine, 3);
+        player.addToPatternLine(3);
 
         assertTrue(patternLine.isFilled());
     }
@@ -27,14 +25,14 @@ public class PatternLineTest {
     void playerAddsToPatternLine() {
         Wall wall = new Wall();
         Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(5, floor, wall);
-        patternLine.add(Tile.RED, 2);
+        PatternLine patternLine = new PatternLine(5, wall);
+        patternLine.add(Tile.RED, 2, 0);
         Player player = new Player(new Board(patternLine, wall, floor));
         player.takeTilesFromFactory(
                 new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.YELLOW), Tile.RED
         );
 
-        player.addToPatternLine(patternLine, 2);
+        player.addToPatternLine(2);
 
         assertFalse(patternLine.isFilled());
     }
@@ -43,12 +41,13 @@ public class PatternLineTest {
     void playerOverfillsPatternLine() {
         Wall wall = new Wall();
         Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(3, floor, wall);
-        patternLine.add(Tile.RED, 2);
-        Player player = new Player(new Board(patternLine, wall, floor));
+        PatternLine patternLine = new PatternLine(3, wall);
+        Board board = new Board(patternLine, wall, floor);
+        board.addTileToPatternLine(Tile.RED, 2, 0);
+        Player player = new Player(board);
         player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.RED), Tile.RED);
 
-        player.addToPatternLine(patternLine, 4);
+        player.addToPatternLine(4);
 
         assertTrue(patternLine.isFilled());
         assertEquals(-4, floor.score());
@@ -58,12 +57,12 @@ public class PatternLineTest {
     void cantAddTileOfDifferentColour() {
         Wall wall = new Wall();
         Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(5, floor, wall);
-        patternLine.add(Tile.RED, 2);
+        PatternLine patternLine = new PatternLine(5, wall);
+        patternLine.add(Tile.RED, 2, 0);
         Player player = new Player(new Board(patternLine, wall, floor));
 
         player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.BLUE, Tile.BLUE, Tile.RED, Tile.RED), Tile.BLUE);
 
-        assertThrows(ActionNotAllowedException.class, () -> player.addToPatternLine(patternLine, 2));
+        assertThrows(ActionNotAllowedException.class, () -> player.addToPatternLine(2));
     }
 }

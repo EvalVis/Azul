@@ -10,11 +10,11 @@ public class PlayerTest {
     void playerCanAddTilesToPatternLineAndFloor() {
         Wall wall = new Wall();
         Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(5, floor, wall);
+        PatternLine patternLine = new PatternLine(5, wall);
         Player player = new Player(new Board(patternLine, wall, floor));
         player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.BLUE), Tile.RED);
 
-        player.addToPatternLine(patternLine, 1);
+        player.addToPatternLine(1);
         player.addToFloor(2);
 
         assertEquals(1, patternLine.tileCount());

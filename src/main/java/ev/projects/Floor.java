@@ -2,6 +2,7 @@ package ev.projects;
 
 public class Floor {
     private int tiles;
+
     void add(int amount) {
         tiles = Math.min(tiles + amount, 7);
     }

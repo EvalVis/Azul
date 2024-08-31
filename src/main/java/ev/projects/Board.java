@@ -12,7 +12,11 @@ public class Board {
     }
 
     public int floorPenalty() {
-        return patternLine.floorPenalty();
+        return floor.score();
+    }
+
+    public void addTileToPatternLine(Tile tile, int count, int y) {
+        floor.add(patternLine.add(tile, count, y));
     }
 
     public int moveTileToWall(int y) {

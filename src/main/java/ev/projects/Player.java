@@ -32,11 +32,11 @@ public class Player {
         board.addTilesToFloorLine(amount);
     }
 
-    void addToPatternLine(PatternLine patternLine, int count) {
+    void addToPatternLine(int count) {
         if (count > tiles.size()) {
             throw new ActionNotAllowedException("Can't add more tiles than player " + name + " has.");
         }
-        patternLine.add(tiles.get(0), count);
+        board.addTileToPatternLine(tiles.get(0), count, 0);
     }
 
     public void giveFloorPenalty() {

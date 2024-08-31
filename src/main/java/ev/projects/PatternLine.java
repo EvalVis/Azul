@@ -4,22 +4,16 @@ public class PatternLine {
     private final int size;
     private int tileCount;
     private Tile tile;
-    private final Floor floor;
     private final Wall wall;
 
-    public PatternLine(int size, Floor floor, Wall wall) {
+    public PatternLine(int size, Wall wall) {
         this.size = size;
         tileCount = 0;
         tile = null;
-        this.floor = floor;
         this.wall = wall;
     }
 
-    public void add(Tile tile, int count) {
-        add(tile, count, 0);
-    }
-
-    public void add(Tile tile, int count, int y) {
+    public int add(Tile tile, int count, int y) {
         if(tileCount > 0) {
             if (this.tile != tile) {
                 throw new ActionNotAllowedException(
@@ -33,8 +27,9 @@ public class PatternLine {
         else {
             this.tile = tile;
         }
-        floor.add(Math.max(0, tileCount + count - size));
+        int overfill = Math.max(0, tileCount + count - size);
         tileCount = Math.min(size, tileCount + count);
+        return overfill;
     }
 
     public boolean isFilled() {
@@ -52,9 +47,5 @@ public class PatternLine {
     public void clear() {
         tileCount = 0;
         tile = null;
-    }
-
-    public int floorPenalty() {
-        return floor.score();
     }
 }
