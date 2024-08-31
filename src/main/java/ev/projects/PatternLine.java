@@ -1,58 +1,57 @@
 package ev.projects;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class PatternLine {
     private final int size;
-    private final List<Tile> tiles;
+    private int tileCount;
+    private Tile tile;
     private final Floor floor;
     private final Wall wall;
 
     public PatternLine(int size, Floor floor, Wall wall) {
         this.size = size;
-        this.tiles = new ArrayList<>();
+        tileCount = 0;
+        tile = null;
         this.floor = floor;
         this.wall = wall;
     }
 
-    public void add(List<Tile> newTiles) {
-        add(newTiles, 0);
+    public void add(Tile tile, int count) {
+        add(tile, count, 0);
     }
 
-    public void add(List<Tile> newTiles, int y) {
-        if(tiles.size() > 0) {
-            if (!newTiles.get(0).equals(tiles.get(0))) {
+    public void add(Tile tile, int count, int y) {
+        if(tileCount > 0) {
+            if (this.tile != tile) {
                 throw new ActionNotAllowedException(
-                        tiles.get(0) + " colour is on the pattern line. Can't add " + tiles.get(0) + " colour."
+                        "Tile(s) with " + this.tile + " colour is on the pattern line. Can't add a tile with " + tile + " colour."
                 );
             }
         }
-        if(wall.alreadyHas(newTiles.get(0), y)) { // TODO: Move this logic out.
-            throw new ActionNotAllowedException("Wall already contains " + newTiles.get(0) + " colour.");
+        if(wall.alreadyHas(tile, y)) { // TODO: Move this logic out.
+            throw new ActionNotAllowedException("Wall already contains tiles(s) with " + tile + " colour.");
         }
-        if (tiles.size() + newTiles.size() > size) {
-            floor.add(tiles.size() + newTiles.size() - size); // TODO: Move this logic out.
-            tiles.addAll(newTiles.stream().limit(size - tiles.size()).toList());
-            return;
+        else {
+            this.tile = tile;
         }
-        tiles.addAll(newTiles);
+        floor.add(Math.max(0, tileCount + count - size));
+        tileCount = Math.min(size, tileCount + count);
     }
 
     public boolean isFilled() {
-        return tiles.size() == size;
+        return tileCount == size;
     }
 
     public int tileCount() {
-        return tiles.size();
+        return tileCount;
     }
 
     public Tile colour() {
-        return tiles.get(0);
+        return tile;
     }
 
     public void clear() {
-        tiles.clear();
+        tileCount = 0;
+        tile = null;
     }
 
     public int floorPenalty() {

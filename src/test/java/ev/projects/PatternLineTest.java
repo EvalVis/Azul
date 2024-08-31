@@ -12,7 +12,7 @@ public class PatternLineTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
-        patternLine.add(List.of(Tile.RED, Tile.RED));
+        patternLine.add(Tile.RED, 2);
         Player player = new Player(new Board(patternLine, wall), floor);
         player.takeTilesFromFactory(
                 new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.YELLOW), Tile.RED
@@ -28,7 +28,7 @@ public class PatternLineTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
-        patternLine.add(List.of(Tile.RED, Tile.RED));
+        patternLine.add(Tile.RED, 2);
         Player player = new Player(new Board(patternLine, wall), floor);
         player.takeTilesFromFactory(
                 new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.YELLOW), Tile.RED
@@ -44,7 +44,7 @@ public class PatternLineTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(3, floor, wall);
-        patternLine.add(List.of(Tile.RED, Tile.RED));
+        patternLine.add(Tile.RED, 2);
         Player player = new Player(new Board(patternLine, wall), floor);
         player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.RED), Tile.RED);
 
@@ -59,7 +59,7 @@ public class PatternLineTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
-        patternLine.add(List.of(Tile.RED, Tile.RED));
+        patternLine.add(Tile.RED, 2);
         Player player = new Player(new Board(patternLine, wall), floor);
 
         player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.BLUE, Tile.BLUE, Tile.RED, Tile.RED), Tile.BLUE);

@@ -8,10 +8,7 @@ public class FactoryDisplay {
     private final Center center;
     private final Tile[] tiles;
 
-    public FactoryDisplay(
-            Center center, Tile tile0, Tile tile1, Tile tile2,
-            Tile tile3
-    ) {
+    public FactoryDisplay(Center center, Tile tile0, Tile tile1, Tile tile2, Tile tile3) {
         this.center = center;
         tiles = new Tile[] {tile0, tile1, tile2, tile3};
     }

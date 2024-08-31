@@ -13,10 +13,6 @@ public class Board {
         return patternLine.floorPenalty();
     }
 
-    public int moveTileToWall() {
-        return moveTileToWall(0);
-    }
-
     public int moveTileToWall(int y) {
         int score = 0;
         if (patternLine.isFilled()) {

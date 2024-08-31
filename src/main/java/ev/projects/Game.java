@@ -18,7 +18,7 @@ public class Game {
     }
 
     void executeGameEndingPhase() {
-        players.forEach(p -> p.assignGameEndingScore());
+        players.forEach(Player::assignGameEndingScore);
     }
 
     List<Player> winners() {

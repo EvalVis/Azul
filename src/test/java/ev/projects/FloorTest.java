@@ -13,7 +13,7 @@ public class FloorTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
-        patternLine.add(List.of(Tile.RED, Tile.RED));
+        patternLine.add(Tile.RED, 2);
         Player player = new Player(new Board(patternLine, wall), floor);
         player.takeTilesFromFactory(
                 new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.BLUE, Tile.YELLOW), Tile.RED
@@ -29,7 +29,7 @@ public class FloorTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
-        patternLine.add(List.of(Tile.RED, Tile.RED));
+        patternLine.add(Tile.RED, 2);
         Player player = new Player(new Board(patternLine, wall), floor);
         player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.RED), Tile.RED);
         player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.BLUE, Tile.RED, Tile.RED, Tile.RED), Tile.RED);
@@ -46,7 +46,7 @@ public class FloorTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
-        patternLine.add(List.of(Tile.RED, Tile.RED));
+        patternLine.add(Tile.RED, 2);
         Player player = new Player(new Board(patternLine, wall), floor);
         player.addScore(5);
         floor.add(3);
@@ -62,7 +62,7 @@ public class FloorTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
-        patternLine.add(List.of(Tile.RED, Tile.RED));
+        patternLine.add(Tile.RED, 2);
         Player player = new Player(new Board(patternLine, wall), floor);
         player.addScore(3);
         floor.add(3);

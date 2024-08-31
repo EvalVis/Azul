@@ -13,7 +13,7 @@ public class WallTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
-        patternLine.add(List.of(Tile.RED, Tile.RED, Tile.RED, Tile.RED, Tile.RED));
+        patternLine.add(Tile.RED, 5);
         Game game = new Game(List.of(new Player(new Board(patternLine, wall), floor)));
 
         game.executeWallTilingPhase();
@@ -27,7 +27,7 @@ public class WallTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
-        patternLine.add(List.of(Tile.RED, Tile.RED, Tile.RED, Tile.RED));
+        patternLine.add(Tile.RED, 4);
         Game game = new Game(List.of(new Player(new Board(patternLine, wall), floor)));
 
         game.executeWallTilingPhase();
@@ -55,7 +55,7 @@ public class WallTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(1, floor, wall);
-        patternLine.add(List.of(Tile.RED));
+        patternLine.add(Tile.RED, 1);
         Player player = new Player(new Board(patternLine, wall), floor);
 
         player.moveTileToWall();
@@ -68,7 +68,7 @@ public class WallTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(3, floor, wall);
-        patternLine.add(List.of(Tile.YELLOW, Tile.YELLOW, Tile.YELLOW));
+        patternLine.add(Tile.YELLOW, 3);
         Player player = new Player(new Board(patternLine, wall), floor);
         wall.add(Tile.BLACK, 2);
         wall.add(Tile.WHITE, 2);
@@ -87,7 +87,7 @@ public class WallTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(3, floor, wall);
-        patternLine.add(List.of(Tile.YELLOW, Tile.YELLOW, Tile.YELLOW));
+        patternLine.add(Tile.YELLOW, 3);
         Player player = new Player(new Board(patternLine, wall), floor);
         wall.add(Tile.BLACK, 2);
         wall.add(Tile.WHITE, 2);

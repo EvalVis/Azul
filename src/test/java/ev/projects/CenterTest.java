@@ -2,8 +2,6 @@ package ev.projects;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CenterTest {
@@ -15,7 +13,7 @@ public class CenterTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
-        patternLine.add(List.of(Tile.RED, Tile.RED));
+        patternLine.add(Tile.RED, 2);
         Player player = new Player(new Board(patternLine, wall), floor);
         player.takeTilesFromFactory(display, Tile.RED);
 
@@ -31,7 +29,7 @@ public class CenterTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
-        patternLine.add(List.of(Tile.RED, Tile.RED));
+        patternLine.add(Tile.RED, 2);
         Player player = new Player(new Board(patternLine, wall), floor);
         player.takeTilesFromFactory(display, Tile.RED);
         player.addToFloor(floor, 3);

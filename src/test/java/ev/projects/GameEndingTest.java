@@ -13,7 +13,7 @@ public class GameEndingTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
-        patternLine.add(List.of(Tile.RED, Tile.RED));
+        patternLine.add(Tile.RED, 2);
         Player player = new Player(new Board(patternLine, wall), floor);
         Game game = new Game(List.of(player));
         completeFirstHorizontalLine(wall);
@@ -30,7 +30,7 @@ public class GameEndingTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
-        patternLine.add(List.of(Tile.RED, Tile.RED));
+        patternLine.add(Tile.RED, 2);
         Player player = new Player(new Board(patternLine, wall), floor);
         Game game = new Game(List.of(player));
         wall.add(Tile.BLUE, 0);
@@ -60,7 +60,7 @@ public class GameEndingTest {
         Wall wall = new Wall();
         Floor floor = new Floor();
         PatternLine patternLine = new PatternLine(5, floor, wall);
-        patternLine.add(List.of(Tile.RED, Tile.RED));
+        patternLine.add(Tile.RED, 2);
         Player player = new Player(new Board(patternLine, wall), floor);
         Game game = new Game(List.of(player));
         wall.add(Tile.BLUE, 0);

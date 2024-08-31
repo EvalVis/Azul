@@ -2,7 +2,6 @@ package ev.projects;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Player {
     private final Board board;
@@ -36,7 +35,10 @@ public class Player {
     }
 
     void addToPatternLine(PatternLine patternLine, int count) {
-        patternLine.add(tiles.stream().limit(count).collect(Collectors.toList()), 0);
+        if (count > tiles.size()) {
+            throw new ActionNotAllowedException("Can't add more tiles than player " + name + " has.");
+        }
+        patternLine.add(tiles.get(0), count);
     }
 
     public void giveFloorPenalty() {
