@@ -11,10 +11,9 @@ public class WallTest {
     @Test
     void tileGetsPlacedOnTheWallIfPatternLineIsFilled() {
         Wall wall = new Wall();
-        Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(5, wall);
-        patternLine.add(Tile.RED, 5, 0);
-        Game game = new Game(List.of(new Player(new Board(patternLine, wall, floor))));
+        PatternLine patternLine = new PatternLine(5);
+        patternLine.add(Tile.RED, 5);
+        Game game = new Game(List.of(new Player(new Board(patternLine, wall, new Floor()))));
 
         game.executeWallTilingPhase();
 
@@ -25,10 +24,9 @@ public class WallTest {
     @Test
     void tileDoesNotGetPlacedOnTheWallIfPatternLineIsNotFilled() {
         Wall wall = new Wall();
-        Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(5, wall);
-        patternLine.add(Tile.RED, 4, 0);
-        Game game = new Game(List.of(new Player(new Board(patternLine, wall, floor))));
+        PatternLine patternLine = new PatternLine(5);
+        patternLine.add(Tile.RED, 4);
+        Game game = new Game(List.of(new Player(new Board(patternLine, wall, new Floor()))));
 
         game.executeWallTilingPhase();
 
@@ -39,13 +37,12 @@ public class WallTest {
     @Test
     void cantAddColourToPatternLineIfWallHasThatColour() {
         Wall wall = new Wall();
-        Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(5, wall);
-        Player player = new Player(new Board(patternLine, wall, floor));
+        PatternLine patternLine = new PatternLine(5);
+        Player player = new Player(new Board(patternLine, wall, new Floor()));
         player.takeTilesFromFactory(
                 new FactoryDisplay(new Center(), Tile.RED, Tile.BLUE, Tile.BLUE, Tile.BLUE), Tile.RED
         );
-        wall.add(Tile.RED, 0);
+        wall.add(Tile.RED, 4);
 
         assertThrows(ActionNotAllowedException.class, () -> player.addToPatternLine(1));
     }
@@ -53,10 +50,9 @@ public class WallTest {
     @Test
     void playerScoresAPointWhenPlacingATileOnEmptyWall() {
         Wall wall = new Wall();
-        Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(1, wall);
-        patternLine.add(Tile.RED, 1, 0);
-        Player player = new Player(new Board(patternLine, wall, floor));
+        PatternLine patternLine = new PatternLine(1);
+        patternLine.add(Tile.RED, 1);
+        Player player = new Player(new Board(patternLine, wall, new Floor()));
 
         player.moveTileToWall();
 
@@ -66,10 +62,9 @@ public class WallTest {
     @Test
     void playerScoresPointsWhenPlacingATileOnWall() {
         Wall wall = new Wall();
-        Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(3, wall);
-        patternLine.add(Tile.YELLOW, 3, 0);
-        Player player = new Player(new Board(patternLine, wall, floor));
+        PatternLine patternLine = new PatternLine(3);
+        patternLine.add(Tile.YELLOW, 3);
+        Player player = new Player(new Board(patternLine, wall, new Floor()));
         wall.add(Tile.BLACK, 2);
         wall.add(Tile.WHITE, 2);
         wall.add(Tile.BLUE, 2);
@@ -85,10 +80,9 @@ public class WallTest {
     @Test
     void playerScoresAPointWhenPlacingATileOnWall() {
         Wall wall = new Wall();
-        Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(3, wall);
-        patternLine.add(Tile.YELLOW, 3, 0);
-        Player player = new Player(new Board(patternLine, wall, floor));
+        PatternLine patternLine = new PatternLine(3);
+        patternLine.add(Tile.YELLOW, 3);
+        Player player = new Player(new Board(patternLine, wall, new Floor()));
         wall.add(Tile.BLACK, 2);
         wall.add(Tile.WHITE, 2);
         wall.add(Tile.BLACK, 0);

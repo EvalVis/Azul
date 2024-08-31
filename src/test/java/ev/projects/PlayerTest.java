@@ -8,10 +8,9 @@ public class PlayerTest {
 
     @Test
     void playerCanAddTilesToPatternLineAndFloor() {
-        Wall wall = new Wall();
         Floor floor = new Floor();
-        PatternLine patternLine = new PatternLine(5, wall);
-        Player player = new Player(new Board(patternLine, wall, floor));
+        PatternLine patternLine = new PatternLine(5);
+        Player player = new Player(new Board(patternLine, new Wall(), floor));
         player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.BLUE), Tile.RED);
 
         player.addToPatternLine(1);

@@ -15,8 +15,11 @@ public class Board {
         return floor.score();
     }
 
-    public void addTileToPatternLine(Tile tile, int count, int y) {
-        floor.add(patternLine.add(tile, count, y));
+    public void addTileToPatternLine(Tile tile, int count) {
+        if(wall.alreadyHas(tile, patternLine.position())) {
+            throw new ActionNotAllowedException("Wall already contains tiles(s) with " + tile + " colour.");
+        }
+        floor.add(patternLine.add(tile, count));
     }
 
     public int moveTileToWall(int y) {
