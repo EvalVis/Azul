@@ -8,6 +8,7 @@ public class Player {
     private final List<Tile> tiles;
     private int score;
     private final String name;
+    private boolean startsRound;
 
     public Player(Board board) {
         this(board, "Erwin");
@@ -18,6 +19,7 @@ public class Player {
         this.tiles = new ArrayList<>();
         this.score = 0;
         this.name = name;
+        this.startsRound = false;
     }
 
     void takeTilesFromFactory(FactoryDisplay factoryDisplay, Tile tile) {
@@ -69,5 +71,13 @@ public class Player {
 
     Board board() {
         return board;
+    }
+
+    public void giveStartingMarker() {
+        startsRound = true;
+    }
+
+    public boolean startsRound() {
+        return startsRound;
     }
 }

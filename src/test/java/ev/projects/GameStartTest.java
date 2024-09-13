@@ -1,27 +1,22 @@
 package ev.projects;
 
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GameStartTest {
 
-    @ParameterizedTest
-    @MethodSource("games")
+    @Test
     void factoryDisplaysAreFilled() {
         Center center = new Center();
         Board player1Board = new Board(new Wall(), new Floor());
         Board player2Board = new Board(new Wall(), new Floor());
         Board player3Board = new Board(new Wall(), new Floor());
-        Game game = new Game(
-                List.of(new Player(player1Board), new Player(player2Board), new Player(player3Board)), center
-        );
-
+        Game game = new Game(List.of(new Player(player1Board), new Player(player2Board)), center);
         game.start();
 
         long blue = Arrays.stream(game.factoryDisplays())
@@ -44,21 +39,31 @@ public class GameStartTest {
         assertEquals(20, white + whiteFromBag);
     }
 
-    private static Stream<Game> games() {
+    @Test
+    void onePlayerHasStartingMarker() {
         Center center = new Center();
-        Board player1Board = new Board(new Wall(), new Floor());
-        Board player2Board = new Board(new Wall(), new Floor());
-        Board player3Board = new Board(new Wall(), new Floor());
-        Board player4Board = new Board(new Wall(), new Floor());
-        return Stream.of(
-                new Game(List.of(new Player(player1Board), new Player(player2Board)), center),
-                new Game(List.of(new Player(player1Board), new Player(player2Board), new Player(player3Board)), center),
-                new Game(
-                        List.of(
-                                new Player(player1Board), new Player(player2Board), new Player(player3Board),
-                                new Player(player4Board)
-                        ), center
-                )
+        Player player1 = new Player(new Board(new Wall(), new Floor()));
+        Player player2 = new Player(new Board(new Wall(), new Floor()));
+        Game game = new Game(List.of(player1, player2), center);
+
+        game.start();
+
+        assertTrue(
+                (player1.startsRound() && !player2.startsRound())
+                        || (!player1.startsRound() && player2.startsRound())
         );
+    }
+
+    @Test
+    void playersStartWith0Points() {
+        Center center = new Center();
+        Player player1 = new Player(new Board(new Wall(), new Floor()));
+        Player player2 = new Player(new Board(new Wall(), new Floor()));
+        Game game = new Game(List.of(player1, player2), center);
+
+        game.start();
+
+        assertEquals(0, player1.score());
+        assertEquals(0, player2.score());
     }
 }

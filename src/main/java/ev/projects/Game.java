@@ -1,6 +1,7 @@
 package ev.projects;
 
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Game {
@@ -8,6 +9,7 @@ public class Game {
     private final Center center;
     private final Bag bag;
     private final FactoryDisplay[] factoryDisplays;
+    private boolean nobodyHasTakenFromCenter;
 
     public Game(List<Player> players) {
         this(players, new Center());
@@ -18,6 +20,7 @@ public class Game {
         this.center = center;
         this.bag = new Bag();
         factoryDisplays = new FactoryDisplay[7];
+        this.nobodyHasTakenFromCenter = true;
     }
 
     void start() {
@@ -25,6 +28,7 @@ public class Game {
             List<Tile> tiles = bag.takeTiles(4);
             factoryDisplays[i] = new FactoryDisplay(center, tiles.get(0), tiles.get(1), tiles.get(2), tiles.get(3));
         }
+        players.get(new Random().nextInt(players.size())).giveStartingMarker();
     }
 
     void executeWallTilingPhase() {
