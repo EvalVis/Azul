@@ -14,9 +14,7 @@ public class GameEndingTest {
         Wall wall = new Wall();
         completeFirstHorizontalLine(wall);
         completeSecondHorizontalLine(wall);
-        PatternLine[] patternLines = patternLines();
-        patternLines[4].add(Tile.RED, 2);
-        Player player = new Player(new Board(patternLines, wall, new Floor()));
+        Player player = new Player(new Board(patternLines(), wall, new Floor()));
         Game game = new Game(List.of(player));
         int currentScore = player.score();
 

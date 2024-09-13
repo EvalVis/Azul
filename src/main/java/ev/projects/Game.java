@@ -5,9 +5,26 @@ import java.util.stream.Collectors;
 
 public class Game {
     private final List<Player> players;
+    private final Center center;
+    private final Bag bag;
+    private final FactoryDisplay[] factoryDisplays;
 
     public Game(List<Player> players) {
+        this(players, new Center());
+    }
+
+    public Game(List<Player> players, Center center) {
         this.players = players;
+        this.center = center;
+        this.bag = new Bag();
+        factoryDisplays = new FactoryDisplay[7];
+    }
+
+    void start() {
+        for (int i = 0; i < 7; i++) {
+            List<Tile> tiles = bag.takeTiles(4);
+            factoryDisplays[i] = new FactoryDisplay(center, tiles.get(0), tiles.get(1), tiles.get(2), tiles.get(3));
+        }
     }
 
     void executeWallTilingPhase() {
@@ -38,5 +55,13 @@ public class Game {
         }
 
         return bestPlayers;
+    }
+
+    FactoryDisplay[] factoryDisplays() {
+        return factoryDisplays;
+    }
+
+    List<Tile> bagTiles() {
+        return bag.tiles();
     }
 }
