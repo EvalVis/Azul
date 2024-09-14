@@ -13,9 +13,9 @@ public class GameStartTest {
     @Test
     void factoryDisplaysAreFilled() {
         Center center = new Center();
-        Board player1Board = new Board(new Wall(), new Floor());
-        Board player2Board = new Board(new Wall(), new Floor());
-        Board player3Board = new Board(new Wall(), new Floor());
+        Board player1Board = new Board();
+        Board player2Board = new Board();
+        Board player3Board = new Board();
         Game game = new Game(List.of(new Player(player1Board), new Player(player2Board)), center);
         game.start();
 
@@ -41,25 +41,20 @@ public class GameStartTest {
 
     @Test
     void onePlayerHasStartingMarker() {
-        Center center = new Center();
-        Player player1 = new Player(new Board(new Wall(), new Floor()));
-        Player player2 = new Player(new Board(new Wall(), new Floor()));
-        Game game = new Game(List.of(player1, player2), center);
+        Player player1 = new PlayerMother().newPlayer();
+        Player player2 = new PlayerMother().newPlayer();
+        Game game = new Game(List.of(player1, player2), new Center(), 0);
 
         game.start();
 
-        assertTrue(
-                (player1.startsRound() && !player2.startsRound())
-                        || (!player1.startsRound() && player2.startsRound())
-        );
+        assertTrue(player1.startsRound() && !player2.startsRound());
     }
 
     @Test
     void playersStartWith0Points() {
-        Center center = new Center();
-        Player player1 = new Player(new Board(new Wall(), new Floor()));
-        Player player2 = new Player(new Board(new Wall(), new Floor()));
-        Game game = new Game(List.of(player1, player2), center);
+        Player player1 = new PlayerMother().newPlayer();
+        Player player2 = new PlayerMother().newPlayer();
+        Game game = new Game(List.of(player1, player2));
 
         game.start();
 

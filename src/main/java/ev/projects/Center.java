@@ -29,4 +29,8 @@ public class Center {
     public long count(Tile tile) {
         return tiles.stream().filter(t -> t.equals(tile)).count();
     }
+
+    public List<Tile> tiles() {
+        return tiles;
+    }
 }

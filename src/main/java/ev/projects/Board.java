@@ -5,6 +5,10 @@ public class Board {
     private final Wall wall;
     private final Floor floor;
 
+    public Board() {
+        this(new Wall(), new Floor());
+    }
+
     public Board(Wall wall, Floor floor) {
         this(
                 new PatternLine[] {
@@ -13,6 +17,10 @@ public class Board {
                 },
                 wall, floor
         );
+    }
+
+    public Board(PatternLine[] patternLines) {
+        this(patternLines, new Wall(), new Floor());
     }
 
     public Board(PatternLine[] patternLines, Wall wall, Floor floor) {

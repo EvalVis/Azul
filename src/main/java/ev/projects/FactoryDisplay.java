@@ -17,4 +17,8 @@ public class FactoryDisplay {
         Arrays.stream(tiles).filter(t -> !t.equals(tile)).forEach(center::addTile);
         return Arrays.stream(tiles).filter(t -> t.equals(tile)).collect(Collectors.toList());
     }
+
+    public Tile[] tiles() {
+        return tiles;
+    }
 }

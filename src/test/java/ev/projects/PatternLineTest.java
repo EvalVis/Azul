@@ -2,6 +2,8 @@ package ev.projects;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PatternLineTest {
@@ -9,10 +11,8 @@ public class PatternLineTest {
     void playerFillsPatternLine() {
         PatternLine[] patternLines = patternLines();
         patternLines[4].add(Tile.RED, 2);
-        Player player = new Player(new Board(patternLines, new Wall(), new Floor()));
-        player.takeTilesFromFactory(
-                new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.YELLOW), Tile.RED
-        );
+        Player player = new Player(new Board(patternLines));
+        player.takeTiles(List.of(Tile.RED, Tile.RED, Tile.RED));
 
         player.addTileToPatternLine(3, 4);
 
@@ -23,10 +23,8 @@ public class PatternLineTest {
     void playerAddsToPatternLine() {
         PatternLine[] patternLines = patternLines();
         patternLines[4].add(Tile.RED, 2);
-        Player player = new Player(new Board(patternLines, new Wall(), new Floor()));
-        player.takeTilesFromFactory(
-                new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.YELLOW), Tile.RED
-        );
+        Player player = new Player(new Board(patternLines));
+        player.takeTiles(List.of(Tile.RED, Tile.RED));
 
         player.addTileToPatternLine(2, 4);
 
@@ -76,7 +74,7 @@ public class PatternLineTest {
         Board board = new Board(patternLines, new Wall(), floor);
         board.addTileToPatternLine(Tile.RED, 2, 2);
         Player player = new Player(board);
-        player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.RED), Tile.RED);
+        player.takeTiles(List.of(Tile.RED, Tile.RED, Tile.RED, Tile.RED));
 
         player.addTileToPatternLine(4, 2);
 
@@ -91,7 +89,7 @@ public class PatternLineTest {
         patternLines[4].add(Tile.RED, 2);
         Player player = new Player(new Board(patternLines, wall, new Floor()));
 
-        player.takeTilesFromFactory(new FactoryDisplay(new Center(), Tile.BLUE, Tile.BLUE, Tile.RED, Tile.RED), Tile.BLUE);
+        player.takeTiles(List.of(Tile.BLUE, Tile.BLUE));
 
         assertThrows(ActionNotAllowedException.class, () -> player.addTileToPatternLine(2, 4));
     }

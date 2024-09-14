@@ -1,5 +1,6 @@
 package ev.projects;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -9,18 +10,22 @@ public class Game {
     private final Center center;
     private final Bag bag;
     private final FactoryDisplay[] factoryDisplays;
-    private boolean nobodyHasTakenFromCenter;
+    private int currentPlayer;
 
     public Game(List<Player> players) {
         this(players, new Center());
     }
 
     public Game(List<Player> players, Center center) {
+        this(players, center, new Random().nextInt(players.size()));
+    }
+
+    public Game(List<Player> players, Center center, int startingPlayer) {
         this.players = players;
         this.center = center;
+        this.currentPlayer = startingPlayer;
         this.bag = new Bag();
-        factoryDisplays = new FactoryDisplay[7];
-        this.nobodyHasTakenFromCenter = true;
+        this.factoryDisplays = new FactoryDisplay[7];
     }
 
     void start() {
@@ -28,7 +33,11 @@ public class Game {
             List<Tile> tiles = bag.takeTiles(4);
             factoryDisplays[i] = new FactoryDisplay(center, tiles.get(0), tiles.get(1), tiles.get(2), tiles.get(3));
         }
-        players.get(new Random().nextInt(players.size())).giveStartingMarker();
+        players.get(currentPlayer).giveStartingMarker();
+    }
+
+    void changeFactoryDisplay(int index, Tile tile1, Tile tile2, Tile tile3, Tile tile4) {
+        factoryDisplays[index] = new FactoryDisplay(center, tile1, tile2, tile3, tile4);
     }
 
     void executeWallTilingPhase() {
@@ -62,10 +71,19 @@ public class Game {
     }
 
     FactoryDisplay[] factoryDisplays() {
-        return factoryDisplays;
+        return Arrays.copyOf(factoryDisplays, factoryDisplays.length);
+    }
+
+    List<Tile> peekCenter() {
+        return center.tiles();
     }
 
     List<Tile> bagTiles() {
         return bag.tiles();
+    }
+
+    public void giveTilesFromFactory(int index, Tile tile) {
+        players.get(currentPlayer).takeTiles(factoryDisplays[index].giveTiles(tile));
+        currentPlayer = (currentPlayer == (players.size() - 1)) ? 0 : (currentPlayer + 1);
     }
 }

@@ -22,8 +22,8 @@ public class Player {
         this.startsRound = false;
     }
 
-    void takeTilesFromFactory(FactoryDisplay factoryDisplay, Tile tile) {
-        tiles.addAll(factoryDisplay.giveTiles(tile));
+    void takeTiles(List<Tile> tiles) {
+        this.tiles.addAll(tiles);
     }
 
     void takeTilesFromCenter(Center center, Tile tile) {
@@ -79,5 +79,9 @@ public class Player {
 
     public boolean startsRound() {
         return startsRound;
+    }
+
+    public int tileCount() {
+        return tiles.size();
     }
 }
