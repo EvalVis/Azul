@@ -91,6 +91,22 @@ public class Game {
         currentPlayer = (currentPlayer == (players.size() - 1)) ? 0 : (currentPlayer + 1);
     }
 
+    public void executeFactoryOfferPhaseWithFactory(
+            int factoryIndex, Tile tileToTake, int amountToPlaceOnFloor, int patternLineIndex
+    ) {
+        players.get(currentPlayer).takeTiles(factoryDisplays[factoryIndex].giveTiles(tileToTake));
+        players.get(currentPlayer).addToFloor(amountToPlaceOnFloor);
+        players.get(currentPlayer).addTileToPatternLine(patternLineIndex);
+        currentPlayer = (currentPlayer == (players.size() - 1)) ? 0 : (currentPlayer + 1);
+    }
+
+    public void executeFactoryOfferPhaseWithCenter(Tile tileToTake, int amountToPlaceOnFloor, int patternLineIndex) {
+        players.get(currentPlayer).takeTilesFromCenter(center, tileToTake);
+        players.get(currentPlayer).addToFloor(amountToPlaceOnFloor);
+        players.get(currentPlayer).addTileToPatternLine(patternLineIndex);
+        currentPlayer = (currentPlayer == (players.size() - 1)) ? 0 : (currentPlayer + 1);
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("Factories: ");

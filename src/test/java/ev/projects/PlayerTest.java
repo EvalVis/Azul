@@ -22,7 +22,7 @@ public class PlayerTest {
         game.giveTilesFromFactory(0, Tile.RED);
 
         player.addTileToPatternLine(1, 2);
-        player.addToFloor(List.of(Tile.RED, Tile.RED));
+        player.addToFloor(2);
 
         assertEquals(1, patternLines[2].tileCount());
         assertEquals(-2, floor.score());

@@ -2,6 +2,7 @@ package ev.projects;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Player {
     private final Board board;
@@ -30,8 +31,16 @@ public class Player {
         tiles.addAll(center.giveTiles(tile, board));
     }
 
-    void addToFloor(List<Tile> tiles) {
-        board.addTilesToFloorLine(tiles);
+    void addToFloor(int amount) {
+        if (amount > tileCount()) {
+            throw new ActionNotAllowedException("You can't place more tiles on floor than you have.");
+        }
+        board.addTilesToFloorLine(tiles.stream().limit(amount).collect(Collectors.toList()));
+        tiles.subList(0, amount).clear();
+    }
+
+    void addTileToPatternLine(int position) {
+        addTileToPatternLine(tileCount(), position);
     }
 
     void addTileToPatternLine(int count, int position) {
@@ -39,6 +48,7 @@ public class Player {
             throw new ActionNotAllowedException("Can't add more tiles than player " + name + " has.");
         }
         board.addTileToPatternLine(tiles.get(0), count, position);
+        tiles.subList(0, count).clear();
     }
 
     public void giveFloorPenalty() {
@@ -83,6 +93,10 @@ public class Player {
 
     public int tileCount() {
         return tiles.size();
+    }
+
+    public List<Tile> getTiles() {
+        return tiles;
     }
 
     @Override

@@ -12,13 +12,12 @@ public class FloorTest {
     void playerCanAddTilesToFloorLine() {
         Floor floor = new Floor();
         Player player = new PlayerMother().newPlayer(floor);
-        Game game = new GameMother().new2PlayerGame(player);
+        Game game = new Game(List.of(player, new PlayerMother().newPlayer()), new Center(), 0);
         game.start();
         game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.BLUE, Tile.YELLOW);
 
         game.giveTilesFromFactory(0, Tile.RED);
-
-        player.addToFloor(List.of(Tile.RED, Tile.RED));
+        player.addToFloor(2);
 
         assertEquals(-2, floor.score());
     }
