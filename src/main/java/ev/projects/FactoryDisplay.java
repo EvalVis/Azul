@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public class FactoryDisplay {
     private final Center center;
-    private final Tile[] tiles;
+    private Tile[] tiles;
 
     public FactoryDisplay(Center center, Tile tile0, Tile tile1, Tile tile2, Tile tile3) {
         this.center = center;
@@ -15,10 +15,20 @@ public class FactoryDisplay {
 
     public List<Tile> giveTiles(Tile tile) {
         Arrays.stream(tiles).filter(t -> !t.equals(tile)).forEach(center::addTile);
-        return Arrays.stream(tiles).filter(t -> t.equals(tile)).collect(Collectors.toList());
+        List<Tile> givenTiles = Arrays.stream(tiles).filter(t -> t.equals(tile)).collect(Collectors.toList());
+        tiles = null;
+        return givenTiles;
     }
 
     public Tile[] tiles() {
         return tiles;
+    }
+
+    @Override
+    public String toString() {
+        if (tiles == null) {
+            return "Empty";
+        }
+        return Tile.count(Arrays.stream(tiles).toList());
     }
 }

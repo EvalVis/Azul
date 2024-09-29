@@ -18,7 +18,7 @@ public class FloorTest {
 
         game.giveTilesFromFactory(0, Tile.RED);
 
-        player.addToFloor(2);
+        player.addToFloor(List.of(Tile.RED, Tile.RED));
 
         assertEquals(-2, floor.score());
     }
@@ -26,7 +26,7 @@ public class FloorTest {
     @Test
     void playerScoresPenaltyForFloorTiles() {
         Floor floor = new Floor();
-        floor.add(3);
+        floor.add(List.of(Tile.RED, Tile.RED, Tile.RED));
         Player player = new PlayerMother().newPlayer(floor);
         player.addScore(5);
         Game game = new Game(List.of(player));
@@ -39,7 +39,7 @@ public class FloorTest {
     @Test
     void floorPenaltyCantMakePlayerScoreNegative() {
         Floor floor = new Floor();
-        floor.add(3);
+        floor.add(List.of(Tile.RED, Tile.RED, Tile.RED));
         Player player = new PlayerMother().newPlayer(floor);
         player.addScore(3);
         Game game = new GameMother().new2PlayerGame(player);

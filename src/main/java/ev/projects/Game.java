@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 public class Game {
     private final List<Player> players;
     private final Center center;
-    private final Bag bag;
+    private Bag bag;
     private final FactoryDisplay[] factoryDisplays;
     private int currentPlayer;
 
@@ -25,11 +25,11 @@ public class Game {
         this.center = center;
         this.currentPlayer = startingPlayer;
         this.bag = new Bag();
-        this.factoryDisplays = new FactoryDisplay[7];
+        this.factoryDisplays = new FactoryDisplay[1 + 2 * players.size()];
     }
 
     void start() {
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 1 + 2 * players.size(); i++) {
             List<Tile> tiles = bag.takeTiles(4);
             factoryDisplays[i] = new FactoryDisplay(center, tiles.get(0), tiles.get(1), tiles.get(2), tiles.get(3));
         }
@@ -38,6 +38,10 @@ public class Game {
 
     void changeFactoryDisplay(int index, Tile tile1, Tile tile2, Tile tile3, Tile tile4) {
         factoryDisplays[index] = new FactoryDisplay(center, tile1, tile2, tile3, tile4);
+    }
+
+    void setBag(Bag bag) {
+        this.bag = bag;
     }
 
     void executeWallTilingPhase() {
@@ -85,5 +89,23 @@ public class Game {
     public void giveTilesFromFactory(int index, Tile tile) {
         players.get(currentPlayer).takeTiles(factoryDisplays[index].giveTiles(tile));
         currentPlayer = (currentPlayer == (players.size() - 1)) ? 0 : (currentPlayer + 1);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder("Factories: ");
+        for(int i = 0; i < factoryDisplays().length; i++) {
+            result.append(i + 1).append(") ").append(factoryDisplays[i].toString());
+            if (i < factoryDisplays().length - 1) {
+                result.append(" ");
+            }
+        }
+        result.append("\n");
+        result.append("Center: ").append(center.toString()).append("\n");
+        for (Player player : players) {
+            result.append(player).append("\n");
+        }
+        result.append("Bag: ").append(bag.toString());
+        return result.toString();
     }
 }

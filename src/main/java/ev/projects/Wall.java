@@ -113,12 +113,29 @@ public class Wall {
         return Tile.values().length - notCompletedTiles.size();
     }
 
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        for (WallTile[] row : tiles) {
+            for (WallTile tile : row) {
+                result.append(tile).append(" ");
+            }
+            result.append("\n");
+        }
+        return result.toString();
+    }
+
     static class WallTile {
         private final Tile tile;
         private boolean isPlaced;
 
         public WallTile(Tile tile) {
             this.tile = tile;
+        }
+
+        @Override
+        public String toString() {
+            return isPlaced ? tile.toString().toUpperCase() : tile.toString().toLowerCase();
         }
     }
 }

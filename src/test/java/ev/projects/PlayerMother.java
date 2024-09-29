@@ -6,6 +6,10 @@ public class PlayerMother {
         return newPlayer(new Floor());
     }
 
+    Player newPlayer(Floor floor, String name) {
+        return new Player(new Board(new Wall(), floor), name);
+    }
+
     Player newPlayer(String name) {
         return new Player(new Board(), name);
     }
@@ -24,5 +28,9 @@ public class PlayerMother {
 
     Player newPlayer(Wall wall, Floor floor) {
         return new Player(new Board(wall, floor));
+    }
+
+    Player newPlayer(Wall wall, Floor floor, String name) {
+        return new Player(new Board(wall, floor), name);
     }
 }

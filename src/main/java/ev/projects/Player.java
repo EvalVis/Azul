@@ -30,8 +30,8 @@ public class Player {
         tiles.addAll(center.giveTiles(tile, board));
     }
 
-    void addToFloor(int amount) {
-        board.addTilesToFloorLine(amount);
+    void addToFloor(List<Tile> tiles) {
+        board.addTilesToFloorLine(tiles);
     }
 
     void addTileToPatternLine(int count, int position) {
@@ -83,5 +83,16 @@ public class Player {
 
     public int tileCount() {
         return tiles.size();
+    }
+
+    @Override
+    public String toString() {
+        String result = "Player " + name() + ":\nHand-held tiles: " + Tile.count(tiles);
+        result += "\nScore: " + score();
+        if (startsRound()) {
+            result += "\nHas the starting player token.";
+        }
+        result += "\n" + board.toString();
+        return result;
     }
 }

@@ -5,8 +5,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class PlayerController {
-    @GetMapping("/ping")
-    public String ping() {
-        return "Pong!";
+    private final Game game;
+
+    public PlayerController(Game game) {
+        this.game = game;
+    }
+
+    @GetMapping("/show")
+    public String show() {
+        return game.toString();
     }
 }

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class CenterTest {
 
@@ -31,11 +30,10 @@ public class CenterTest {
         Game game = new GameMother().new2PlayerGame(player, center);
         game.start();
         game.giveTilesFromFactory(0, game.factoryDisplays()[0].tiles()[0]);
-        player.addToFloor(player.tileCount());
 
         player.takeTilesFromCenter(center, Tile.BLUE);
 
-        assertNotEquals(0, floor.score());
+        assertEquals(-1, floor.score());
     }
 
     @Test

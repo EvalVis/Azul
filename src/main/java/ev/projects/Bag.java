@@ -8,12 +8,21 @@ public class Bag {
     private final List<Tile> tiles;
 
     Bag() {
-        tiles = new ArrayList<>();
+        this(initTiles());
+    }
+
+    private static List<Tile> initTiles() {
+        List<Tile> result = new ArrayList<>();
         for (Tile tileValue : Tile.values()) {
             for (int j = 0; j < 20; j++) {
-                tiles.add(tileValue);
+                result.add(tileValue);
             }
         }
+        return result;
+    }
+
+    Bag(List<Tile> tiles) {
+        this.tiles = tiles;
     }
 
     public List<Tile> takeTiles(int amount) {
@@ -26,5 +35,10 @@ public class Bag {
 
     public List<Tile> tiles() {
         return tiles;
+    }
+
+    @Override
+    public String toString() {
+        return Tile.count(tiles);
     }
 }

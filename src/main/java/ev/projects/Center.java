@@ -21,7 +21,7 @@ public class Center {
         tiles.removeAll(tilesToGive);
         if (nobodyHasTakenFromCenter) {
             nobodyHasTakenFromCenter = false;
-            board.addTilesToFloorLine(1);
+            board.addFirstPlayerMarkerToFloorLine();
         }
         return tilesToGive;
     }
@@ -32,5 +32,10 @@ public class Center {
 
     public List<Tile> tiles() {
         return tiles;
+    }
+
+    @Override
+    public String toString() {
+        return Tile.count(tiles);
     }
 }

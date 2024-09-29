@@ -1,14 +1,32 @@
 package ev.projects;
 
-public class Floor {
-    private int tiles;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-    void add(int amount) {
-        tiles = Math.min(tiles + amount, 7);
+public class Floor {
+    private List<Tile> tiles;
+    private int firstPlayerMarkerPosition;
+
+    public Floor() {
+        tiles = new ArrayList<>();
+        firstPlayerMarkerPosition = -1;
+    }
+
+    void addFirstPlayerMarker() {
+        firstPlayerMarkerPosition = tiles.size();
+    }
+
+    void add(List<Tile> newTiles) {
+        tiles = Stream.concat(tiles.stream(), newTiles.stream())
+                .limit(7)
+                .collect(Collectors.toList());
     }
 
     int score() {
-        return switch (tiles) {
+        int tileCountWithMarker = (firstPlayerMarkerPosition > -1) ? (tiles.size() + 1) : tiles.size();
+        return switch (tileCountWithMarker) {
             case 0 -> 0;
             case 1 -> -1;
             case 2 -> -2;
@@ -19,5 +37,19 @@ public class Floor {
             case 7 -> -14;
             default -> throw new RuntimeException("Unexpected tile count");
         };
+    }
+
+    @Override
+    public String toString() {
+        if (tiles.size() == 0 && firstPlayerMarkerPosition == -1) {
+            return "Empty";
+        }
+        StringBuilder result = new StringBuilder(
+                tiles.stream().map(Tile::toString).collect(Collectors.joining(""))
+        );
+        if (firstPlayerMarkerPosition > -1) {
+            result.insert(firstPlayerMarkerPosition, "M");
+        }
+        return String.join(" ", result.toString().split(""));
     }
 }
