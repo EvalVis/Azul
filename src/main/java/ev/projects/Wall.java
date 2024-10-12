@@ -77,10 +77,6 @@ public class Wall {
         return score;
     }
 
-    public boolean alreadyHas(Tile tile) {
-        return alreadyHas(tile, 0);
-    }
-
     public boolean alreadyHas(Tile tile, int y) {
         return tiles[y][(tile.ordinal() + y) % 5].isPlaced;
     }

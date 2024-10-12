@@ -50,12 +50,8 @@ public class Player {
         score += board.gameEndingScore();
     }
 
-    public void moveTileToWall() {
-        moveTileToWall(0);
-    }
-
-    public void moveTileToWall(int y) {
-        score += board.moveTilesFromPatternLinesToWall(y);
+    public void moveTilesToWall() {
+        score += board.moveTilesFromPatternLinesToWall();
     }
 
     void addScore(int score) {

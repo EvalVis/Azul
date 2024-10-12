@@ -2,8 +2,6 @@ package ev.projects;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PatternLineTest {
@@ -40,7 +38,7 @@ public class PatternLineTest {
         Board board = new Board(patternLines, wall, new Floor());
 
         patternLines[2].add(Tile.WHITE, 3);
-        board.moveTilesFromPatternLinesToWall(2);
+        board.moveTilesFromPatternLinesToWall();
 
         assertTrue(wall.alreadyHas(Tile.WHITE, 2));
         assertFalse(wall.alreadyHas(Tile.WHITE, 0));

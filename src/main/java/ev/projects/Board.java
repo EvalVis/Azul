@@ -40,11 +40,12 @@ public class Board {
         floor.add(tile, patternLines[position].add(tile, count));
     }
 
-    public int moveTilesFromPatternLinesToWall(int y) {
+    public int moveTilesFromPatternLinesToWall() {
         int score = 0;
-        for (PatternLine line : patternLines) {
+        for (int i = 0; i < patternLines.length; i++) {
+            PatternLine line = patternLines[i];
             if (line.isFilled()) {
-                score += wall.add(line.tile(), y);
+                score += wall.add(line.tile(), i);
                 line.clear();
             }
         }

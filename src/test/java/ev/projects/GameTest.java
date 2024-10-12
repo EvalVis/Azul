@@ -6,25 +6,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static ev.projects.PatternLineTest.patternLines;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GameTest {
 
     @Test
+    void gameEndingExecutesOnFilledHorizontalLine() {
+        Center center = new Center();
+        center.addTile(Tile.BLUE);
+        Player player = new PlayerMother().newPlayer(new WallMother().withAlmostCompletedHorizontalLine());
+        Game game = new Game(List.of(player, new PlayerMother().newPlayer()), center, 0);
+        game.start();
+        game.clearFactoryDisplays();
+
+        game.executeFactoryOfferPhaseWithCenter(Tile.BLUE, 0, 0);
+
+        assertEquals(6, player.score());
+    }
+
+    @Test
     void wallTilingExecutesOnEmptyFactoryDisplaysAndCenter() {
         Center center = new Center();
+        center.addTile(Tile.BLUE);
         PatternLine[] patternLines = patternLines();
         Player player = new Player(new Board(patternLines));
         Game game = new Game(List.of(player, new PlayerMother().newPlayer()), center, 0);
         game.start();
-        for (int i = 1; i < game.factoryDisplays().length; i++) {
-            game.clearFactoryDisplay(i);
-        }
+        game.clearFactoryDisplays();
 
-        game.executeFactoryOfferPhaseWithFactory(0, game.factoryDisplays()[0].tiles()[0], 0, 0);
+        game.executeFactoryOfferPhaseWithCenter(Tile.BLUE, 0, 0);
 
-        assertTrue(patternLines[0].isFilled());
+        assertFalse(patternLines[0].isFilled());
     }
 
     @Test

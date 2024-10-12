@@ -46,9 +46,12 @@ public class Game {
 
     void executeWallTilingPhase() {
         players.forEach(p -> {
-            p.moveTileToWall();
+            p.moveTilesToWall();
             p.giveFloorPenalty();
         });
+        if (players.stream().anyMatch(p -> p.board().wall().completedHorizontalLines() > 0)) {
+            executeGameEndingPhase();
+        }
     }
 
     void executeGameEndingPhase() {
@@ -78,8 +81,10 @@ public class Game {
         return Arrays.copyOf(factoryDisplays, factoryDisplays.length);
     }
 
-    public void clearFactoryDisplay(int index) {
-        factoryDisplays[index].clear();
+    public void clearFactoryDisplays() {
+        for (FactoryDisplay factoryDisplay : factoryDisplays) {
+            factoryDisplay.clear();
+        }
     }
 
     List<Tile> peekCenter() {

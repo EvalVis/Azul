@@ -18,7 +18,7 @@ public class WallTest {
 
         game.executeWallTilingPhase();
 
-        assertTrue(wall.alreadyHas(Tile.RED));
+        assertTrue(wall.alreadyHas(Tile.RED, 4));
         assertEquals(0, patternLines[4].tileCount());
     }
 
@@ -31,7 +31,7 @@ public class WallTest {
 
         game.executeWallTilingPhase();
 
-        assertFalse(wall.alreadyHas(Tile.RED));
+        assertFalse(wall.alreadyHas(Tile.RED, 4));
         assertEquals(4, patternLines[4].tileCount());
     }
 
@@ -56,7 +56,7 @@ public class WallTest {
         patternLines[0].add(Tile.RED, 1);
         Player player = new Player(new Board(patternLines, wall, new Floor()));
 
-        player.moveTileToWall();
+        player.moveTilesToWall();
 
         assertEquals(1, player.score());
     }
@@ -74,7 +74,7 @@ public class WallTest {
         wall.add(Tile.RED, 1);
         int currentScore = player.score();
 
-        player.moveTileToWall(2);
+        player.moveTilesToWall();
 
         assertEquals(7, player.score() - currentScore);
     }
@@ -90,7 +90,7 @@ public class WallTest {
         wall.add(Tile.BLACK, 0);
         int currentScore = player.score();
 
-        player.moveTileToWall(2);
+        player.moveTilesToWall();
 
         assertEquals(1, player.score() - currentScore);
     }

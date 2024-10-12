@@ -12,8 +12,13 @@ public class WallMother {
     }
 
     Wall withCompletedHorizontalLine() {
-        Wall wall = new Wall();
+        Wall wall = withAlmostCompletedHorizontalLine();
         wall.add(Tile.BLUE, 0);
+        return wall;
+    }
+
+    Wall withAlmostCompletedHorizontalLine() {
+        Wall wall = new Wall();
         wall.add(Tile.YELLOW, 0);
         wall.add(Tile.RED, 0);
         wall.add(Tile.BLACK, 0);
