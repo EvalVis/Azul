@@ -12,6 +12,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class GameTest {
 
     @Test
+    void wallTilingExecutesOnEmptyFactoryDisplaysAndCenter() {
+        Center center = new Center();
+        PatternLine[] patternLines = patternLines();
+        Player player = new Player(new Board(patternLines));
+        Game game = new Game(List.of(player, new PlayerMother().newPlayer()), center, 0);
+        game.start();
+        for (int i = 1; i < game.factoryDisplays().length; i++) {
+            game.clearFactoryDisplay(i);
+        }
+
+        game.executeFactoryOfferPhaseWithFactory(0, game.factoryDisplays()[0].tiles()[0], 0, 0);
+
+        assertTrue(patternLines[0].isFilled());
+    }
+
+    @Test
     void playerTakesAndPlacesFactoryTiles() {
         PatternLine[] patternLines = patternLines();
         Floor floor = new Floor();
@@ -57,7 +73,7 @@ public class GameTest {
         Player player1 = new Player(new Board(patternLines1));
         PatternLine[] patternLines2 = patternLines();
         Player player2 = new Player(new Board(patternLines2));
-        Game game = new Game(List.of(player1, player2), center);
+        Game game = new Game(List.of(player1, player2), center, 0);
         game.start();
 
         game.executeFactoryOfferPhaseWithFactory(0, game.factoryDisplays()[0].tiles()[0], 0, 0);

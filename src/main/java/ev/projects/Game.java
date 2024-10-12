@@ -78,6 +78,10 @@ public class Game {
         return Arrays.copyOf(factoryDisplays, factoryDisplays.length);
     }
 
+    public void clearFactoryDisplay(int index) {
+        factoryDisplays[index].clear();
+    }
+
     List<Tile> peekCenter() {
         return center.tiles();
     }
@@ -94,7 +98,11 @@ public class Game {
                 .takeTilesFromFactory(
                         factoryDisplays[factoryIndex], tileToTake, amountToPlaceOnFloor, patternLineIndex
                 );
-        currentPlayer = (currentPlayer == (players.size() - 1)) ? 0 : (currentPlayer + 1);
+        if (Arrays.stream(factoryDisplays).allMatch(FactoryDisplay::isEmpty) && center.isEmpty()) {
+            executeWallTilingPhase();
+        } else {
+            currentPlayer = (currentPlayer == (players.size() - 1)) ? 0 : (currentPlayer + 1);
+        }
     }
 
     public void executeFactoryOfferPhaseWithCenter(Tile tileToTake, int amountToPlaceOnFloor, int patternLineIndex) {
@@ -103,7 +111,11 @@ public class Game {
                 .takeTilesFromCenter(
                         center, tileToTake, amountToPlaceOnFloor, patternLineIndex
                 );
-        currentPlayer = (currentPlayer == (players.size() - 1)) ? 0 : (currentPlayer + 1);
+        if (Arrays.stream(factoryDisplays).allMatch(FactoryDisplay::isEmpty) && center.isEmpty()) {
+            executeWallTilingPhase();
+        } else {
+            currentPlayer = (currentPlayer == (players.size() - 1)) ? 0 : (currentPlayer + 1);
+        }
     }
 
     @Override

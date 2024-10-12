@@ -24,6 +24,14 @@ public class FactoryDisplay {
         return tiles;
     }
 
+    public void clear() {
+        tiles = null;
+    }
+
+    public boolean isEmpty() {
+        return tiles == null;
+    }
+
     @Override
     public String toString() {
         if (tiles == null) {

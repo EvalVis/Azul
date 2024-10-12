@@ -43,6 +43,7 @@ public class CenterTest {
         Player player1 = new PlayerMother().newPlayer(floor1);
         Player player2 = new PlayerMother().newPlayer();
         Game game = new Game(List.of(player1, player2), center, 0);
+        game.start();
         game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.BLUE, Tile.YELLOW);
         game.executeFactoryOfferPhaseWithFactory(0, Tile.RED, 0, 4);
         player2.takeTilesFromCenter(center, Tile.BLUE, 0, 4);

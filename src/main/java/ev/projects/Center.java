@@ -34,6 +34,10 @@ public class Center {
         return tiles;
     }
 
+    public boolean isEmpty() {
+        return tiles.size() == 0;
+    }
+
     @Override
     public String toString() {
         return Tile.count(tiles);
