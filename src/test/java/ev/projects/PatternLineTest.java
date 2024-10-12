@@ -12,9 +12,10 @@ public class PatternLineTest {
         PatternLine[] patternLines = patternLines();
         patternLines[4].add(Tile.RED, 2);
         Player player = new Player(new Board(patternLines));
-        player.takeTiles(List.of(Tile.RED, Tile.RED, Tile.RED));
 
-        player.addTileToPatternLine(3, 4);
+        player.takeTilesFromFactory(
+                new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.BLUE), Tile.RED, 0, 4
+        );
 
         assertTrue(patternLines[4].isFilled());
     }
@@ -24,9 +25,10 @@ public class PatternLineTest {
         PatternLine[] patternLines = patternLines();
         patternLines[4].add(Tile.RED, 2);
         Player player = new Player(new Board(patternLines));
-        player.takeTiles(List.of(Tile.RED, Tile.RED));
 
-        player.addTileToPatternLine(2, 4);
+        player.takeTilesFromFactory(
+                new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.BLUE, Tile.BLUE), Tile.RED, 0, 4
+        );
 
         assertFalse(patternLines[4].isFilled());
     }
@@ -74,9 +76,10 @@ public class PatternLineTest {
         Board board = new Board(patternLines, new Wall(), floor);
         board.addTileToPatternLine(Tile.RED, 2, 2);
         Player player = new Player(board);
-        player.takeTiles(List.of(Tile.RED, Tile.RED, Tile.RED, Tile.RED));
 
-        player.addTileToPatternLine(4, 2);
+        player.takeTilesFromFactory(
+                new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.RED), Tile.RED, 0, 2
+        );
 
         assertTrue(patternLines[2].isFilled());
         assertEquals(-4, floor.score());
@@ -89,9 +92,12 @@ public class PatternLineTest {
         patternLines[4].add(Tile.RED, 2);
         Player player = new Player(new Board(patternLines, wall, new Floor()));
 
-        player.takeTiles(List.of(Tile.BLUE, Tile.BLUE));
-
-        assertThrows(ActionNotAllowedException.class, () -> player.addTileToPatternLine(2, 4));
+        assertThrows(
+                ActionNotAllowedException.class,
+                () -> player.takeTilesFromFactory(
+                        new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.BLUE, Tile.BLUE), Tile.BLUE, 0, 4
+                )
+        );
     }
 
     public static PatternLine[] patternLines() {

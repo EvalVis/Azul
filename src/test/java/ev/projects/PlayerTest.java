@@ -19,10 +19,8 @@ public class PlayerTest {
         );
         game.start();
         game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.RED, Tile.BLUE);
-        game.giveTilesFromFactory(0, Tile.RED);
 
-        player.addTileToPatternLine(1, 2);
-        player.addToFloor(2);
+        game.executeFactoryOfferPhaseWithFactory(0, Tile.RED, 2, 2);
 
         assertEquals(1, patternLines[2].tileCount());
         assertEquals(-2, floor.score());

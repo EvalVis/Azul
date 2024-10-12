@@ -16,14 +16,14 @@ public class Center {
         tiles.add(tile);
     }
 
-    public List<Tile> giveTiles(Tile tile, Board board) {
-        List<Tile> tilesToGive = tiles.stream().filter(t -> t.equals(tile)).toList();
-        tiles.removeAll(tilesToGive);
+    public int giveTiles(Tile tile, Board board) {
+        int tileCount = (int) tiles.stream().filter(t -> t.equals(tile)).count();
+        tiles.removeIf(t -> t.equals(tile));
         if (nobodyHasTakenFromCenter) {
             nobodyHasTakenFromCenter = false;
             board.addFirstPlayerMarkerToFloorLine();
         }
-        return tilesToGive;
+        return tileCount;
     }
 
     public long count(Tile tile) {

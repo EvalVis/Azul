@@ -20,12 +20,12 @@ public class GameStartTest {
         game.start();
 
         long blue = Arrays.stream(game.factoryDisplays())
-                .mapToLong(fd -> fd.giveTiles(Tile.BLUE).size())
+                .mapToLong(fd -> fd.giveTiles(Tile.BLUE))
                 .sum();
-        int yellow = center.giveTiles(Tile.YELLOW, player2Board).size();
-        int red = center.giveTiles(Tile.RED, player3Board).size();
-        int black = center.giveTiles(Tile.BLACK, player1Board).size();
-        int white = center.giveTiles(Tile.WHITE, player2Board).size();
+        int yellow = center.giveTiles(Tile.YELLOW, player2Board);
+        int red = center.giveTiles(Tile.RED, player3Board);
+        int black = center.giveTiles(Tile.BLACK, player1Board);
+        int white = center.giveTiles(Tile.WHITE, player2Board);
         assertEquals(100, blue + yellow + red + black + white + game.bagTiles().size());
         long blueFromBag = game.bagTiles().stream().filter(t -> t == Tile.BLUE).count();
         long yellowFromBag = game.bagTiles().stream().filter(t -> t == Tile.YELLOW).count();

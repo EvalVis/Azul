@@ -13,7 +13,7 @@ public class FactoryDisplayTest {
         game.start();
         game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.BLUE, Tile.YELLOW);
 
-        game.giveTilesFromFactory(0, Tile.RED);
+        game.executeFactoryOfferPhaseWithFactory(0, Tile.RED, 0, 0);
 
         assertEquals(0L, center.count(Tile.RED));
         assertEquals(1L, center.count(Tile.BLUE));

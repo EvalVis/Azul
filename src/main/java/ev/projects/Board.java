@@ -1,7 +1,5 @@
 package ev.projects;
 
-import java.util.List;
-
 public class Board {
     private final PatternLine[] patternLines;
     private final Wall wall;
@@ -39,7 +37,7 @@ public class Board {
         if (wall.alreadyHas(tile, position)) {
             throw new ActionNotAllowedException("Wall already contains tiles(s) with " + tile + " colour.");
         }
-        floor.add(patternLines[position].add(tile, count));
+        floor.add(tile, patternLines[position].add(tile, count));
     }
 
     public int moveTilesFromPatternLinesToWall(int y) {
@@ -61,8 +59,8 @@ public class Board {
         return wall;
     }
 
-    public void addTilesToFloorLine(List<Tile> tiles) {
-        floor.add(tiles);
+    public void addTilesToFloorLine(Tile tile, int amount) {
+        floor.add(tile, amount);
     }
 
     public void addFirstPlayerMarkerToFloorLine() {

@@ -38,7 +38,7 @@ public class GameTest {
         Game game = new Game(List.of(player, new PlayerMother().newPlayer()), center, 1);
         game.start();
         game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.YELLOW, Tile.BLACK);
-        game.giveTilesFromFactory(0, Tile.YELLOW);
+        game.executeFactoryOfferPhaseWithFactory(0, Tile.YELLOW, 0, 3);
         PlayerController playerController = new PlayerController(game);
 
         playerController.takeTilesFromCenter(new CenterTakingRequest(Tile.RED, 1, 0));
@@ -53,19 +53,21 @@ public class GameTest {
     @Test
     void playersTakeTilesInOrder() {
         Center center = new Center();
-        Player player1 = new PlayerMother().newPlayer();
-        Player player2 = new PlayerMother().newPlayer();
+        PatternLine[] patternLines1 = patternLines();
+        Player player1 = new Player(new Board(patternLines1));
+        PatternLine[] patternLines2 = patternLines();
+        Player player2 = new Player(new Board(patternLines2));
         Game game = new Game(List.of(player1, player2), center);
         game.start();
 
-        game.giveTilesFromFactory(0, game.factoryDisplays()[0].tiles()[0]);
-        int player1TileCount = player1.tileCount();
-        game.giveTilesFromFactory(1, game.factoryDisplays()[1].tiles()[0]);
-        int player2TileCount = player2.tileCount();
-        game.giveTilesFromFactory(2, game.factoryDisplays()[2].tiles()[0]);
-        assertTrue(player1TileCount < player1.tileCount());
-        game.giveTilesFromFactory(3, game.factoryDisplays()[3].tiles()[0]);
-        assertTrue(player2TileCount < player2.tileCount());
+        game.executeFactoryOfferPhaseWithFactory(0, game.factoryDisplays()[0].tiles()[0], 0, 0);
+        assertTrue(patternLines1[0].tileCount() > 0);
+        game.executeFactoryOfferPhaseWithFactory(1, game.factoryDisplays()[1].tiles()[0], 0, 0);
+        assertTrue(patternLines2[0].tileCount() > 0);
+        game.executeFactoryOfferPhaseWithFactory(2, game.factoryDisplays()[2].tiles()[0], 0, 1);
+        assertTrue(patternLines1[1].tileCount() > 0);
+        game.executeFactoryOfferPhaseWithFactory(3, game.factoryDisplays()[3].tiles()[0], 0, 1);
+        assertTrue(patternLines2[1].tileCount() > 0);
     }
 
     @Test
@@ -83,10 +85,10 @@ public class GameTest {
         game.changeFactoryDisplay(3, Tile.WHITE, Tile.WHITE, Tile.WHITE, Tile.WHITE);
         game.changeFactoryDisplay(4, Tile.BLACK, Tile.WHITE, Tile.WHITE, Tile.YELLOW);
         game.setBag(new Bag(initTilesInBag(new int[] {18, 14, 15, 19, 14})));
-        game.giveTilesFromFactory(4, Tile.WHITE);
-        player1.addTileToPatternLine(1, 2);
-        floor2.add(List.of(Tile.RED, Tile.YELLOW, Tile.YELLOW));
-        player2.takeTilesFromCenter(center, Tile.YELLOW);
+        game.executeFactoryOfferPhaseWithFactory(4, Tile.WHITE, 1, 2);
+        floor2.add(Tile.RED, 1);
+        floor2.add(Tile.YELLOW, 2);
+        player2.takeTilesFromCenter(center, Tile.YELLOW, 0, 1);
         wall2.add(Tile.BLUE, 2);
         game.executeWallTilingPhase();
 
@@ -95,7 +97,6 @@ public class GameTest {
                         Factories: 1) B 3R 2) B Y 2R 3) 4Y 4) 4W 5) Empty
                         Center: K
                         Player Robert:
-                        Hand-held tiles: W
                         Score: 0
                         Has the starting player token.
                         Board:
@@ -111,14 +112,13 @@ public class GameTest {
                         k w b y r\s
                         r k w b y\s
                         y r k w b\s
-                        Floor: Empty
+                        Floor: W
                         Player Roger:
-                        Hand-held tiles: Y
                         Score: 0
                         Board:
                         Pattern lines:
                         E\s
-                        E E\s
+                        Y E\s
                         E E E\s
                         E E E E\s
                         E E E E E\s

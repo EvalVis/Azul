@@ -1,12 +1,7 @@
 package ev.projects;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class Player {
     private final Board board;
-    private final List<Tile> tiles;
     private int score;
     private final String name;
     private boolean startsRound;
@@ -17,38 +12,34 @@ public class Player {
 
     public Player(Board board, String name) {
         this.board = board;
-        this.tiles = new ArrayList<>();
         this.score = 0;
         this.name = name;
         this.startsRound = false;
     }
 
-    void takeTiles(List<Tile> tiles) {
-        this.tiles.addAll(tiles);
+    void takeTilesFromFactory(
+            FactoryDisplay factoryDisplay, Tile tileToTake, int tilesToPlaceOnFloor, int patternLineIndex
+    ) {
+        placeTilesOnFloorAndPatternLine(
+                factoryDisplay.giveTiles(tileToTake), tileToTake, tilesToPlaceOnFloor, patternLineIndex
+        );
     }
 
-    void takeTilesFromCenter(Center center, Tile tile) {
-        tiles.addAll(center.giveTiles(tile, board));
+    void takeTilesFromCenter(Center center, Tile tileToTake, int tilesToPlaceOnFloor, int patternLineIndex) {
+        placeTilesOnFloorAndPatternLine(
+                center.giveTiles(tileToTake, board), tileToTake, tilesToPlaceOnFloor, patternLineIndex
+        );
     }
 
-    void addToFloor(int amount) {
-        if (amount > tileCount()) {
-            throw new ActionNotAllowedException("You can't place more tiles on floor than you have.");
+    private void placeTilesOnFloorAndPatternLine(
+            int tileCount, Tile tileToPlace, int tilesToPlaceOnFloor, int patternLineIndex
+    ) {
+        if (tileCount < tilesToPlaceOnFloor) {
+            throw new ActionNotAllowedException("You can't place more tiles on the floor than you have.");
         }
-        board.addTilesToFloorLine(tiles.stream().limit(amount).collect(Collectors.toList()));
-        tiles.subList(0, amount).clear();
-    }
-
-    void addTileToPatternLine(int position) {
-        addTileToPatternLine(tileCount(), position);
-    }
-
-    void addTileToPatternLine(int count, int position) {
-        if (count > tiles.size()) {
-            throw new ActionNotAllowedException("Can't add more tiles than player " + name + " has.");
-        }
-        board.addTileToPatternLine(tiles.get(0), count, position);
-        tiles.subList(0, count).clear();
+        tileCount -= tilesToPlaceOnFloor;
+        board.addTilesToFloorLine(tileToPlace, tilesToPlaceOnFloor);
+        board.addTileToPatternLine(tileToPlace, tileCount, patternLineIndex);
     }
 
     public void giveFloorPenalty() {
@@ -91,18 +82,9 @@ public class Player {
         return startsRound;
     }
 
-    public int tileCount() {
-        return tiles.size();
-    }
-
-    public List<Tile> getTiles() {
-        return tiles;
-    }
-
     @Override
     public String toString() {
-        String result = "Player " + name() + ":\nHand-held tiles: " + Tile.count(tiles);
-        result += "\nScore: " + score();
+        String result = "Player " + name() + ":\nScore: " + score();
         if (startsRound()) {
             result += "\nHas the starting player token.";
         }

@@ -86,24 +86,23 @@ public class Game {
         return bag.tiles();
     }
 
-    public void giveTilesFromFactory(int index, Tile tile) {
-        players.get(currentPlayer).takeTiles(factoryDisplays[index].giveTiles(tile));
-        currentPlayer = (currentPlayer == (players.size() - 1)) ? 0 : (currentPlayer + 1);
-    }
-
     public void executeFactoryOfferPhaseWithFactory(
             int factoryIndex, Tile tileToTake, int amountToPlaceOnFloor, int patternLineIndex
     ) {
-        players.get(currentPlayer).takeTiles(factoryDisplays[factoryIndex].giveTiles(tileToTake));
-        players.get(currentPlayer).addToFloor(amountToPlaceOnFloor);
-        players.get(currentPlayer).addTileToPatternLine(patternLineIndex);
+        players
+                .get(currentPlayer)
+                .takeTilesFromFactory(
+                        factoryDisplays[factoryIndex], tileToTake, amountToPlaceOnFloor, patternLineIndex
+                );
         currentPlayer = (currentPlayer == (players.size() - 1)) ? 0 : (currentPlayer + 1);
     }
 
     public void executeFactoryOfferPhaseWithCenter(Tile tileToTake, int amountToPlaceOnFloor, int patternLineIndex) {
-        players.get(currentPlayer).takeTilesFromCenter(center, tileToTake);
-        players.get(currentPlayer).addToFloor(amountToPlaceOnFloor);
-        players.get(currentPlayer).addTileToPatternLine(patternLineIndex);
+        players
+                .get(currentPlayer)
+                .takeTilesFromCenter(
+                        center, tileToTake, amountToPlaceOnFloor, patternLineIndex
+                );
         currentPlayer = (currentPlayer == (players.size() - 1)) ? 0 : (currentPlayer + 1);
     }
 

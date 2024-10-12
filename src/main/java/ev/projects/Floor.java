@@ -3,10 +3,9 @@ package ev.projects;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Floor {
-    private List<Tile> tiles;
+    private final List<Tile> tiles;
     private int firstPlayerMarkerPosition;
 
     public Floor() {
@@ -18,10 +17,10 @@ public class Floor {
         firstPlayerMarkerPosition = tiles.size();
     }
 
-    void add(List<Tile> newTiles) {
-        tiles = Stream.concat(tiles.stream(), newTiles.stream())
-                .limit(7)
-                .collect(Collectors.toList());
+    void add(Tile tile, int amount) {
+        for (int i = 0; i < amount; i++) {
+            tiles.add(tile);
+        }
     }
 
     int score() {

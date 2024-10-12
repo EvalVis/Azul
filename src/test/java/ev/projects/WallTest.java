@@ -39,10 +39,14 @@ public class WallTest {
     void cantAddColourToPatternLineIfWallHasThatColour() {
         Wall wall = new Wall();
         Player player = new PlayerMother().newPlayer(wall);
-        player.takeTiles(List.of(Tile.RED));
         wall.add(Tile.RED, 4);
 
-        assertThrows(ActionNotAllowedException.class, () -> player.addTileToPatternLine(1, 4));
+        assertThrows(
+                ActionNotAllowedException.class,
+                () -> player.takeTilesFromFactory(
+                        new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.BLUE), Tile.RED, 0, 4
+                )
+        );
     }
 
     @Test

@@ -13,11 +13,11 @@ public class FactoryDisplay {
         tiles = new Tile[] {tile0, tile1, tile2, tile3};
     }
 
-    public List<Tile> giveTiles(Tile tile) {
+    public int giveTiles(Tile tile) {
         Arrays.stream(tiles).filter(t -> !t.equals(tile)).forEach(center::addTile);
-        List<Tile> givenTiles = Arrays.stream(tiles).filter(t -> t.equals(tile)).collect(Collectors.toList());
+        long givenTiles = Arrays.stream(tiles).filter(t -> t.equals(tile)).count();
         tiles = null;
-        return givenTiles;
+        return (int) givenTiles;
     }
 
     public Tile[] tiles() {

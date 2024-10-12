@@ -1,9 +1,6 @@
 package ev.projects;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class PatternLine {
     private final int size;
@@ -16,7 +13,7 @@ public class PatternLine {
         tile = null;
     }
 
-    public List<Tile> add(Tile tile, int count) {
+    public int add(Tile tile, int count) {
         if(tileCount > 0 && this.tile != tile) {
             throw new ActionNotAllowedException(
                     "Tile(s) with " + this.tile + " colour is on the pattern line. Can't add a tile with " + tile + " colour."
@@ -25,7 +22,7 @@ public class PatternLine {
         this.tile = tile;
         int overfill = Math.max(0, tileCount + count - size);
         tileCount = Math.min(size, tileCount + count);
-        return Stream.generate(() -> tile).limit(overfill).collect(Collectors.toList());
+        return overfill;
     }
 
     public boolean isFilled() {
