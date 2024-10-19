@@ -7,10 +7,16 @@ import java.util.stream.Collectors;
 public class Floor {
     private final List<Tile> tiles;
     private int firstPlayerMarkerPosition;
+    private final Lid lid;
 
     public Floor() {
+        this(new Lid());
+    }
+
+    public Floor(Lid lid) {
         tiles = new ArrayList<>();
         firstPlayerMarkerPosition = -1;
+        this.lid = lid;
     }
 
     void addFirstPlayerMarker() {
@@ -18,7 +24,12 @@ public class Floor {
     }
 
     void add(Tile tile, int amount) {
-        for (int i = 0; i < amount; i++) {
+        int overfill = tiles.size() + amount - 7;
+        for (int i = 0; i < overfill; i++) {
+            lid.addTile(tile);
+        }
+        int amountToFill = Math.min(amount, 7 - tiles.size());
+        for (int i = 0; i < amountToFill; i++) {
             tiles.add(tile);
         }
     }

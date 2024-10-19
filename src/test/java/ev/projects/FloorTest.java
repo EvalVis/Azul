@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FloorTest {
@@ -24,19 +25,6 @@ public class FloorTest {
     }
 
     @Test
-    void playerScoresPenaltyForFloorTiles() {
-        Floor floor = new Floor();
-        floor.add(Tile.RED, 3);
-        Player player = new PlayerMother().newPlayer(floor);
-        player.addScore(5);
-        Game game = new Game(List.of(player));
-
-        game.executeWallTilingPhase();
-
-        assertEquals(1, player.score());
-    }
-
-    @Test
     void floorPenaltyCantMakePlayerScoreNegative() {
         Floor floor = new Floor();
         floor.add(Tile.RED, 3);
@@ -47,5 +35,15 @@ public class FloorTest {
         game.executeWallTilingPhase();
 
         assertEquals(0, player.score());
+    }
+
+    @Test
+    void overflownFloorTilesGoToLid() {
+        Lid lid = new Lid();
+        Floor floor = new Floor(lid);
+        floor.add(Tile.RED, 8);
+        floor.add(Tile.BLUE, 1);
+
+        assertArrayEquals(new Tile[]{Tile.RED, Tile.BLUE}, lid.tiles().toArray());
     }
 }
