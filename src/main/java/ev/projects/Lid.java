@@ -20,6 +20,9 @@ public class Lid {
 
     @Override
     public String toString() {
+        if (tiles.size() == 0) {
+            return "Empty";
+        }
         return Tile.count(tiles);
     }
 }

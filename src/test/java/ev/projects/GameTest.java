@@ -95,12 +95,13 @@ public class GameTest {
 
     @Test
     void gameIsDisplayed() {
+        Lid lid = new Lid();
         Player player1 = new PlayerMother().newPlayer("Robert");
         Wall wall2 = new Wall();
-        Floor floor2 = new Floor();
+        Floor floor2 = new Floor(lid);
         Player player2 = new PlayerMother().newPlayer(wall2, floor2, "Roger");
         Center center = new Center();
-        Game game = new Game(List.of(player1, player2), center, 0);
+        Game game = new Game(List.of(player1, player2), center, 0, lid);
         game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.RED, Tile.BLUE);
         game.changeFactoryDisplay(1, Tile.RED, Tile.RED, Tile.YELLOW, Tile.BLUE);
         game.changeFactoryDisplay(2, Tile.YELLOW, Tile.YELLOW, Tile.YELLOW, Tile.YELLOW);
@@ -151,10 +152,10 @@ public class GameTest {
                         r k w b y\s
                         y r k w b\s
                         Floor: R Y Y M
-                        Bag: 18B 14Y 15R 19K 14W""",
+                        Bag: 18B 14Y 15R 19K 14W
+                        Lid: Empty""",
                 new GameController(game).show()
         );
-        // TODO: Implement showing of lid tiles.
     }
 
     private List<Tile> initTilesInBag(int[] amount) {

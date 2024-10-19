@@ -9,6 +9,7 @@ public class Game {
     private final List<Player> players;
     private final Center center;
     private Bag bag;
+    private final Lid lid;
     private final FactoryDisplay[] factoryDisplays;
     private int currentPlayer;
 
@@ -21,10 +22,15 @@ public class Game {
     }
 
     public Game(List<Player> players, Center center, int startingPlayer) {
+        this(players, center, startingPlayer, new Lid());
+    }
+
+    public Game(List<Player> players, Center center, int startingPlayer, Lid lid) {
         this.players = players;
         this.center = center;
         this.currentPlayer = startingPlayer;
         this.bag = new Bag();
+        this.lid = lid;
         this.factoryDisplays = new FactoryDisplay[1 + 2 * players.size()];
         for (int i = 0; i < 1 + 2 * players.size(); i++) {
             List<Tile> tiles = bag.takeTiles(4);
@@ -134,7 +140,9 @@ public class Game {
         for (Player player : players) {
             result.append(player).append("\n");
         }
-        result.append("Bag: ").append(bag.toString());
+        result
+                .append("Bag: ").append(bag.toString()).append("\n")
+                .append("Lid: ").append(lid.toString());
         return result.toString();
     }
 }
