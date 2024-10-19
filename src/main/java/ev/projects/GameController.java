@@ -12,11 +12,6 @@ public class GameController {
         this.game = game;
     }
 
-    @PostMapping("/start")
-    public void start() {
-        game.start();
-    }
-
     @GetMapping("/show")
     public String show() {
         return game.toString();

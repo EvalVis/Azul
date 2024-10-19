@@ -10,7 +10,6 @@ public class FactoryDisplayTest {
     void leftOverTilesArePushedToCenter() {
         Center center = new Center();
         Game game = new GameMother().new2PlayerGame(center);
-        game.start();
         game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.BLUE, Tile.YELLOW);
 
         game.executeFactoryOfferPhaseWithFactory(0, Tile.RED, 0, 0);

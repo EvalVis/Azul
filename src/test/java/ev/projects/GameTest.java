@@ -16,7 +16,6 @@ public class GameTest {
         center.addTile(Tile.BLUE);
         Player player = new PlayerMother().newPlayer(new WallMother().withAlmostCompletedHorizontalLine());
         Game game = new Game(List.of(player, new PlayerMother().newPlayer()), center, 0);
-        game.start();
         game.clearFactoryDisplays();
 
         game.executeFactoryOfferPhaseWithCenter(Tile.BLUE, 0, 0);
@@ -31,7 +30,6 @@ public class GameTest {
         PatternLine[] patternLines = patternLines();
         Player player = new Player(new Board(patternLines));
         Game game = new Game(List.of(player, new PlayerMother().newPlayer()), center, 0);
-        game.start();
         game.clearFactoryDisplays();
 
         game.executeFactoryOfferPhaseWithCenter(Tile.BLUE, 0, 0);
@@ -45,7 +43,6 @@ public class GameTest {
         Floor floor = new Floor();
         Player player = new Player(new Board(patternLines, new Wall(), floor));
         Game game = new Game(List.of(player, new PlayerMother().newPlayer()), new Center(), 0);
-        game.start();
         game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.RED, Tile.RED);
         GameController gameController = new GameController(game);
 
@@ -64,7 +61,6 @@ public class GameTest {
         Player player = new Player(new Board(patternLines, new Wall(), floor));
         Center center = new Center();
         Game game = new Game(List.of(player, new PlayerMother().newPlayer()), center, 1);
-        game.start();
         game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.YELLOW, Tile.BLACK);
         game.executeFactoryOfferPhaseWithFactory(0, Tile.YELLOW, 0, 3);
         GameController gameController = new GameController(game);
@@ -86,7 +82,6 @@ public class GameTest {
         PatternLine[] patternLines2 = patternLines();
         Player player2 = new Player(new Board(patternLines2));
         Game game = new Game(List.of(player1, player2), center, 0);
-        game.start();
 
         game.executeFactoryOfferPhaseWithFactory(0, game.factoryDisplays()[0].tiles()[0], 0, 0);
         assertTrue(patternLines1[0].tileCount() > 0);
@@ -106,7 +101,6 @@ public class GameTest {
         Player player2 = new PlayerMother().newPlayer(wall2, floor2, "Roger");
         Center center = new Center();
         Game game = new Game(List.of(player1, player2), center, 0);
-        game.start();
         game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.RED, Tile.BLUE);
         game.changeFactoryDisplay(1, Tile.RED, Tile.RED, Tile.YELLOW, Tile.BLUE);
         game.changeFactoryDisplay(2, Tile.YELLOW, Tile.YELLOW, Tile.YELLOW, Tile.YELLOW);

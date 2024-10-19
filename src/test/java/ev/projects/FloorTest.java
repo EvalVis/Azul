@@ -14,7 +14,6 @@ public class FloorTest {
         Floor floor = new Floor();
         Player player = new PlayerMother().newPlayer(floor);
         Game game = new Game(List.of(player, new PlayerMother().newPlayer()), new Center(), 0);
-        game.start();
         game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.BLUE, Tile.YELLOW);
 
         player.takeTilesFromFactory(

@@ -26,9 +26,6 @@ public class Game {
         this.currentPlayer = startingPlayer;
         this.bag = new Bag();
         this.factoryDisplays = new FactoryDisplay[1 + 2 * players.size()];
-    }
-
-    void start() {
         for (int i = 0; i < 1 + 2 * players.size(); i++) {
             List<Tile> tiles = bag.takeTiles(4);
             factoryDisplays[i] = new FactoryDisplay(center, tiles.get(0), tiles.get(1), tiles.get(2), tiles.get(3));

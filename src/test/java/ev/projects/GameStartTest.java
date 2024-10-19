@@ -17,7 +17,6 @@ public class GameStartTest {
         Board player2Board = new Board();
         Board player3Board = new Board();
         Game game = new Game(List.of(new Player(player1Board), new Player(player2Board)), center);
-        game.start();
 
         long blue = Arrays.stream(game.factoryDisplays())
                 .mapToLong(fd -> fd.giveTiles(Tile.BLUE))
@@ -43,9 +42,8 @@ public class GameStartTest {
     void onePlayerHasStartingMarker() {
         Player player1 = new PlayerMother().newPlayer();
         Player player2 = new PlayerMother().newPlayer();
-        Game game = new Game(List.of(player1, player2), new Center(), 0);
 
-        game.start();
+        new Game(List.of(player1, player2), new Center(), 0);
 
         assertTrue(player1.startsRound() && !player2.startsRound());
     }
@@ -54,9 +52,8 @@ public class GameStartTest {
     void playersStartWith0Points() {
         Player player1 = new PlayerMother().newPlayer();
         Player player2 = new PlayerMother().newPlayer();
-        Game game = new Game(List.of(player1, player2));
 
-        game.start();
+        new Game(List.of(player1, player2));
 
         assertEquals(0, player1.score());
         assertEquals(0, player2.score());

@@ -17,7 +17,6 @@ public class PlayerTest {
         Game game = new Game(
                 List.of(player, new Player(new Board(patternLines()))), new Center(), 0
         );
-        game.start();
         game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.RED, Tile.BLUE);
 
         game.executeFactoryOfferPhaseWithFactory(0, Tile.RED, 2, 2);

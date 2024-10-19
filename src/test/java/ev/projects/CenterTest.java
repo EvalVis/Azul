@@ -12,7 +12,6 @@ public class CenterTest {
         Floor floor = new Floor();
         Game game = new Game(List.of(new PlayerMother().newPlayer(floor), new PlayerMother().newPlayer()), new Center(), 1);
         GameController controller = new GameController(game);
-        controller.start();
         controller.takeTilesFromFactory(new FactoryTakingRequest(0, game.factoryDisplays()[0].tiles()[0], 0, 4));
 
         controller.takeTilesFromCenter(new CenterTakingRequest(game.peekCenter().get(0), 0, 4));
@@ -25,7 +24,6 @@ public class CenterTest {
         Floor floor = new Floor();
         Game game = new Game(List.of(new PlayerMother().newPlayer(floor), new PlayerMother().newPlayer()), new Center(), 1);
         GameController controller = new GameController(game);
-        controller.start();
         controller.takeTilesFromFactory(new FactoryTakingRequest(0, game.factoryDisplays()[0].tiles()[0], 0, 4));
 
         controller.takeTilesFromCenter(new CenterTakingRequest(game.peekCenter().get(0), 1, 4));
@@ -40,7 +38,6 @@ public class CenterTest {
         Player player1 = new PlayerMother().newPlayer(floor1);
         Player player2 = new PlayerMother().newPlayer();
         Game game = new Game(List.of(player1, player2), center, 0);
-        game.start();
         game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.BLUE, Tile.YELLOW);
         game.executeFactoryOfferPhaseWithFactory(0, Tile.RED, 0, 4);
         player2.takeTilesFromCenter(center, Tile.BLUE, 0, 4);
