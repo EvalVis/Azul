@@ -9,6 +9,10 @@ public class Board {
         this(new Wall(), new Floor());
     }
 
+    public Board(Floor floor) {
+        this(new Wall(), floor);
+    }
+
     public Board(Wall wall, Floor floor) {
         this(
                 new PatternLine[]{
