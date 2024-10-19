@@ -43,7 +43,7 @@ public class GameTest {
         Floor floor = new Floor();
         Player player = new Player(new Board(patternLines, new Wall(), floor));
         Game game = new Game(List.of(player, new PlayerMother().newPlayer()), new Center(), 0);
-        game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.RED, Tile.RED);
+        game.changeFactoryDisplay(0, List.of(Tile.RED, Tile.RED, Tile.RED, Tile.RED));
         GameController gameController = new GameController(game);
 
         gameController.takeTilesFromFactory(new FactoryTakingRequest(0, Tile.RED, 2, 1));
@@ -61,7 +61,7 @@ public class GameTest {
         Player player = new Player(new Board(patternLines, new Wall(), floor));
         Center center = new Center();
         Game game = new Game(List.of(player, new PlayerMother().newPlayer()), center, 1);
-        game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.YELLOW, Tile.BLACK);
+        game.changeFactoryDisplay(0, List.of(Tile.RED, Tile.RED, Tile.YELLOW, Tile.BLACK));
         game.executeFactoryOfferPhaseWithFactory(0, Tile.YELLOW, 0, 3);
         GameController gameController = new GameController(game);
 
@@ -83,13 +83,13 @@ public class GameTest {
         Player player2 = new Player(new Board(patternLines2));
         Game game = new Game(List.of(player1, player2), center, 0);
 
-        game.executeFactoryOfferPhaseWithFactory(0, game.factoryDisplays()[0].tiles()[0], 0, 0);
+        game.executeFactoryOfferPhaseWithFactory(0, game.factoryDisplays()[0].tiles().get(0), 0, 0);
         assertTrue(patternLines1[0].tileCount() > 0);
-        game.executeFactoryOfferPhaseWithFactory(1, game.factoryDisplays()[1].tiles()[0], 0, 0);
+        game.executeFactoryOfferPhaseWithFactory(1, game.factoryDisplays()[1].tiles().get(0), 0, 0);
         assertTrue(patternLines2[0].tileCount() > 0);
-        game.executeFactoryOfferPhaseWithFactory(2, game.factoryDisplays()[2].tiles()[0], 0, 1);
+        game.executeFactoryOfferPhaseWithFactory(2, game.factoryDisplays()[2].tiles().get(0), 0, 1);
         assertTrue(patternLines1[1].tileCount() > 0);
-        game.executeFactoryOfferPhaseWithFactory(3, game.factoryDisplays()[3].tiles()[0], 0, 1);
+        game.executeFactoryOfferPhaseWithFactory(3, game.factoryDisplays()[3].tiles().get(0), 0, 1);
         assertTrue(patternLines2[1].tileCount() > 0);
     }
 
@@ -102,11 +102,11 @@ public class GameTest {
         Player player2 = new PlayerMother().newPlayer(wall2, floor2, "Roger");
         Center center = new Center();
         Game game = new Game(List.of(player1, player2), center, 0, lid);
-        game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.RED, Tile.BLUE);
-        game.changeFactoryDisplay(1, Tile.RED, Tile.RED, Tile.YELLOW, Tile.BLUE);
-        game.changeFactoryDisplay(2, Tile.YELLOW, Tile.YELLOW, Tile.YELLOW, Tile.YELLOW);
-        game.changeFactoryDisplay(3, Tile.WHITE, Tile.WHITE, Tile.WHITE, Tile.WHITE);
-        game.changeFactoryDisplay(4, Tile.BLACK, Tile.WHITE, Tile.WHITE, Tile.YELLOW);
+        game.changeFactoryDisplay(0, List.of(Tile.RED, Tile.RED, Tile.RED, Tile.BLUE));
+        game.changeFactoryDisplay(1, List.of(Tile.RED, Tile.RED, Tile.YELLOW, Tile.BLUE));
+        game.changeFactoryDisplay(2, List.of(Tile.YELLOW, Tile.YELLOW, Tile.YELLOW, Tile.YELLOW));
+        game.changeFactoryDisplay(3, List.of(Tile.WHITE, Tile.WHITE, Tile.WHITE, Tile.WHITE));
+        game.changeFactoryDisplay(4, List.of(Tile.BLACK, Tile.WHITE, Tile.WHITE, Tile.YELLOW));
         game.setBag(new Bag(initTilesInBag(new int[] {18, 14, 15, 19, 14})));
         game.executeFactoryOfferPhaseWithFactory(4, Tile.WHITE, 1, 2);
         floor2.add(Tile.RED, 1);
@@ -116,8 +116,10 @@ public class GameTest {
         game.executeWallTilingPhase();
 
         System.out.println(new GameController(game).show());
+
+        String result = new GameController(game).show();
+        assertEquals("Factories: 1) B 3R 2) B Y 2R 3) 4Y 4) 4W", result.substring(0, 40));
         assertEquals("""
-                        Factories: 1) B 3R 2) B Y 2R 3) 4Y 4) 4W 5) Empty
                         Center: K
                         Player Robert:
                         Score: 0
@@ -152,9 +154,8 @@ public class GameTest {
                         r k w b y\s
                         y r k w b\s
                         Floor: R Y Y M
-                        Bag: 18B 14Y 15R 19K 14W
-                        Lid: Empty""",
-                new GameController(game).show()
+                        """,
+                result.substring(result.indexOf("Center: K"), result.indexOf("Bag"))
         );
     }
 

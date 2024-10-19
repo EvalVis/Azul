@@ -32,15 +32,14 @@ public class Game {
         this.bag = new Bag();
         this.lid = lid;
         this.factoryDisplays = new FactoryDisplay[1 + 2 * players.size()];
-        for (int i = 0; i < 1 + 2 * players.size(); i++) {
-            List<Tile> tiles = bag.takeTiles(4);
-            factoryDisplays[i] = new FactoryDisplay(center, tiles.get(0), tiles.get(1), tiles.get(2), tiles.get(3));
+        for (int i = 0; i < 1 + 2 * players.size(); i++) {;
+            factoryDisplays[i] = new FactoryDisplay(center, bag.takeTiles(4, lid));
         }
         players.get(currentPlayer).giveStartingMarker();
     }
 
-    void changeFactoryDisplay(int index, Tile tile1, Tile tile2, Tile tile3, Tile tile4) {
-        factoryDisplays[index] = new FactoryDisplay(center, tile1, tile2, tile3, tile4);
+    void changeFactoryDisplay(int index, List<Tile> tiles) {
+        factoryDisplays[index] = new FactoryDisplay(center, tiles);
     }
 
     void setBag(Bag bag) {
@@ -52,8 +51,19 @@ public class Game {
             p.moveTilesToWall();
             p.giveFloorPenalty();
         });
-        if (players.stream().anyMatch(p -> p.board().wall().completedHorizontalLines() > 0)) {
+        if (players.stream().noneMatch(p -> p.board().wall().completedHorizontalLines() > 0)) {
+            prepareForNextRound();
+        }
+        else {
             executeGameEndingPhase();
+        }
+    }
+
+    void prepareForNextRound() {
+        for (int i = 0; i < 1 + 2 * players.size(); i++) {
+            if (factoryDisplays[i].isEmpty()) {
+                factoryDisplays[i] = new FactoryDisplay(center, bag.takeTiles(4, lid));
+            }
         }
     }
 

@@ -44,7 +44,7 @@ public class WallTest {
         assertThrows(
                 ActionNotAllowedException.class,
                 () -> player.takeTilesFromFactory(
-                        new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.BLUE), Tile.RED, 0, 4
+                        new FactoryDisplay(new Center(), List.of(Tile.RED, Tile.RED, Tile.RED, Tile.BLUE)), Tile.RED, 0, 4
                 )
         );
     }

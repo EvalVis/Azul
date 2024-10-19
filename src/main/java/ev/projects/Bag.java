@@ -25,9 +25,12 @@ public class Bag {
         this.tiles = tiles;
     }
 
-    public List<Tile> takeTiles(int amount) {
+    public List<Tile> takeTiles(int amount, Lid lid) {
         List<Tile> takenTiles = new ArrayList<>(amount);
-        for(int i = 0; i < amount; i++) {
+        if (amount > tiles.size()) {
+            tiles.addAll(lid.giveTiles());
+        }
+        for(int i = 0; i < Math.min(tiles.size(), amount); i++) {
             takenTiles.add(tiles.remove(new Random().nextInt(tiles.size())));
         }
         return takenTiles;

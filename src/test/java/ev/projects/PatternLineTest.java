@@ -2,6 +2,8 @@ package ev.projects;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PatternLineTest {
@@ -12,7 +14,7 @@ public class PatternLineTest {
         Player player = new Player(new Board(patternLines));
 
         player.takeTilesFromFactory(
-                new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.BLUE), Tile.RED, 0, 4
+                new FactoryDisplay(new Center(), List.of(Tile.RED, Tile.RED, Tile.RED, Tile.BLUE)), Tile.RED, 0, 4
         );
 
         assertTrue(patternLines[4].isFilled());
@@ -25,7 +27,7 @@ public class PatternLineTest {
         Player player = new Player(new Board(patternLines));
 
         player.takeTilesFromFactory(
-                new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.BLUE, Tile.BLUE), Tile.RED, 0, 4
+                new FactoryDisplay(new Center(), List.of(Tile.RED, Tile.RED, Tile.BLUE, Tile.BLUE)), Tile.RED, 0, 4
         );
 
         assertFalse(patternLines[4].isFilled());
@@ -76,7 +78,7 @@ public class PatternLineTest {
         Player player = new Player(board);
 
         player.takeTilesFromFactory(
-                new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.RED, Tile.RED), Tile.RED, 0, 2
+                new FactoryDisplay(new Center(), List.of(Tile.RED, Tile.RED, Tile.RED, Tile.RED)), Tile.RED, 0, 2
         );
 
         assertTrue(patternLines[2].isFilled());
@@ -93,7 +95,7 @@ public class PatternLineTest {
         assertThrows(
                 ActionNotAllowedException.class,
                 () -> player.takeTilesFromFactory(
-                        new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.BLUE, Tile.BLUE), Tile.BLUE, 0, 4
+                        new FactoryDisplay(new Center(), List.of(Tile.RED, Tile.RED, Tile.BLUE, Tile.BLUE)), Tile.BLUE, 0, 4
                 )
         );
     }

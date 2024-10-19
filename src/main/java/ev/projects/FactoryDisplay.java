@@ -1,42 +1,41 @@
 package ev.projects;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FactoryDisplay {
     private final Center center;
-    private Tile[] tiles;
+    private final List<Tile> tiles;
 
-    public FactoryDisplay(Center center, Tile tile0, Tile tile1, Tile tile2, Tile tile3) {
+    public FactoryDisplay(Center center, List<Tile> tiles) {
         this.center = center;
-        tiles = new Tile[] {tile0, tile1, tile2, tile3};
+        this.tiles = new ArrayList<>(tiles);
     }
 
     public int giveTiles(Tile tile) {
-        Arrays.stream(tiles).filter(t -> !t.equals(tile)).forEach(center::addTile);
-        long givenTiles = Arrays.stream(tiles).filter(t -> t.equals(tile)).count();
-        tiles = null;
+        tiles.stream().filter(t -> !t.equals(tile)).forEach(center::addTile);
+        long givenTiles = tiles.stream().filter(t -> t.equals(tile)).count();
+        tiles.clear();
         return (int) givenTiles;
     }
 
-    public Tile[] tiles() {
+    public List<Tile> tiles() {
         return tiles;
     }
 
     public void clear() {
-        tiles = null;
-    }
-
-    public boolean isEmpty() {
-        return tiles == null;
+        tiles.clear();
     }
 
     @Override
     public String toString() {
-        if (tiles == null) {
+        if (isEmpty()) {
             return "Empty";
         }
-        return Tile.count(Arrays.stream(tiles).toList());
+        return Tile.count(tiles);
+    }
+
+    public boolean isEmpty() {
+        return tiles.isEmpty();
     }
 }

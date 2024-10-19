@@ -18,6 +18,12 @@ public class Lid {
         return tiles;
     }
 
+    public List<Tile> giveTiles() {
+        List<Tile> tilesToGive = tiles;
+        tiles.clear();
+        return tilesToGive;
+    }
+
     @Override
     public String toString() {
         if (tiles.size() == 0) {

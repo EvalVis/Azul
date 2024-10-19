@@ -14,10 +14,10 @@ public class FloorTest {
         Floor floor = new Floor();
         Player player = new PlayerMother().newPlayer(floor);
         Game game = new Game(List.of(player, new PlayerMother().newPlayer()), new Center(), 0);
-        game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.BLUE, Tile.YELLOW);
+        game.changeFactoryDisplay(0, List.of(Tile.RED, Tile.RED, Tile.BLUE, Tile.YELLOW));
 
         player.takeTilesFromFactory(
-                new FactoryDisplay(new Center(), Tile.RED, Tile.RED, Tile.BLUE, Tile.BLUE), Tile.RED, 2, 4
+                new FactoryDisplay(new Center(), List.of(Tile.RED, Tile.RED, Tile.BLUE, Tile.BLUE)), Tile.RED, 2, 4
         );
 
         assertEquals(-2, floor.score());
