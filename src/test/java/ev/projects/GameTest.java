@@ -47,9 +47,9 @@ public class GameTest {
         Game game = new Game(List.of(player, new PlayerMother().newPlayer()), new Center(), 0);
         game.start();
         game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.RED, Tile.RED);
-        PlayerController playerController = new PlayerController(game);
+        GameController gameController = new GameController(game);
 
-        playerController.takeTilesFromFactory(new FactoryTakingRequest(0, Tile.RED, 2, 1));
+        gameController.takeTilesFromFactory(new FactoryTakingRequest(0, Tile.RED, 2, 1));
 
         assertEquals(-2, floor.score());
         assertEquals("R R", floor.toString());
@@ -67,9 +67,9 @@ public class GameTest {
         game.start();
         game.changeFactoryDisplay(0, Tile.RED, Tile.RED, Tile.YELLOW, Tile.BLACK);
         game.executeFactoryOfferPhaseWithFactory(0, Tile.YELLOW, 0, 3);
-        PlayerController playerController = new PlayerController(game);
+        GameController gameController = new GameController(game);
 
-        playerController.takeTilesFromCenter(new CenterTakingRequest(Tile.RED, 1, 0));
+        gameController.takeTilesFromCenter(new CenterTakingRequest(Tile.RED, 1, 0));
 
         assertEquals(-2, floor.score());
         assertEquals("M R", floor.toString());
@@ -120,7 +120,7 @@ public class GameTest {
         wall2.add(Tile.BLUE, 2);
         game.executeWallTilingPhase();
 
-        System.out.println(new PlayerController(game).show());
+        System.out.println(new GameController(game).show());
         assertEquals("""
                         Factories: 1) B 3R 2) B Y 2R 3) 4Y 4) 4W 5) Empty
                         Center: K
@@ -158,7 +158,7 @@ public class GameTest {
                         y r k w b\s
                         Floor: R Y Y M
                         Bag: 18B 14Y 15R 19K 14W""",
-                new PlayerController(game).show()
+                new GameController(game).show()
         );
         // TODO: Implement showing of lid tiles.
     }

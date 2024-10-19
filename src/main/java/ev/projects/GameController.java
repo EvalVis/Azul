@@ -5,11 +5,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class PlayerController {
+public class GameController {
     private final Game game;
 
-    public PlayerController(Game game) {
+    public GameController(Game game) {
         this.game = game;
+    }
+
+    @PostMapping("/start")
+    public void start() {
+        game.start();
     }
 
     @GetMapping("/show")

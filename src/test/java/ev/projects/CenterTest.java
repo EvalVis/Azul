@@ -7,31 +7,28 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CenterTest {
-
     @Test
     void playerTakingFromCenterFirstWithEmptyFloorGetsPenalty() {
-        Center center = new Center();
         Floor floor = new Floor();
-        Player player = new PlayerMother().newPlayer(floor);
-        Game game = new Game(List.of(player, new PlayerMother().newPlayer()), center, 1);
-        game.start();
-        game.executeFactoryOfferPhaseWithFactory(0, game.factoryDisplays()[0].tiles()[0], 0, 4);
+        Game game = new Game(List.of(new PlayerMother().newPlayer(floor), new PlayerMother().newPlayer()), new Center(), 1);
+        GameController controller = new GameController(game);
+        controller.start();
+        controller.takeTilesFromFactory(new FactoryTakingRequest(0, game.factoryDisplays()[0].tiles()[0], 0, 4));
 
-        player.takeTilesFromCenter(center, game.peekCenter().get(0), 0, 4);
+        controller.takeTilesFromCenter(new CenterTakingRequest(game.peekCenter().get(0), 0, 4));
 
         assertEquals(-1, floor.score());
     }
 
     @Test
     void playerTakingFromCenterFirstWithNonEmptyFloorGetsPenalty() {
-        Center center = new Center();
         Floor floor = new Floor();
-        Player player = new PlayerMother().newPlayer(floor);
-        Game game = new Game(List.of(player, new PlayerMother().newPlayer()), center, 1);
-        game.start();
-        game.executeFactoryOfferPhaseWithFactory(0, game.factoryDisplays()[0].tiles()[0], 0, 4);
+        Game game = new Game(List.of(new PlayerMother().newPlayer(floor), new PlayerMother().newPlayer()), new Center(), 1);
+        GameController controller = new GameController(game);
+        controller.start();
+        controller.takeTilesFromFactory(new FactoryTakingRequest(0, game.factoryDisplays()[0].tiles()[0], 0, 4));
 
-        player.takeTilesFromCenter(center, game.peekCenter().get(0), 1, 4);
+        controller.takeTilesFromCenter(new CenterTakingRequest(game.peekCenter().get(0), 1, 4));
 
         assertEquals(-2, floor.score());
     }
