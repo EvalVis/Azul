@@ -1,5 +1,7 @@
 package ev.projects;
 
+import java.util.Map;
+
 public class Player {
     private final Board board;
     private int score;
@@ -80,11 +82,17 @@ public class Player {
 
     @Override
     public String toString() {
-        String result = "Player " + name() + ":\nScore: " + score();
+        String result = name() + ":\nScore: " + score();
         if (startsRound()) {
             result += "\nHas the starting player token.";
         }
         result += "\n" + board.toString();
         return result;
+    }
+
+    public Map<String, Object> jsonObject() {
+        return Map.of(
+                "Name", name(), "Score", score(), "startsRound", startsRound(), "Board", board.jsonObject()
+        );
     }
 }

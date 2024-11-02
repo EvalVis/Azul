@@ -2,6 +2,7 @@ package ev.projects;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class FactoryDisplay {
     private final Center center;
@@ -32,7 +33,11 @@ public class FactoryDisplay {
         if (isEmpty()) {
             return "Empty";
         }
-        return Tile.count(tiles);
+        return Tile.printedTiles(tiles);
+    }
+
+    public Map<String, Integer> jsonObject() {
+        return Tile.groupedTiles(tiles);
     }
 
     public boolean isEmpty() {

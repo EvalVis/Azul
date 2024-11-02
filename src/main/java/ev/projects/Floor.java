@@ -19,6 +19,12 @@ public class Floor {
         this.lid = lid;
     }
 
+    void clear() {
+        tiles.forEach(lid::addTile);
+        tiles.clear();
+        firstPlayerMarkerPosition = -1;
+    }
+
     void addFirstPlayerMarker() {
         firstPlayerMarkerPosition = tiles.size();
     }
@@ -51,8 +57,11 @@ public class Floor {
 
     @Override
     public String toString() {
-        if (tiles.size() == 0 && firstPlayerMarkerPosition == -1) {
-            return "Empty";
+        if (tiles.size() == 0) {
+            if (firstPlayerMarkerPosition == -1) {
+                return "Empty";
+            }
+            return "M";
         }
         StringBuilder result = new StringBuilder(
                 tiles.stream().map(Tile::toString).collect(Collectors.joining(""))
@@ -61,5 +70,16 @@ public class Floor {
             result.insert(firstPlayerMarkerPosition, "M");
         }
         return String.join(" ", result.toString().split(""));
+    }
+
+    public List<String> jsonList() {
+        List<String> jsonList = new ArrayList<>();
+        for (Tile tile : tiles) {
+            jsonList.add(tile.toString());
+        }
+        if (firstPlayerMarkerPosition > -1) {
+            jsonList.add(firstPlayerMarkerPosition, "M");
+        }
+        return jsonList;
     }
 }

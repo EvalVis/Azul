@@ -2,6 +2,7 @@ package ev.projects;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class Bag {
@@ -42,6 +43,13 @@ public class Bag {
 
     @Override
     public String toString() {
-        return Tile.count(tiles);
+        if (tiles.size() == 0) {
+            return "Empty";
+        }
+        return Tile.printedTiles(tiles);
+    }
+
+    public Map<String, Integer> jsonObject() {
+        return Tile.groupedTiles(tiles);
     }
 }

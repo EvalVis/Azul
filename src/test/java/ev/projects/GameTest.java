@@ -1,9 +1,11 @@
 package ev.projects;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static ev.projects.PatternLineTest.patternLines;
 import static org.junit.jupiter.api.Assertions.*;
@@ -96,7 +98,7 @@ public class GameTest {
     @Test
     void gameIsDisplayed() {
         Lid lid = new Lid();
-        Player player1 = new PlayerMother().newPlayer("Robert");
+        Player player1 = new PlayerMother().newPlayer(new Wall(), new Floor(lid), "Robert");
         Wall wall2 = new Wall();
         Floor floor2 = new Floor(lid);
         Player player2 = new PlayerMother().newPlayer(wall2, floor2, "Roger");
@@ -115,47 +117,21 @@ public class GameTest {
         wall2.add(Tile.BLUE, 2);
         game.executeWallTilingPhase();
 
-        System.out.println(new GameController(game).show());
+        System.out.println(new GameController(game).showJson());
 
-        String result = new GameController(game).show();
-        assertEquals("Factories: 1) B 3R 2) B Y 2R 3) 4Y 4) 4W", result.substring(0, 40));
-        assertEquals("""
-                        Center: K
-                        Player Robert:
-                        Score: 0
-                        Has the starting player token.
-                        Board:
-                        Pattern lines:
-                        E\s
-                        E E\s
-                        W E E\s
-                        E E E E\s
-                        E E E E E\s
-                        Wall:
-                        b y r k w\s
-                        w b y r k\s
-                        k w b y r\s
-                        r k w b y\s
-                        y r k w b\s
-                        Floor: W
-                        Player Roger:
-                        Score: 0
-                        Board:
-                        Pattern lines:
-                        E\s
-                        Y E\s
-                        E E E\s
-                        E E E E\s
-                        E E E E E\s
-                        Wall:
-                        b y r k w\s
-                        w b y r k\s
-                        k w B y r\s
-                        r k w b y\s
-                        y r k w b\s
-                        Floor: R Y Y M
-                        """,
-                result.substring(result.indexOf("Center: K"), result.indexOf("Bag"))
+        Map<String, Object> jsonObject = new GameController(game).showJson();
+        assertEquals("{K=1}", jsonObject.get("Center").toString());
+        assertEquals("{R=1, W=1, Y=2}", jsonObject.get("Lid").toString());
+        assertTrue(jsonObject.get("Factory displays").toString().contains("{B=1, R=3}"));
+        assertTrue(jsonObject.get("Factory displays").toString().contains("{B=1, R=2, Y=1}"));
+        assertTrue(jsonObject.get("Factory displays").toString().contains("{Y=4}"));
+        assertTrue(jsonObject.get("Factory displays").toString().contains("{W=4}"));
+        assertTrue(jsonObject.get("Players").toString().contains("Pattern lines=[[], [], [W], [], []]"));
+        assertTrue(
+                jsonObject
+                        .get("Players")
+                        .toString()
+                        .contains("Wall=[[b, y, r, k, w], [w, b, y, r, k], [k, w, b, y, r], [r, k, w, b, y], [y, r, k, w, b]]")
         );
     }
 

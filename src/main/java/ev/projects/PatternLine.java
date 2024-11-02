@@ -1,6 +1,9 @@
 package ev.projects;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PatternLine {
     private final int size;
@@ -46,5 +49,11 @@ public class PatternLine {
     public String toString() {
         return Optional.ofNullable(tile).map(t -> (t + " ").repeat(tileCount)).orElse("")
                 + "E ".repeat(size - tileCount);
+    }
+
+    public List<String> jsonList() {
+        return Stream.generate(() -> tile.toString())
+                    .limit(tileCount)
+                    .collect(Collectors.toList());
     }
 }

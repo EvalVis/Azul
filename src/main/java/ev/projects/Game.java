@@ -1,8 +1,6 @@
 package ev.projects;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Game {
@@ -32,7 +30,7 @@ public class Game {
         this.bag = new Bag();
         this.lid = lid;
         this.factoryDisplays = new FactoryDisplay[1 + 2 * players.size()];
-        for (int i = 0; i < 1 + 2 * players.size(); i++) {;
+        for (int i = 0; i < 1 + 2 * players.size(); i++) {
             factoryDisplays[i] = new FactoryDisplay(center, bag.takeTiles(4, lid));
         }
         players.get(currentPlayer).giveStartingMarker();
@@ -50,6 +48,7 @@ public class Game {
         players.forEach(p -> {
             p.moveTilesToWall();
             p.giveFloorPenalty();
+            p.board().clearFloor();
         });
         if (players.stream().noneMatch(p -> p.board().wall().completedHorizontalLines() > 0)) {
             prepareForNextRound();
@@ -148,11 +147,27 @@ public class Game {
         result.append("\n");
         result.append("Center: ").append(center.toString()).append("\n");
         for (Player player : players) {
-            result.append(player).append("\n");
+            result.append("Player: ").append(player).append("\n");
         }
         result
                 .append("Bag: ").append(bag.toString()).append("\n")
                 .append("Lid: ").append(lid.toString());
         return result.toString();
+    }
+
+    public Map<String, Object> jsonObject() {
+        List<Map<String, Object>> playersJson = new ArrayList<>();
+        for (Player player : players) {
+            playersJson.add(player.jsonObject());
+        }
+
+        List<Map<String, Integer>> factoryDisplaysJson = new ArrayList<>();
+        for (FactoryDisplay factoryDisplay : factoryDisplays) {
+            factoryDisplaysJson.add(factoryDisplay.jsonObject());
+        }
+        return Map.of(
+                "Factory displays", factoryDisplaysJson, "Center", center.jsonObject(), "Players", playersJson,
+                "Bag", bag.jsonObject(), "Lid", lid.jsonObject()
+        );
     }
 }

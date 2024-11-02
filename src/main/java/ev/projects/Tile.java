@@ -1,6 +1,8 @@
 package ev.projects;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public enum Tile {
     BLUE("B"), YELLOW("Y"), RED("R"), BLACK("K"), WHITE("W");
@@ -16,7 +18,7 @@ public enum Tile {
         return displayName;
     }
 
-    public static String count(List<Tile> tiles) {
+    public static String printedTiles(List<Tile> tiles) {
         int[] tileCount = new int[Tile.values().length];
         for (Tile tile : tiles) {
             tileCount[tile.ordinal()]++;
@@ -37,5 +39,20 @@ public enum Tile {
             return result.substring(0, result.length() - 1);
         }
         return result.toString();
+    }
+
+    public static Map<String, Integer> groupedTiles(List<Tile> tiles) {
+        int[] tileCount = new int[Tile.values().length];
+        for (Tile tile : tiles) {
+            tileCount[tile.ordinal()]++;
+        }
+
+        Map<String, Integer> result = new HashMap<>();
+        for (int i = 0; i < tileCount.length; i++) {
+            if (tileCount[i] > 0) {
+                result.put(Tile.values()[i].toString(), tileCount[i]);
+            }
+        }
+        return result;
     }
 }

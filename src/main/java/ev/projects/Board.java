@@ -1,5 +1,7 @@
 package ev.projects;
 
+import java.util.*;
+
 public class Board {
     private final PatternLine[] patternLines;
     private final Wall wall;
@@ -7,10 +9,6 @@ public class Board {
 
     public Board() {
         this(new Wall(), new Floor());
-    }
-
-    public Board(Floor floor) {
-        this(new Wall(), floor);
     }
 
     public Board(Wall wall, Floor floor) {
@@ -70,6 +68,18 @@ public class Board {
 
     public void addFirstPlayerMarkerToFloorLine() {
         floor.addFirstPlayerMarker();
+    }
+
+    public void clearFloor() {
+        floor.clear();
+    }
+
+    public Map<String, Object> jsonObject() {
+        List<List<String>> patternLinesJson = new ArrayList<>();
+        for (PatternLine patternLine : patternLines) {
+            patternLinesJson.add(patternLine.jsonList());
+        }
+        return Map.of("Wall", wall.jsonList(), "Floor", floor.jsonList(), "Pattern lines", patternLinesJson);
     }
 
     @Override

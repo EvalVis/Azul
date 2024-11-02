@@ -2,6 +2,7 @@ package ev.projects;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Lid {
     private final List<Tile> tiles;
@@ -26,9 +27,10 @@ public class Lid {
 
     @Override
     public String toString() {
-        if (tiles.size() == 0) {
-            return "Empty";
-        }
-        return Tile.count(tiles);
+        return Tile.printedTiles(tiles);
+    }
+
+    public Map<String, Integer> jsonObject() {
+        return Tile.groupedTiles(tiles);
     }
 }

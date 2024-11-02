@@ -1,8 +1,6 @@
 package ev.projects;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public class Wall {
@@ -119,6 +117,19 @@ public class Wall {
             result.append("\n");
         }
         return result.toString();
+    }
+
+    public List<List<String>> jsonList() {
+        List<List<String>> result = new ArrayList<>();
+
+        for (WallTile[] row : tiles) {
+            List<String> line = new ArrayList<>();
+            for (WallTile tile : row) {
+                line.add(tile.toString());
+            }
+            result.add(line);
+        }
+        return result;
     }
 
     static class WallTile {
