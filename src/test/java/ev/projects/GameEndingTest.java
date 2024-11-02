@@ -51,10 +51,10 @@ public class GameEndingTest {
         player3.addScore(15);
         Game game = new Game(List.of(player1, player2, player3));
 
-        List<Player> winner = game.winners();
+        List<String> winner = game.winners();
 
         assertEquals(1, winner.size());
-        assertEquals("Alfonso", winner.get(0).name());
+        assertEquals("Alfonso", winner.get(0));
     }
 
     @Test
@@ -65,10 +65,10 @@ public class GameEndingTest {
         player2.addScore(20);
         Game game = new Game(List.of(player1, player2));
 
-        List<Player> winner = game.winners();
+        List<String> winner = game.winners();
 
         assertEquals(1, winner.size());
-        assertEquals("Joke", winner.get(0).name());
+        assertEquals("Joke", winner.get(0));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class GameEndingTest {
         player2.addScore(20);
         Game game = new Game(List.of(player1, player2));
 
-        List<Player> winners = game.winners();
+        List<String> winners = game.winners();
 
         assertEquals(2, winners.size());
     }

@@ -10,6 +10,7 @@ public class Game {
     private final Lid lid;
     private final FactoryDisplay[] factoryDisplays;
     private int currentPlayer;
+    private boolean isRunning;
 
     public Game(List<Player> players) {
         this(players, new Center());
@@ -34,6 +35,7 @@ public class Game {
             factoryDisplays[i] = new FactoryDisplay(center, bag.takeTiles(4, lid));
         }
         players.get(currentPlayer).giveStartingMarker();
+        isRunning = true;
     }
 
     void changeFactoryDisplay(int index, List<Tile> tiles) {
@@ -68,25 +70,7 @@ public class Game {
 
     void executeGameEndingPhase() {
         players.forEach(Player::assignGameEndingScore);
-    }
-
-    List<Player> winners() {
-        int maxScore = players.stream()
-                .map(Player::score)
-                .max(Integer::compareTo).get();
-        List<Player> bestPlayers = players.stream().filter(p -> p.score() == maxScore).toList();
-
-        if(bestPlayers.size() > 1) {
-            int maxCompletedHorizontalLines = players.stream()
-                    .map(p -> p.board().wall().completedHorizontalLines())
-                    .max(Integer::compareTo).get();
-            return players
-                    .stream()
-                    .filter(p -> p.board().wall().completedHorizontalLines() == maxCompletedHorizontalLines)
-                    .collect(Collectors.toList());
-        }
-
-        return bestPlayers;
+        isRunning = false;
     }
 
     FactoryDisplay[] factoryDisplays() {
@@ -137,37 +121,76 @@ public class Game {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("Factories: ");
-        for(int i = 0; i < factoryDisplays().length; i++) {
-            result.append(i + 1).append(") ").append(factoryDisplays[i].toString());
-            if (i < factoryDisplays().length - 1) {
-                result.append(" ");
+        StringBuilder result;
+        if (isRunning) {
+            result = new StringBuilder("Factories: ");
+            for (int i = 0; i < factoryDisplays().length; i++) {
+                result.append(i + 1).append(") ").append(factoryDisplays[i].toString());
+                if (i < factoryDisplays().length - 1) {
+                    result.append(" ");
+                }
+            }
+            result.append("\n");
+            result.append("Center: ").append(center.toString()).append("\n");
+            for (Player player : players) {
+                result.append("Player: ").append(player).append("\n");
+            }
+            result
+                    .append("Bag: ").append(bag.toString()).append("\n")
+                    .append("Lid: ").append(lid.toString());
+        } else {
+            result = new StringBuilder();
+            for (Player player : players) {
+                result.append(player.name()).append(" : ").append(player.score());
             }
         }
-        result.append("\n");
-        result.append("Center: ").append(center.toString()).append("\n");
-        for (Player player : players) {
-            result.append("Player: ").append(player).append("\n");
-        }
-        result
-                .append("Bag: ").append(bag.toString()).append("\n")
-                .append("Lid: ").append(lid.toString());
         return result.toString();
     }
 
     public Map<String, Object> jsonObject() {
-        List<Map<String, Object>> playersJson = new ArrayList<>();
-        for (Player player : players) {
-            playersJson.add(player.jsonObject());
+        if (isRunning) {
+            List<Map<String, Object>> playersJson = new ArrayList<>();
+            for (Player player : players) {
+                playersJson.add(player.jsonObject());
+            }
+
+            List<Map<String, Integer>> factoryDisplaysJson = new ArrayList<>();
+            for (FactoryDisplay factoryDisplay : factoryDisplays) {
+                factoryDisplaysJson.add(factoryDisplay.jsonObject());
+            }
+            return Map.of(
+                    "isRunning", true, "Factory displays", factoryDisplaysJson, "Center", center.jsonObject(),
+                    "Players", playersJson, "Bag", bag.jsonObject(), "Lid", lid.jsonObject()
+            );
+        } else {
+            Map<String, Integer> playersScores = new HashMap<>();
+            for (Player player : players) {
+                playersScores.put(player.name(), player.score());
+            }
+            return Map.of(
+                    "isRunning", false,
+                    "Game results", Map.of("Winners", winners(), "Final scores", playersScores)
+            );
+        }
+    }
+
+    List<String> winners() {
+        int maxScore = players.stream()
+                .map(Player::score)
+                .max(Integer::compareTo).get();
+        List<Player> bestPlayers = players.stream().filter(p -> p.score() == maxScore).toList();
+
+        if(bestPlayers.size() > 1) {
+            int maxCompletedHorizontalLines = players.stream()
+                    .map(p -> p.board().wall().completedHorizontalLines())
+                    .max(Integer::compareTo).get();
+            return players
+                    .stream()
+                    .filter(p -> p.board().wall().completedHorizontalLines() == maxCompletedHorizontalLines)
+                    .map(Player::name)
+                    .collect(Collectors.toList());
         }
 
-        List<Map<String, Integer>> factoryDisplaysJson = new ArrayList<>();
-        for (FactoryDisplay factoryDisplay : factoryDisplays) {
-            factoryDisplaysJson.add(factoryDisplay.jsonObject());
-        }
-        return Map.of(
-                "Factory displays", factoryDisplaysJson, "Center", center.jsonObject(), "Players", playersJson,
-                "Bag", bag.jsonObject(), "Lid", lid.jsonObject()
-        );
+        return bestPlayers.stream().map(Player::name).collect(Collectors.toList());
     }
 }
