@@ -6,15 +6,18 @@ class FactoryDisplay:
         self.tiles = list(tiles)
 
     def give_tiles(self, tile):
-        given_tiles = sum(1 for t in self.tiles if t == tile)
+        given_tiles = self.count(tile)
         for t in self.tiles:
             if t != tile:
                 self.center.add_tile(t)
         self.tiles.clear()
         return given_tiles
 
-    def get_tiles(self):
-        return self.tiles
+    def tile_exist(self, tile):
+        return tile in self.tiles
+
+    def count(self, tile):
+        return sum(1 for t in self.tiles if t == tile)
 
     def clear(self):
         self.tiles.clear()

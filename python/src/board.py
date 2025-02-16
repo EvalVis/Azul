@@ -17,11 +17,13 @@ class Board:
             raise ActionNotAllowedException(f"Wall already contains tile(s) with {tile} colour.")
         self.floor.add(tile, self.pattern_lines[position].add(tile, count))
 
-    def move_tiles_from_pattern_lines_to_wall(self):
+    def move_tiles_from_pattern_lines_to_wall(self, lid):
         score = 0
         for i, line in enumerate(self.pattern_lines):
             if line.is_filled():
                 score += self.wall.add(line.tile, i)
+                for _ in range(line.tile_count - 1):
+                    lid.add_tile(line.tile)
                 line.clear()
         return score
 

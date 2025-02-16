@@ -22,6 +22,9 @@ class Center:
     def is_empty(self):
         return len(self.tiles) == 0
 
+    def tile_exist(self, tile):
+        return tile in self.tiles
+
     def __str__(self):
         if self.is_empty():
             return "Empty"

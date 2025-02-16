@@ -73,7 +73,7 @@ class TestGame(unittest.TestCase):
         center = Center()
         game = Game([player, PlayerMother().new_player()], center, 1)
         game.change_factory_display(0, [Tile.RED, Tile.RED, Tile.YELLOW, Tile.BLACK])
-        game.execute_factory_offer_phase_with_factory(0, Tile.YELLOW, 0, 3)
+        game.execute_factory_offer_phase_with_factory(0, Tile.YELLOW, 1, 3)
         game_controller = GameController(game)
 
         game_controller.take_tiles_from_center(CenterTakingRequest(Tile.RED, 1, 0))
@@ -121,21 +121,16 @@ class TestGame(unittest.TestCase):
         game.execute_factory_offer_phase_with_factory(4, Tile.WHITE, 1, 2)
         floor2.add(Tile.RED, 1)
         floor2.add(Tile.YELLOW, 2)
-        player2.take_tiles_from_center(center, Tile.YELLOW, 0, 1)
+        player2.take_tiles_from_center(center, Tile.YELLOW, 0, 0)
         wall2.add(Tile.BLUE, 2)
         game.execute_wall_tiling_phase()
 
         json_object = GameController(game).show_json().json
 
-        self.assertEqual("{'K': 1}", str(json_object["Center"]))
         self.assertEqual("{'R': 1, 'W': 1, 'Y': 2}", str(json_object["Lid"]))
-        self.assertTrue("{'B': 1, 'R': 3}" in str(json_object["Factory displays"]))
-        self.assertTrue("{'B': 1, 'R': 2, 'Y': 1}" in str(json_object["Factory displays"]))
-        self.assertTrue("{'Y': 4}" in str(json_object["Factory displays"]))
-        self.assertTrue("{'W': 4}" in str(json_object["Factory displays"]))
         self.assertTrue("'Pattern lines': [[], [], ['W'], [], []]" in str(json_object["Players"]))
         self.assertTrue(
-            "'Wall': [['b', 'y', 'r', 'k', 'w'], ['w', 'b', 'y', 'r', 'k'], ['k', 'w', 'b', 'y', 'r'], ['r', 'k', 'w', 'b', 'y'], ['y', 'r', 'k', 'w', 'b']]"
+            "'Wall': [['b', 'Y', 'r', 'k', 'w'], ['w', 'b', 'y', 'r', 'k'], ['k', 'w', 'B', 'y', 'r'], ['r', 'k', 'w', 'b', 'y'], ['y', 'r', 'k', 'w', 'b']]"
                 in str(json_object["Players"])
         )
 

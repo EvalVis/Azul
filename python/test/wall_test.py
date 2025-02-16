@@ -2,6 +2,7 @@ import unittest
 
 from flask import Flask
 
+from src.lid import Lid
 from src.wall import Wall
 from src.pattern_line import PatternLine
 from src.board import Board
@@ -64,7 +65,7 @@ class TestWall(unittest.TestCase):
         pattern_lines[0].add(Tile.RED, 1)
         player = Player(Board(pattern_lines, wall, Floor()))
 
-        player.move_tiles_to_wall()
+        player.move_tiles_to_wall(Lid())
 
         self.assertEqual(1, player.score)
 
@@ -80,7 +81,7 @@ class TestWall(unittest.TestCase):
         wall.add(Tile.RED, 1)
         current_score = player.score
 
-        player.move_tiles_to_wall()
+        player.move_tiles_to_wall(Lid())
 
         self.assertEqual(7, player.score - current_score)
 
@@ -94,7 +95,7 @@ class TestWall(unittest.TestCase):
         wall.add(Tile.BLACK, 0)
         current_score = player.score
 
-        player.move_tiles_to_wall()
+        player.move_tiles_to_wall(Lid())
 
         self.assertEqual(1, player.score - current_score)
 

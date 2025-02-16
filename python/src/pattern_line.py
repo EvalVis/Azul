@@ -7,7 +7,7 @@ class PatternLine:
         self.tile = None
 
     def add(self, tile, count):
-        if self.tile_count > 0 and self.tile != tile:
+        if self.is_colour_invalid(tile):
             raise ActionNotAllowedException(
                 f"Tile(s) with {self.tile} colour is on the pattern line. Can't add a tile with {tile} colour."
             )
@@ -22,6 +22,12 @@ class PatternLine:
     def clear(self):
         self.tile_count = 0
         self.tile = None
+
+    def is_colour_invalid(self, tile):
+        return self.tile_count > 0 and self.tile != tile
+
+    def is_pattern_line_going_to_overflow(self, count):
+        return self.tile_count + count > self.size
 
     def __str__(self):
         return (

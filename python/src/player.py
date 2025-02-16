@@ -30,8 +30,8 @@ class Player:
     def assign_game_ending_score(self):
         self.score += self.board.game_ending_score()
 
-    def move_tiles_to_wall(self):
-        self.score += self.board.move_tiles_from_pattern_lines_to_wall()
+    def move_tiles_to_wall(self, lid):
+        self.score += self.board.move_tiles_from_pattern_lines_to_wall(lid)
 
     def add_score(self, score):
         self.score += score

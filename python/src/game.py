@@ -17,9 +17,12 @@ class Game:
         self.current_player = starting_player
         self.bag = Bag()
         self.lid = lid
-        self.factory_displays = [FactoryDisplay(center, self.bag.take_tiles(4, lid)) for _ in range(1 + 2 * len(players))]
+        self.factory_displays = [FactoryDisplay(center, self.bag.take_tiles(4, lid)) for _ in range(self.factory_display_count())]
         self.players[self.current_player].give_starting_marker()
         self.is_running = True
+
+    def factory_display_count(self):
+        return 1 + 2 * len(self.players)
 
     def change_factory_display(self, index, tiles):
         self.factory_displays[index] = FactoryDisplay(self.center, tiles)
@@ -29,7 +32,7 @@ class Game:
 
     def execute_wall_tiling_phase(self):
         for player in self.players:
-            player.move_tiles_to_wall()
+            player.move_tiles_to_wall(self.lid)
             player.give_floor_penalty()
             player.board.clear_floor()
         if all(player.board.wall.completed_horizontal_lines() == 0 for player in self.players):
@@ -39,7 +42,6 @@ class Game:
 
     def prepare_for_next_round(self):
         for i in range(1 + 2 * len(self.players)):
-            if self.factory_displays[i].is_empty():
                 self.factory_displays[i] = FactoryDisplay(self.center, self.bag.take_tiles(4, self.lid))
 
     def execute_game_ending_phase(self):

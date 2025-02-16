@@ -2,6 +2,7 @@ import unittest
 
 from flask import Flask
 
+from src.lid import Lid
 from src.pattern_line import PatternLine
 from src.board import Board
 from src.player import Player
@@ -11,7 +12,6 @@ from src.tile import Tile
 from src.center import Center
 from src.factory_display import FactoryDisplay
 from src.action_not_allowed_exception import ActionNotAllowedException
-from player_mother import PlayerMother
 
 
 class TestPatternLine(unittest.TestCase):
@@ -53,7 +53,7 @@ class TestPatternLine(unittest.TestCase):
         board = Board(pattern_lines, wall, Floor())
 
         pattern_lines[2].add(Tile.WHITE, 3)
-        board.move_tiles_from_pattern_lines_to_wall()
+        board.move_tiles_from_pattern_lines_to_wall(Lid())
 
         self.assertTrue(wall.already_has(Tile.WHITE, 2))
 
