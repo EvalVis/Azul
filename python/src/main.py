@@ -1,6 +1,4 @@
 import sys
-
-from attr.validators import instance_of
 from flask import Flask, request, jsonify
 from werkzeug.exceptions import HTTPException
 from src.action_not_allowed_exception import ActionNotAllowedException
@@ -46,6 +44,7 @@ def create_app():
     app.register_error_handler(Exception, handle_exception)
     return app
 
+
 def create_game():
     lid = Lid()
     players = []
@@ -53,6 +52,7 @@ def create_game():
     for i in range(player_count):
         players.append(Player(Board(wall=Wall(), floor=Floor(lid)), f"Player {i + 1}"))
     return Game(players, Center(), 0, lid)
+
 
 def get_player_count():
     if len(sys.argv) < 2:
@@ -64,6 +64,7 @@ def get_player_count():
         return player_count
     except ValueError:
         raise RuntimeError("Failed to read player count.")
+
 
 if __name__ == '__main__':
     app = create_app()

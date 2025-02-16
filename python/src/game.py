@@ -1,4 +1,6 @@
 import random
+
+from src.action_not_allowed_exception import ActionNotAllowedException
 from src.center import Center
 from src.lid import Lid
 from src.bag import Bag
@@ -60,6 +62,8 @@ class Game:
         return self.bag.tiles
 
     def execute_factory_offer_phase_with_factory(self, factory_index, tile_to_take, amount_to_place_on_floor, pattern_line_index):
+        if not self.is_running:
+            raise ActionNotAllowedException("Game has already ended.")
         self.players[self.current_player].take_tiles_from_factory(
             self.factory_displays[factory_index], tile_to_take, amount_to_place_on_floor, pattern_line_index
         )
@@ -69,6 +73,8 @@ class Game:
             self.current_player = 0 if self.current_player == (len(self.players) - 1) else (self.current_player + 1)
 
     def execute_factory_offer_phase_with_center(self, tile_to_take, amount_to_place_on_floor, pattern_line_index):
+        if not self.is_running:
+            raise ActionNotAllowedException("Game has already ended.")
         self.players[self.current_player].take_tiles_from_center(
             self.center, tile_to_take, amount_to_place_on_floor, pattern_line_index
         )
