@@ -2,12 +2,12 @@ import unittest
 
 from flask import Flask
 
-from src.floor import Floor
-from src.game import Game
-from src.center import Center
-from src.tile import Tile
-from src.lid import Lid
-from src.factory_display import FactoryDisplay
+from azul_ai_gym.floor import Floor
+from azul_ai_gym.game import Game
+from azul_ai_gym.center import Center
+from azul_ai_gym.tile import Tile
+from azul_ai_gym.lid import Lid
+from azul_ai_gym.factory_display import FactoryDisplay
 from player_mother import PlayerMother
 from game_mother import GameMother
 

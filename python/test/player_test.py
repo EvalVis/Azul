@@ -2,14 +2,14 @@ import unittest
 
 from flask import Flask
 
-from src.floor import Floor
-from src.pattern_line import PatternLine
-from src.board import Board
-from src.wall import Wall
-from src.player import Player
-from src.game import Game
-from src.tile import Tile
-from src.center import Center
+from azul_ai_gym.floor import Floor
+from azul_ai_gym.pattern_line import PatternLine
+from azul_ai_gym.board import Board
+from azul_ai_gym.wall import Wall
+from azul_ai_gym.player import Player
+from azul_ai_gym.game import Game
+from azul_ai_gym.tile import Tile
+from azul_ai_gym.center import Center
 
 class TestPlayer(unittest.TestCase):
     @classmethod

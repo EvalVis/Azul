@@ -1,6 +1,6 @@
 import unittest
 from flask import Flask
-from src.game import Game
+from azul_ai_gym.game import Game
 from wall_mother import WallMother
 from game_mother import GameMother
 from player_mother import PlayerMother

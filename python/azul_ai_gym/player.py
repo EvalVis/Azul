@@ -1,4 +1,4 @@
-from src.action_not_allowed_exception import ActionNotAllowedException
+from azul_ai_gym.action_not_allowed_exception import ActionNotAllowedException
 
 class Player:
     def __init__(self, board, name="Erwin"):
@@ -25,7 +25,7 @@ class Player:
         self.board.add_tile_to_pattern_line(tile_to_place, tile_count, pattern_line_index)
 
     def give_floor_penalty(self):
-        self.score = max(0, self.score + self.board.floor_penalty())
+        self.score = self.score + self.board.floor_penalty()
 
     def assign_game_ending_score(self):
         self.score += self.board.game_ending_score()

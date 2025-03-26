@@ -1,10 +1,10 @@
 import random
 
-from src.action_not_allowed_exception import ActionNotAllowedException
-from src.center import Center
-from src.lid import Lid
-from src.bag import Bag
-from src.factory_display import FactoryDisplay
+from azul_ai_gym.action_not_allowed_exception import ActionNotAllowedException
+from azul_ai_gym.center import Center
+from azul_ai_gym.lid import Lid
+from azul_ai_gym.bag import Bag
+from azul_ai_gym.factory_display import FactoryDisplay
 
 class Game:
     def __init__(self, players, center=None, starting_player=None, lid=None):
@@ -95,23 +95,19 @@ class Game:
         return "\n".join(result)
 
     def json_object(self):
-        if self.is_running:
-            players_json = [player.json_object() for player in self.players]
-            factory_displays_json = [factory_display.json_object() for factory_display in self.factory_displays]
-            return {
-                "isRunning": True,
-                "Factory displays": factory_displays_json,
-                "Center": self.center.json_object(),
-                "Players": players_json,
-                "Bag": self.bag.json_object(),
-                "Lid": self.lid.json_object(),
-            }
-        else:
-            players_scores = {player.name: player.score for player in self.players}
-            return {
-                "isRunning": False,
-                "Game results": {"Winners": self.winners(), "Final scores": players_scores},
-            }
+        players_json = [player.json_object() for player in self.players]
+        factory_displays_json = [factory_display.json_object() for factory_display in self.factory_displays]
+        result = {
+            "isRunning": self.is_running,
+            "Factory displays": factory_displays_json,
+            "Center": self.center.json_object(),
+            "Players": players_json,
+            "Bag": self.bag.json_object(),
+            "Lid": self.lid.json_object(),
+        }
+        if not self.is_running:
+            result["Winners"] = self.winners()
+        return result
 
     def winners(self):
         max_score = max(player.score for player in self.players)

@@ -1,5 +1,5 @@
-from src.wall import Wall
-from src.tile import Tile
+from azul_ai_gym.wall import Wall
+from azul_ai_gym.tile import Tile
 
 class WallMother:
     @staticmethod

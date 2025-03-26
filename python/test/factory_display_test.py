@@ -2,8 +2,8 @@ import unittest
 
 from flask import Flask
 
-from src.center import Center
-from src.tile import Tile
+from azul_ai_gym.center import Center
+from azul_ai_gym.tile import Tile
 from game_mother import GameMother
 
 

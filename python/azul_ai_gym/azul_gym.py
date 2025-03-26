@@ -2,14 +2,17 @@ import gym
 from gym import spaces
 import numpy as np
 
-from src.action_not_allowed_exception import ActionNotAllowedException
-from src.center import Center
-from src.floor import Floor
-from src.board import Board
-from src.player import Player
-from src.game import Game
-from src.lid import Lid
-from src.wall import Wall
+from azul_ai_gym.action_not_allowed_exception import ActionNotAllowedException
+from azul_ai_gym.center import Center
+from azul_ai_gym.floor import Floor
+from azul_ai_gym.board import Board
+from azul_ai_gym.player import Player
+from azul_ai_gym.game import Game
+from azul_ai_gym.lid import Lid
+from azul_ai_gym.wall import Wall
+from azul_ai_gym.tile import Tile
+from azul_ai_gym.factory_taking_request import FactoryTakingRequest
+from azul_ai_gym.center_taking_request import CenterTakingRequest
 
 
 class AzulEnv(gym.Env):
@@ -39,7 +42,8 @@ class AzulEnv(gym.Env):
                     "pattern_lines": spaces.Box(low=0, high=5, shape=(5, 5), dtype=np.int32),
                     "wall": spaces.Box(low=0, high=5, shape=(5, 5), dtype=np.int32),
                     "floor": spaces.Box(low=0, high=5, shape=(7,), dtype=np.int32), # high 4 instead of 5 because of first player marker.
-                    "is_starting": spaces.Discrete(2)
+                    "is_starting": spaces.Discrete(2),
+                    "score": spaces.Discrete(241)
                 }) for _ in range(player_count)
             ]),
             "bag": spaces.Box(low=0, high=100, shape=(5,), dtype=np.int32),
@@ -91,18 +95,25 @@ class AzulEnv(gym.Env):
         return Game(players, Center(), 0, lid)
 
     def step(self, action):
-        factory_index, tile_to_take, tiles_to_place_floor, pattern_line_index = action
+        if not self.game.json_object().get("isRunning"):
+            return self.state, 0, False, None, {}
+            
+        factory_index, tile_to_take_number, tiles_to_place_floor, pattern_line_index = action
+        tile_to_take = Tile(self.__number_to_tile__(tile_to_take_number))
+        
         try:
             if factory_index == 0:
+                CenterTakingRequest(tile_to_take, tiles_to_place_floor, pattern_line_index).validate(self.game)
                 self.game.execute_factory_offer_phase_with_center(tile_to_take, tiles_to_place_floor, pattern_line_index)
             else:
+                FactoryTakingRequest(factory_index - 1, tile_to_take, tiles_to_place_floor, pattern_line_index).validate(self.game)
                 self.game.execute_factory_offer_phase_with_factory(factory_index - 1, tile_to_take, tiles_to_place_floor, pattern_line_index)
-        except ActionNotAllowedException:
-            return self.state, -2, None, False, {}
+        except ActionNotAllowedException as e:
+            return self.state, -2, None, None, {}
 
         self.set_state()
         self.current_player = 0 if self.current_player == (self.player_count - 1) else (self.current_player + 1)
-        return self.state, -1, None, False, {}
+        return self.state, -1, None, None, {}
 
     def set_state(self):
         game_state = self.game.json_object()
@@ -118,7 +129,7 @@ class AzulEnv(gym.Env):
                         ], dtype=np.int32),
                     "wall": np.array([[AzulEnv.__tile_to_number__(tile) if tile.isupper() else 5 for tile in row] for row in player_state.get("Board").get("Wall")], dtype=np.int32),
                     "floor": [AzulEnv.__tile_to_number__(tile) if tile != "M" else 5 for tile in player_state.get("Board").get("Floor")],
-                    "is_starting": int(player_state.get("startsRound"))
+                    "score": player_state.get("Score")
                 }
                 for player_state in game_state.get("Players")
             ],
@@ -130,10 +141,8 @@ class AzulEnv(gym.Env):
         reward = 0
         terminated = not self.game.json_object().get("isRunning")
         if terminated:
-            reward = self.state["players"][player_index]["score"] - max(
-                player["score"] for i, player in enumerate(self.state["players"]) if i != player_index
-            )
-        return self.state, reward, terminated
+            reward = self.state["players"][player_index]["score"]
+        return self.state, reward, terminated, False
 
     def render(self):
         pass

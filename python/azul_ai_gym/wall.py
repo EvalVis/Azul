@@ -1,4 +1,4 @@
-from src.tile import Tile
+from azul_ai_gym.tile import Tile
 
 class Wall:
     def __init__(self):

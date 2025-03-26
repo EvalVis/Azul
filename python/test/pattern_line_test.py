@@ -2,16 +2,16 @@ import unittest
 
 from flask import Flask
 
-from src.lid import Lid
-from src.pattern_line import PatternLine
-from src.board import Board
-from src.player import Player
-from src.wall import Wall
-from src.floor import Floor
-from src.tile import Tile
-from src.center import Center
-from src.factory_display import FactoryDisplay
-from src.action_not_allowed_exception import ActionNotAllowedException
+from azul_ai_gym.lid import Lid
+from azul_ai_gym.pattern_line import PatternLine
+from azul_ai_gym.board import Board
+from azul_ai_gym.player import Player
+from azul_ai_gym.wall import Wall
+from azul_ai_gym.floor import Floor
+from azul_ai_gym.tile import Tile
+from azul_ai_gym.center import Center
+from azul_ai_gym.factory_display import FactoryDisplay
+from azul_ai_gym.action_not_allowed_exception import ActionNotAllowedException
 
 
 class TestPatternLine(unittest.TestCase):

@@ -1,5 +1,5 @@
 import random
-from src.tile import Tile
+from azul_ai_gym.tile import Tile
 
 class Bag:
     def __init__(self, tiles=None):

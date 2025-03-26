@@ -1,17 +1,17 @@
 import sys
 from flask import Flask, request, jsonify
 from werkzeug.exceptions import HTTPException
-from src.action_not_allowed_exception import ActionNotAllowedException
-from src.lid import Lid
-from src.player import Player
-from src.board import Board
-from src.wall import Wall
-from src.floor import Floor
-from src.game import Game
-from src.center import Center
-from src.game_controller import GameController
-from src.factory_taking_request import FactoryTakingRequest
-from src.center_taking_request import CenterTakingRequest
+from azul_ai_gym.action_not_allowed_exception import ActionNotAllowedException
+from azul_ai_gym.lid import Lid
+from azul_ai_gym.player import Player
+from azul_ai_gym.board import Board
+from azul_ai_gym.wall import Wall
+from azul_ai_gym.floor import Floor
+from azul_ai_gym.game import Game
+from azul_ai_gym.center import Center
+from azul_ai_gym.game_controller import GameController
+from azul_ai_gym.factory_taking_request import FactoryTakingRequest
+from azul_ai_gym.center_taking_request import CenterTakingRequest
 
 def create_app():
     app = Flask(__name__)

@@ -1,4 +1,4 @@
-from src.action_not_allowed_exception import ActionNotAllowedException
+from azul_ai_gym.action_not_allowed_exception import ActionNotAllowedException
 
 class PatternLine:
     def __init__(self, size):

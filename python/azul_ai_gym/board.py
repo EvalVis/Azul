@@ -1,7 +1,7 @@
-from src.pattern_line import PatternLine
-from src.wall import Wall
-from src.floor import Floor
-from src.action_not_allowed_exception import ActionNotAllowedException
+from azul_ai_gym.pattern_line import PatternLine
+from azul_ai_gym.wall import Wall
+from azul_ai_gym.floor import Floor
+from azul_ai_gym.action_not_allowed_exception import ActionNotAllowedException
 
 class Board:
     def __init__(self, pattern_lines=None, wall=None, floor=None):
@@ -13,6 +13,8 @@ class Board:
         return self.floor.score()
 
     def add_tile_to_pattern_line(self, tile, count, position):
+        if count == 0:
+            return
         if self.wall.already_has(tile, position):
             raise ActionNotAllowedException(f"Wall already contains tile(s) with {tile} colour.")
         self.floor.add(tile, self.pattern_lines[position].add(tile, count))

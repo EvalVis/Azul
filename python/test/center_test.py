@@ -1,12 +1,12 @@
 import unittest
 from flask import Flask
-from src.game import Game
-from src.game_controller import GameController
-from src.floor import Floor
-from src.center import Center
-from src.factory_taking_request import FactoryTakingRequest
-from src.center_taking_request import CenterTakingRequest
-from src.tile import Tile
+from azul_ai_gym.game import Game
+from azul_ai_gym.game_controller import GameController
+from azul_ai_gym.floor import Floor
+from azul_ai_gym.center import Center
+from azul_ai_gym.factory_taking_request import FactoryTakingRequest
+from azul_ai_gym.center_taking_request import CenterTakingRequest
+from azul_ai_gym.tile import Tile
 from player_mother import PlayerMother
 
 class TestCenter(unittest.TestCase):

@@ -1,6 +1,6 @@
-from src.action_not_allowed_exception import ActionNotAllowedException
-from src.tile import Tile
-from src.game import Game
+from azul_ai_gym.action_not_allowed_exception import ActionNotAllowedException
+from azul_ai_gym.tile import Tile
+from azul_ai_gym.game import Game
 
 
 class CenterTakingRequest:
@@ -20,6 +20,8 @@ class CenterTakingRequest:
         matching_tile_count = center.count(self.tile_to_take)
         if self.tiles_to_put_on_floor < 0 or self.tiles_to_put_on_floor > matching_tile_count:
             raise ActionNotAllowedException(f"Tiles to put on floor count must be between 0 and tile taken count ({matching_tile_count} in this case).")
+        if self.tiles_to_put_on_floor == matching_tile_count:
+            return
         if self.pattern_line_index < 0 or self.pattern_line_index >= 5:
             raise ActionNotAllowedException("Pattern line index must be between 0 and 5")
         if pattern_lines[self.pattern_line_index].is_colour_invalid(self.tile_to_take):

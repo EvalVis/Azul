@@ -2,10 +2,10 @@ import unittest
 
 from flask import Flask
 
-from src.center import Center
-from src.board import Board
-from src.game import Game
-from src.tile import Tile
+from azul_ai_gym.center import Center
+from azul_ai_gym.board import Board
+from azul_ai_gym.game import Game
+from azul_ai_gym.tile import Tile
 from player_mother import PlayerMother
 
 class TestGameStart(unittest.TestCase):
