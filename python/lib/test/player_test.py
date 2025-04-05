@@ -1,13 +1,13 @@
 import unittest
 
-from lib.azul.board import Board
-from lib.azul.center import Center
-from lib.azul.floor import Floor
-from lib.azul.game import Game
-from lib.azul.pattern_line import PatternLine
-from lib.azul.player import Player
-from lib.azul.tile import Tile
-from lib.azul.wall import Wall
+from azul.board import Board
+from azul.center import Center
+from azul.floor import Floor
+from azul.game import Game
+from azul.pattern_line import PatternLine
+from azul.player import Player
+from azul.tile import Tile
+from azul.wall import Wall
 
 
 class TestPlayer(unittest.TestCase):

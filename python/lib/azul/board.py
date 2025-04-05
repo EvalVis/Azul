@@ -1,7 +1,7 @@
-from lib.azul.pattern_line import PatternLine
-from lib.azul.wall import Wall
-from lib.azul.floor import Floor
-from lib.azul.action_not_allowed_exception import ActionNotAllowedException
+from azul.pattern_line import PatternLine
+from azul.wall import Wall
+from azul.floor import Floor
+from azul.action_not_allowed_exception import ActionNotAllowedException
 
 class Board:
     def __init__(self, pattern_lines=None, wall=None, floor=None):

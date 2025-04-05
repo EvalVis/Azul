@@ -1,9 +1,9 @@
 import unittest
 
-from lib.azul.board import Board
-from lib.azul.center import Center
-from lib.azul.game import Game
-from lib.azul.tile import Tile
+from azul.board import Board
+from azul.center import Center
+from azul.game import Game
+from azul.tile import Tile
 from player_mother import PlayerMother
 
 

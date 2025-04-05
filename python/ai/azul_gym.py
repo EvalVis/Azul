@@ -2,17 +2,17 @@ import gym
 from gym import spaces
 import numpy as np
 
-from lib.azul.action_not_allowed_exception import ActionNotAllowedException
-from lib.azul.center import Center
-from lib.azul.floor import Floor
-from lib.azul.board import Board
-from lib.azul.player import Player
-from lib.azul.game import Game
-from lib.azul.lid import Lid
-from lib.azul.wall import Wall
-from lib.azul.tile import Tile
-from lib.azul.factory_taking_request import FactoryTakingRequest
-from lib.azul.center_taking_request import CenterTakingRequest
+from azul.action_not_allowed_exception import ActionNotAllowedException
+from azul.center import Center
+from azul.floor import Floor
+from azul.board import Board
+from azul.player import Player
+from azul.game import Game
+from azul.lid import Lid
+from azul.wall import Wall
+from azul.tile import Tile
+from azul.factory_taking_request import FactoryTakingRequest
+from azul.center_taking_request import CenterTakingRequest
 
 
 class AzulEnv(gym.Env):

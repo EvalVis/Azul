@@ -1,6 +1,6 @@
-from lib.azul.action_not_allowed_exception import ActionNotAllowedException
-from lib.azul.tile import Tile
-from lib.azul.game import Game
+from azul.action_not_allowed_exception import ActionNotAllowedException
+from azul.tile import Tile
+from azul.game import Game
 
 
 class CenterTakingRequest:

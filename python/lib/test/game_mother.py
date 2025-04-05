@@ -1,5 +1,5 @@
-from lib.azul.game import Game
-from lib.azul.center import Center
+from azul.game import Game
+from azul.center import Center
 from player_mother import PlayerMother
 
 class GameMother:

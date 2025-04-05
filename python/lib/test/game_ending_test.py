@@ -1,7 +1,7 @@
 import unittest
 
 from game_mother import GameMother
-from lib.azul.game import Game
+from azul.game import Game
 from player_mother import PlayerMother
 from wall_mother import WallMother
 

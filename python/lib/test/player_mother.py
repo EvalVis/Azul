@@ -1,7 +1,7 @@
-from lib.azul.board import Board
-from lib.azul.floor import Floor
-from lib.azul.wall import Wall
-from lib.azul.player import Player
+from azul.board import Board
+from azul.floor import Floor
+from azul.wall import Wall
+from azul.player import Player
 
 class PlayerMother:
     @staticmethod

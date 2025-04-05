@@ -1,8 +1,8 @@
 import unittest
 
 from game_mother import GameMother
-from lib.azul.center import Center
-from lib.azul.tile import Tile
+from azul.center import Center
+from azul.tile import Tile
 
 class TestFactoryDisplay(unittest.TestCase):
     def test_leftover_tiles_are_pushed_to_center(self):

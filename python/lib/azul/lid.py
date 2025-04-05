@@ -1,4 +1,4 @@
-from lib.azul.tile import Tile
+from azul.tile import Tile
 
 class Lid:
     def __init__(self):

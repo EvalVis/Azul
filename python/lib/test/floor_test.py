@@ -1,12 +1,12 @@
 import unittest
 
 from game_mother import GameMother
-from lib.azul.center import Center
-from lib.azul.factory_display import FactoryDisplay
-from lib.azul.floor import Floor
-from lib.azul.game import Game
-from lib.azul.lid import Lid
-from lib.azul.tile import Tile
+from azul.center import Center
+from azul.factory_display import FactoryDisplay
+from azul.floor import Floor
+from azul.game import Game
+from azul.lid import Lid
+from azul.tile import Tile
 from player_mother import PlayerMother
 
 class TestFloor(unittest.TestCase):

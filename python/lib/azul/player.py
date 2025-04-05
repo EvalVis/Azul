@@ -1,4 +1,4 @@
-from lib.azul.action_not_allowed_exception import ActionNotAllowedException
+from azul.action_not_allowed_exception import ActionNotAllowedException
 
 class Player:
     def __init__(self, board, name="Erwin"):
