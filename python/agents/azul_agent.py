@@ -1,4 +1,4 @@
-from azul_env import AzulEnv
+from azul_ai_env.azul_env import AzulEnv
 
 env = AzulEnv(player_count=2)
 
