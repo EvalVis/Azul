@@ -1,22 +1,12 @@
 import unittest
-from flask import Flask
-from azul_ai_gym.game import Game
-from wall_mother import WallMother
+
 from game_mother import GameMother
+from lib.azul.game import Game
 from player_mother import PlayerMother
+from wall_mother import WallMother
 
 
 class TestGameEnding(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = Flask(__name__)
-        cls.app_context = cls.app.app_context()
-        cls.app_context.push()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app_context.pop()
-
     def test_player_scores_for_completed_horizontal_lines(self):
         player = PlayerMother().new_player(wall=WallMother().with_completed_two_horizontal_lines())
         game = GameMother.new_2_player_game(player1=player)

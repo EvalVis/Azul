@@ -1,6 +1,6 @@
-from azul_ai_gym.action_not_allowed_exception import ActionNotAllowedException
-from azul_ai_gym.tile import Tile
-from azul_ai_gym.game import Game
+from lib.azul.action_not_allowed_exception import ActionNotAllowedException
+from lib.azul.tile import Tile
+from lib.azul.game import Game
 
 
 class CenterTakingRequest:

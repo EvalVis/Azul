@@ -1,4 +1,4 @@
-from azul_ai_gym.lid import Lid
+from lib.azul.lid import Lid
 
 class Floor:
     def __init__(self, lid=None):

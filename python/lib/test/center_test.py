@@ -1,42 +1,28 @@
 import unittest
-from flask import Flask
-from azul_ai_gym.game import Game
-from azul_ai_gym.game_controller import GameController
-from azul_ai_gym.floor import Floor
-from azul_ai_gym.center import Center
-from azul_ai_gym.factory_taking_request import FactoryTakingRequest
-from azul_ai_gym.center_taking_request import CenterTakingRequest
-from azul_ai_gym.tile import Tile
+
+from lib.azul.center import Center
+from lib.azul.floor import Floor
+from lib.azul.game import Game
+from lib.azul.tile import Tile
 from player_mother import PlayerMother
 
+
 class TestCenter(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = Flask(__name__)
-        cls.app_context = cls.app.app_context()
-        cls.app_context.push()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app_context.pop()
-
     def test_player_taking_from_center_first_with_empty_floor_gets_penalty(self):
         floor = Floor()
         game = Game([PlayerMother().new_player(floor=floor), PlayerMother().new_player()], Center(), 1)
-        controller = GameController(game)
-        controller.take_tiles_from_factory(FactoryTakingRequest(0, game.factory_displays[0].tiles[0], 0, 4))
+        game.execute_factory_offer_phase_with_factory(0, game.factory_displays[0].tiles[0], 0, 4)
 
-        controller.take_tiles_from_center(CenterTakingRequest(game.peek_center()[0], 0, 4))
+        game.execute_factory_offer_phase_with_center(game.peek_center()[0], 0, 4)
 
         self.assertEqual(-1, floor.score())
 
     def test_player_taking_from_center_first_with_non_empty_floor_gets_penalty(self):
         floor = Floor()
         game = Game([PlayerMother().new_player(floor=floor), PlayerMother().new_player()], Center(), 1)
-        controller = GameController(game)
-        controller.take_tiles_from_factory(FactoryTakingRequest(0, game.factory_displays[0].tiles[0], 0, 4))
+        game.execute_factory_offer_phase_with_factory(0, game.factory_displays[0].tiles[0], 0, 4)
 
-        controller.take_tiles_from_center(CenterTakingRequest(game.peek_center()[0], 1, 4))
+        game.execute_factory_offer_phase_with_center(game.peek_center()[0], 1, 4)
 
         self.assertEqual(-2, floor.score())
 

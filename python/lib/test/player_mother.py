@@ -1,7 +1,7 @@
-from azul_ai_gym.board import Board
-from azul_ai_gym.floor import Floor
-from azul_ai_gym.wall import Wall
-from azul_ai_gym.player import Player
+from lib.azul.board import Board
+from lib.azul.floor import Floor
+from lib.azul.wall import Wall
+from lib.azul.player import Player
 
 class PlayerMother:
     @staticmethod

@@ -1,4 +1,4 @@
-from azul_ai_gym.action_not_allowed_exception import ActionNotAllowedException
+from lib.azul.action_not_allowed_exception import ActionNotAllowedException
 
 class Player:
     def __init__(self, board, name="Erwin"):

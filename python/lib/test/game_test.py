@@ -1,33 +1,20 @@
 import unittest
-from flask import Flask
-from azul_ai_gym.center import Center
-from azul_ai_gym.board import Board
-from azul_ai_gym.game import Game
-from azul_ai_gym.pattern_line import PatternLine
-from azul_ai_gym.tile import Tile
-from azul_ai_gym.floor import Floor
-from azul_ai_gym.wall import Wall
-from azul_ai_gym.lid import Lid
-from azul_ai_gym.bag import Bag
-from azul_ai_gym.player import Player
-from azul_ai_gym.factory_taking_request import FactoryTakingRequest
-from azul_ai_gym.center_taking_request import CenterTakingRequest
-from azul_ai_gym.game_controller import GameController
+
+from lib.azul.bag import Bag
+from lib.azul.board import Board
+from lib.azul.center import Center
+from lib.azul.floor import Floor
+from lib.azul.game import Game
+from lib.azul.lid import Lid
+from lib.azul.pattern_line import PatternLine
+from lib.azul.player import Player
+from lib.azul.tile import Tile
+from lib.azul.wall import Wall
 from player_mother import PlayerMother
 from wall_mother import WallMother
 
 
 class TestGame(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = Flask(__name__)
-        cls.app_context = cls.app.app_context()
-        cls.app_context.push()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app_context.pop()
-
     def test_game_ending_executes_on_filled_horizontal_line(self):
         center = Center()
         center.add_tile(Tile(Tile.BLUE))
@@ -57,9 +44,8 @@ class TestGame(unittest.TestCase):
         player = Player(Board(pattern_lines, Wall(), floor))
         game = Game([player, PlayerMother().new_player()], Center(), 0)
         game.change_factory_display(0, [Tile.RED, Tile.RED, Tile.RED, Tile.RED])
-        game_controller = GameController(game)
 
-        game_controller.take_tiles_from_factory(FactoryTakingRequest(0, Tile.RED, 2, 1))
+        game.execute_factory_offer_phase_with_factory(0, Tile.RED, 2, 1)
 
         self.assertEqual(-2, floor.score())
         self.assertEqual("R R", str(floor))
@@ -74,9 +60,8 @@ class TestGame(unittest.TestCase):
         game = Game([player, PlayerMother().new_player()], center, 1)
         game.change_factory_display(0, [Tile.RED, Tile.RED, Tile.YELLOW, Tile.BLACK])
         game.execute_factory_offer_phase_with_factory(0, Tile.YELLOW, 1, 3)
-        game_controller = GameController(game)
 
-        game_controller.take_tiles_from_center(CenterTakingRequest(Tile.RED, 1, 0))
+        game.execute_factory_offer_phase_with_center(Tile.RED, 1, 0)
 
         self.assertEqual(-2, floor.score())
         self.assertEqual("M R", str(floor))
@@ -125,9 +110,9 @@ class TestGame(unittest.TestCase):
         wall2.add(Tile.BLUE, 2)
         game.execute_wall_tiling_phase()
 
-        json_object = GameController(game).show_json().json
+        json_object = game.json_object()
 
-        self.assertEqual("{'R': 1, 'W': 1, 'Y': 2}", str(json_object["Lid"]))
+        self.assertEqual("{'W': 1, 'R': 1, 'Y': 2}", str(json_object["Lid"]))
         self.assertTrue("'Pattern lines': [[], [], ['W'], [], []]" in str(json_object["Players"]))
         self.assertTrue(
             "'Wall': [['b', 'Y', 'r', 'k', 'w'], ['w', 'b', 'y', 'r', 'k'], ['k', 'w', 'B', 'y', 'r'], ['r', 'k', 'w', 'b', 'y'], ['y', 'r', 'k', 'w', 'b']]"

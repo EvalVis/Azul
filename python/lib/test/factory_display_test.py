@@ -1,23 +1,10 @@
 import unittest
 
-from flask import Flask
-
-from azul_ai_gym.center import Center
-from azul_ai_gym.tile import Tile
 from game_mother import GameMother
-
+from lib.azul.center import Center
+from lib.azul.tile import Tile
 
 class TestFactoryDisplay(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = Flask(__name__)
-        cls.app_context = cls.app.app_context()
-        cls.app_context.push()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app_context.pop()
-
     def test_leftover_tiles_are_pushed_to_center(self):
         center = Center()
         game = GameMother().new_2_player_game(center=center)

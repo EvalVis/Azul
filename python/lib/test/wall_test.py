@@ -1,31 +1,20 @@
 import unittest
 
-from flask import Flask
-
-from azul_ai_gym.lid import Lid
-from azul_ai_gym.wall import Wall
-from azul_ai_gym.pattern_line import PatternLine
-from azul_ai_gym.board import Board
-from azul_ai_gym.floor import Floor
-from azul_ai_gym.player import Player
-from azul_ai_gym.game import Game
-from azul_ai_gym.tile import Tile
-from azul_ai_gym.center import Center
-from azul_ai_gym.factory_display import FactoryDisplay
-from azul_ai_gym.action_not_allowed_exception import ActionNotAllowedException
+from lib.azul.action_not_allowed_exception import ActionNotAllowedException
+from lib.azul.board import Board
+from lib.azul.center import Center
+from lib.azul.factory_display import FactoryDisplay
+from lib.azul.floor import Floor
+from lib.azul.game import Game
+from lib.azul.lid import Lid
+from lib.azul.pattern_line import PatternLine
+from lib.azul.player import Player
+from lib.azul.tile import Tile
+from lib.azul.wall import Wall
 from player_mother import PlayerMother
 
 
 class TestWall(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = Flask(__name__)
-        cls.app_context = cls.app.app_context()
-        cls.app_context.push()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app_context.pop()
 
     def test_tile_gets_placed_on_wall_if_pattern_line_is_filled(self):
         wall = Wall()

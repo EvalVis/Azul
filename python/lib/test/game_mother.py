@@ -1,5 +1,5 @@
-from azul_ai_gym.game import Game
-from azul_ai_gym.center import Center
+from lib.azul.game import Game
+from lib.azul.center import Center
 from player_mother import PlayerMother
 
 class GameMother:

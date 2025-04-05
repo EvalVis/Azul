@@ -1,6 +1,6 @@
 from flask import jsonify
-from azul_ai_gym.factory_taking_request import FactoryTakingRequest
-from azul_ai_gym.center_taking_request import CenterTakingRequest
+from lib.azul.factory_taking_request import FactoryTakingRequest
+from lib.azul.center_taking_request import CenterTakingRequest
 
 class GameController:
     def __init__(self, game):

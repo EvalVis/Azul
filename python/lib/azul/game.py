@@ -1,10 +1,10 @@
 import random
 
-from azul_ai_gym.action_not_allowed_exception import ActionNotAllowedException
-from azul_ai_gym.center import Center
-from azul_ai_gym.lid import Lid
-from azul_ai_gym.bag import Bag
-from azul_ai_gym.factory_display import FactoryDisplay
+from lib.azul.action_not_allowed_exception import ActionNotAllowedException
+from lib.azul.center import Center
+from lib.azul.lid import Lid
+from lib.azul.bag import Bag
+from lib.azul.factory_display import FactoryDisplay
 
 class Game:
     def __init__(self, players, center=None, starting_player=None, lid=None):

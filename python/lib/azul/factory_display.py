@@ -1,4 +1,4 @@
-from azul_ai_gym.tile import Tile
+from lib.azul.tile import Tile
 
 class FactoryDisplay:
     def __init__(self, center, tiles):
