@@ -25,7 +25,8 @@ class Player:
         self.board.add_tile_to_pattern_line(tile_to_place, tile_count, pattern_line_index)
 
     def give_floor_penalty(self):
-        self.score = self.score + self.board.floor_penalty()
+        penalized_score = self.score + self.board.floor_penalty()
+        self.score = penalized_score if penalized_score >= 0 else 0
 
     def assign_game_ending_score(self):
         self.score += self.board.game_ending_score()
