@@ -372,6 +372,9 @@ class AzulEnv(AECEnv):
         # Show bag and lid in separate popup window
         self.show_bag_lid_popup(bag_counts, lid_counts, tile_colors, tile_letters)
         
+        # Show pattern lines in separate popup window
+        self.show_pattern_lines_popup(tile_colors, tile_letters)
+        
         # Update the display
         self.fig.tight_layout()
         self.fig.canvas.draw()
@@ -527,6 +530,91 @@ class AzulEnv(AECEnv):
         self.bag_lid_fig.canvas.flush_events()
         plt.show(block=False)
 
+    def show_pattern_lines_popup(self, tile_colors, tile_letters):
+        """Show pattern lines in a separate popup window"""
+        # Create popup window if it doesn't exist
+        if not hasattr(self, 'pattern_lines_fig') or self.pattern_lines_fig is None:
+            num_players = len(self.state["players"])
+            self.pattern_lines_fig = plt.figure(figsize=(12, 6 + num_players * 3))
+            self.pattern_lines_fig.canvas.manager.set_window_title('Azul - Pattern Lines')
+            self.pattern_lines_fig.patch.set_facecolor('#E6E6FA')
+            
+            # Create subplots for each player's pattern lines
+            self.pattern_axes = []
+            for i in range(num_players):
+                ax = plt.subplot2grid((num_players, 1), (i, 0))
+                ax.set_facecolor('#F0F8FF')
+                self.pattern_axes.append(ax)
+        else:
+            # Clear existing axes
+            for ax in self.pattern_axes:
+                ax.clear()
+                ax.set_facecolor('#F0F8FF')
+        
+        # Draw pattern lines for each player
+        for player_idx, player_data in enumerate(self.state["players"]):
+            pattern_lines = player_data["pattern_lines"]
+            ax = self.pattern_axes[player_idx]
+            
+            # Set title for this player's pattern lines
+            ax.set_title(f'Player {player_idx + 1} Pattern Lines', 
+                        fontsize=14, fontweight='bold', pad=15)
+            
+            # Draw each pattern line row (1 to 5 tiles)
+            for row in range(5):
+                row_length = row + 1  # Row 0 has 1 tile, row 1 has 2 tiles, etc.
+                pattern_row = pattern_lines[row]
+                
+                # Calculate starting position to center the row
+                start_x = (5 - row_length) / 2 + 0.5
+                y = 4 - row + 0.5  # Row 0 at top, row 4 at bottom
+                
+                # Draw row label
+                ax.text(start_x - 0.7, y, f'Row {row + 1}:',
+                       ha='right', va='center', fontsize=10, fontweight='bold')
+                
+                # Draw tiles for this row
+                for pos in range(row_length):
+                    x = start_x + pos
+                    
+                    # Draw slot background
+                    slot = plt.Rectangle((x, y), 0.8, 0.8, facecolor='lightgray', 
+                                       edgecolor='black', linewidth=1, alpha=0.3)
+                    ax.add_patch(slot)
+                    
+                    # Check if there's a tile in this position
+                    if pos < len(pattern_row):
+                        tile_type = pattern_row[pos]
+                        
+                        # Only draw if it's not empty (value 5 means empty)
+                        if tile_type != 5:
+                            # Draw tile
+                            tile_square = plt.Rectangle((x, y), 0.8, 0.8, 
+                                                      facecolor=tile_colors[tile_type],
+                                                      edgecolor='black', linewidth=2)
+                            ax.add_patch(tile_square)
+                            
+                            # Add tile letter
+                            ax.text(x + 0.4, y + 0.4, tile_letters[tile_type],
+                                   ha='center', va='center', fontsize=12, fontweight='bold',
+                                   color='white' if tile_type != 4 else 'black')
+            
+            # Set axis limits and styling
+            ax.set_xlim(-1, 6)
+            ax.set_ylim(0, 6)
+            ax.set_xticks([])
+            ax.set_yticks([])
+            ax.set_aspect('equal')
+            
+            # Add a subtle grid
+            ax.grid(True, alpha=0.2, linestyle='--')
+        
+        # Update the popup display
+        self.pattern_lines_fig.tight_layout()
+        self.pattern_lines_fig.canvas.draw()
+        self.pattern_lines_fig.canvas.flush_events()
+        plt.show(block=False)
+
     def close(self):
         if self.fig is not None:
             plt.close(self.fig)
@@ -542,3 +630,9 @@ class AzulEnv(AECEnv):
             self.bag_lid_fig = None
             self.ax_bag = None
             self.ax_lid = None
+        
+        # Close pattern lines popup if it exists
+        if hasattr(self, 'pattern_lines_fig') and self.pattern_lines_fig is not None:
+            plt.close(self.pattern_lines_fig)
+            self.pattern_lines_fig = None
+            self.pattern_axes = []
