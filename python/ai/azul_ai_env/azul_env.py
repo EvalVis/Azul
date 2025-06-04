@@ -42,6 +42,7 @@ class AzulEnv(AECEnv):
         # Add matplotlib figure storage for reusing the same plot
         self.fig = None
         self.ax_bag = None
+        self.ax_center = None
         self.ax_lid = None
         self.ax_scores = None
         self.ax_factories = None
@@ -209,6 +210,7 @@ class AzulEnv(AECEnv):
         # Get tile counts from the bag and factories
         bag_counts = self.state["bag"]
         lid_counts = self.state["lid"]
+        center_counts = self.state["center"]
         factories = self.state["factories"]
         
         # Define tile colors and names
@@ -217,31 +219,32 @@ class AzulEnv(AECEnv):
         tile_letters = ['B', 'Y', 'R', 'K', 'W']
         
         # Create figure with subplots if they don't exist, otherwise reuse
-        if self.fig is None or self.ax_bag is None or self.ax_lid is None or self.ax_scores is None or self.ax_factories is None:
-            # Create figure with subplots - bag, lid, scores, then factories below
-            self.fig = plt.figure(figsize=(16, 16))
+        if self.fig is None or self.ax_bag is None or self.ax_center is None or self.ax_lid is None or self.ax_scores is None or self.ax_factories is None:
+            # Create figure with subplots - bag, center, lid at top, scores, then factories below
+            self.fig = plt.figure(figsize=(18, 16))
             self.fig.patch.set_facecolor('#E6E6FA')  # Light lavender background
             
-            # Top subplot for bag statistics
-            self.ax_bag = plt.subplot2grid((5, 2), (0, 0))
+            # Top row: bag, center, lid statistics
+            self.ax_bag = plt.subplot2grid((5, 3), (0, 0))
+            self.ax_center = plt.subplot2grid((5, 3), (0, 1))
+            self.ax_lid = plt.subplot2grid((5, 3), (0, 2))
             
-            # Top right subplot for lid statistics
-            self.ax_lid = plt.subplot2grid((5, 2), (0, 1))
+            # Middle subplot for player scores (spans all columns)
+            self.ax_scores = plt.subplot2grid((5, 3), (1, 0), colspan=3)
             
-            # Middle subplot for player scores (spans both columns)
-            self.ax_scores = plt.subplot2grid((5, 2), (1, 0), colspan=2)
-            
-            # Bottom subplot for factories (spans both columns and multiple rows)
-            self.ax_factories = plt.subplot2grid((5, 2), (2, 0), rowspan=3, colspan=2)
+            # Bottom subplot for factories (spans all columns and multiple rows)
+            self.ax_factories = plt.subplot2grid((5, 3), (2, 0), rowspan=3, colspan=3)
         else:
             # Clear existing axes for redrawing
             self.ax_bag.clear()
+            self.ax_center.clear()
             self.ax_lid.clear()
             self.ax_scores.clear()
             self.ax_factories.clear()
         
         # Set background colors
         self.ax_bag.set_facecolor('#F0F8FF')
+        self.ax_center.set_facecolor('#F0F8FF')
         self.ax_lid.set_facecolor('#F0F8FF')
         self.ax_scores.set_facecolor('#F0F8FF')
         self.ax_factories.set_facecolor('#F0F8FF')
@@ -250,6 +253,11 @@ class AzulEnv(AECEnv):
         bars_bag = self.ax_bag.bar(range(5), bag_counts, color=tile_colors, edgecolor='black', linewidth=1.5)
         bars_bag[4].set_edgecolor('black')
         bars_bag[4].set_linewidth(2)
+        
+        # Create center bar chart
+        bars_center = self.ax_center.bar(range(5), center_counts, color=tile_colors, edgecolor='black', linewidth=1.5)
+        bars_center[4].set_edgecolor('black')
+        bars_center[4].set_linewidth(2)
         
         # Create lid bar chart  
         bars_lid = self.ax_lid.bar(range(5), lid_counts, color=tile_colors, edgecolor='black', linewidth=1.5)
@@ -261,6 +269,12 @@ class AzulEnv(AECEnv):
         self.ax_bag.set_ylabel('Count', fontsize=10)
         self.ax_bag.set_xticks(range(5))
         self.ax_bag.set_xticklabels([f'{letter}' for letter in tile_letters], fontsize=10)
+        
+        # Customize center plot
+        self.ax_center.set_title('Center Statistics', fontsize=14, fontweight='bold', pad=10)
+        self.ax_center.set_ylabel('Count', fontsize=10)
+        self.ax_center.set_xticks(range(5))
+        self.ax_center.set_xticklabels([f'{letter}' for letter in tile_letters], fontsize=10)
         
         # Customize lid plot
         self.ax_lid.set_title('Lid Statistics', fontsize=14, fontweight='bold', pad=10)
@@ -275,6 +289,13 @@ class AzulEnv(AECEnv):
                 self.ax_bag.text(bar.get_x() + bar.get_width()/2., height + 0.05,
                                f'{count}', ha='center', va='bottom', fontsize=9, fontweight='bold')
         
+        # Add count labels on center bars
+        for bar, count in zip(bars_center, center_counts):
+            height = bar.get_height()
+            if count > 0:  # Only show label if there are tiles
+                self.ax_center.text(bar.get_x() + bar.get_width()/2., height + 0.05,
+                                  f'{count}', ha='center', va='bottom', fontsize=9, fontweight='bold')
+        
         # Add count labels on lid bars
         for bar, count in zip(bars_lid, lid_counts):
             height = bar.get_height()
@@ -284,10 +305,12 @@ class AzulEnv(AECEnv):
         
         # Set y-axis limits
         self.ax_bag.set_ylim(0, max(bag_counts) + 2 if max(bag_counts) > 0 else 5)
+        self.ax_center.set_ylim(0, max(center_counts) + 2 if max(center_counts) > 0 else 5)
         self.ax_lid.set_ylim(0, max(lid_counts) + 2 if max(lid_counts) > 0 else 5)
         
         # Add grids
         self.ax_bag.grid(True, alpha=0.3, linestyle='--')
+        self.ax_center.grid(True, alpha=0.3, linestyle='--')
         self.ax_lid.grid(True, alpha=0.3, linestyle='--')
         
         # Set scores title
@@ -395,6 +418,7 @@ class AzulEnv(AECEnv):
             plt.close(self.fig)
             self.fig = None
             self.ax_bag = None
+            self.ax_center = None
             self.ax_lid = None
             self.ax_scores = None
             self.ax_factories = None
