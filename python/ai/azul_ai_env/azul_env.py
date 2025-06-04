@@ -220,80 +220,45 @@ class AzulEnv(AECEnv):
         tile_letters = ['B', 'Y', 'R', 'K', 'W']
         
         # Create figure with subplots if they don't exist, otherwise reuse
-        if self.fig is None or self.ax_bag is None or self.ax_center is None or self.ax_lid is None or self.ax_scores is None or self.ax_factories is None or self.ax_floor is None:
-            # Create figure with subplots - bag, center, lid at top, scores, factories, then floor at bottom
-            self.fig = plt.figure(figsize=(18, 18))
+        if self.fig is None or self.ax_center is None or self.ax_scores is None or self.ax_factories is None or self.ax_floor is None:
+            # Create figure with subplots - center at top, scores, factories, then floor at bottom
+            self.fig = plt.figure(figsize=(18, 16))
             self.fig.patch.set_facecolor('#E6E6FA')  # Light lavender background
             
-            # Top row: bag, center, lid statistics
-            self.ax_bag = plt.subplot2grid((6, 3), (0, 0))
-            self.ax_center = plt.subplot2grid((6, 3), (0, 1))
-            self.ax_lid = plt.subplot2grid((6, 3), (0, 2))
+            # Top row: center statistics only
+            self.ax_center = plt.subplot2grid((5, 1), (0, 0))
             
-            # Middle subplot for player scores (spans all columns)
-            self.ax_scores = plt.subplot2grid((6, 3), (1, 0), colspan=3)
+            # Player scores
+            self.ax_scores = plt.subplot2grid((5, 1), (1, 0))
             
-            # Factories subplot (spans all columns)
-            self.ax_factories = plt.subplot2grid((6, 3), (2, 0), rowspan=2, colspan=3)
+            # Factories subplot
+            self.ax_factories = plt.subplot2grid((5, 1), (2, 0), rowspan=2)
             
-            # Floor statistics for each player (spans all columns)
-            self.ax_floor = plt.subplot2grid((6, 3), (4, 0), rowspan=2, colspan=3)
+            # Floor statistics for each player
+            self.ax_floor = plt.subplot2grid((5, 1), (4, 0))
         else:
             # Clear existing axes for redrawing
-            self.ax_bag.clear()
             self.ax_center.clear()
-            self.ax_lid.clear()
             self.ax_scores.clear()
             self.ax_factories.clear()
             self.ax_floor.clear()
         
         # Set background colors
-        self.ax_bag.set_facecolor('#F0F8FF')
         self.ax_center.set_facecolor('#F0F8FF')
-        self.ax_lid.set_facecolor('#F0F8FF')
         self.ax_scores.set_facecolor('#F0F8FF')
         self.ax_factories.set_facecolor('#F0F8FF')
         self.ax_floor.set_facecolor('#F0F8FF')
-        
-        # Create bag bar chart
-        bars_bag = self.ax_bag.bar(range(5), bag_counts, color=tile_colors, edgecolor='black', linewidth=1.5)
-        bars_bag[4].set_edgecolor('black')
-        bars_bag[4].set_linewidth(2)
         
         # Create center bar chart
         bars_center = self.ax_center.bar(range(5), center_counts, color=tile_colors, edgecolor='black', linewidth=1.5)
         bars_center[4].set_edgecolor('black')
         bars_center[4].set_linewidth(2)
         
-        # Create lid bar chart  
-        bars_lid = self.ax_lid.bar(range(5), lid_counts, color=tile_colors, edgecolor='black', linewidth=1.5)
-        bars_lid[4].set_edgecolor('black')
-        bars_lid[4].set_linewidth(2)
-        
-        # Customize bag plot
-        self.ax_bag.set_title('Bag Statistics', fontsize=14, fontweight='bold', pad=10)
-        self.ax_bag.set_ylabel('Count', fontsize=10)
-        self.ax_bag.set_xticks(range(5))
-        self.ax_bag.set_xticklabels([f'{letter}' for letter in tile_letters], fontsize=10)
-        
         # Customize center plot
         self.ax_center.set_title('Center Statistics', fontsize=14, fontweight='bold', pad=10)
         self.ax_center.set_ylabel('Count', fontsize=10)
         self.ax_center.set_xticks(range(5))
         self.ax_center.set_xticklabels([f'{letter}' for letter in tile_letters], fontsize=10)
-        
-        # Customize lid plot
-        self.ax_lid.set_title('Lid Statistics', fontsize=14, fontweight='bold', pad=10)
-        self.ax_lid.set_ylabel('Count', fontsize=10)
-        self.ax_lid.set_xticks(range(5))
-        self.ax_lid.set_xticklabels([f'{letter}' for letter in tile_letters], fontsize=10)
-        
-        # Add count labels on bag bars
-        for bar, count in zip(bars_bag, bag_counts):
-            height = bar.get_height()
-            if count > 0:  # Only show label if there are tiles
-                self.ax_bag.text(bar.get_x() + bar.get_width()/2., height + 0.05,
-                               f'{count}', ha='center', va='bottom', fontsize=9, fontweight='bold')
         
         # Add count labels on center bars
         for bar, count in zip(bars_center, center_counts):
@@ -302,22 +267,11 @@ class AzulEnv(AECEnv):
                 self.ax_center.text(bar.get_x() + bar.get_width()/2., height + 0.05,
                                   f'{count}', ha='center', va='bottom', fontsize=9, fontweight='bold')
         
-        # Add count labels on lid bars
-        for bar, count in zip(bars_lid, lid_counts):
-            height = bar.get_height()
-            if count > 0:  # Only show label if there are tiles
-                self.ax_lid.text(bar.get_x() + bar.get_width()/2., height + 0.05,
-                               f'{count}', ha='center', va='bottom', fontsize=9, fontweight='bold')
-        
         # Set y-axis limits
-        self.ax_bag.set_ylim(0, max(bag_counts) + 2 if max(bag_counts) > 0 else 5)
         self.ax_center.set_ylim(0, max(center_counts) + 2 if max(center_counts) > 0 else 5)
-        self.ax_lid.set_ylim(0, max(lid_counts) + 2 if max(lid_counts) > 0 else 5)
         
         # Add grids
-        self.ax_bag.grid(True, alpha=0.3, linestyle='--')
         self.ax_center.grid(True, alpha=0.3, linestyle='--')
-        self.ax_lid.grid(True, alpha=0.3, linestyle='--')
         
         # Set scores title
         self.ax_scores.set_title('Player Scores', fontsize=16, fontweight='bold', pad=20)
@@ -415,6 +369,9 @@ class AzulEnv(AECEnv):
         # Draw player floors
         self.draw_player_floors(tile_colors, tile_letters)
         
+        # Show bag and lid in separate popup window
+        self.show_bag_lid_popup(bag_counts, lid_counts, tile_colors, tile_letters)
+        
         # Update the display
         self.fig.tight_layout()
         self.fig.canvas.draw()
@@ -499,13 +456,89 @@ class AzulEnv(AECEnv):
         self.ax_floor.set_yticks([])
         self.ax_floor.set_aspect('equal')
 
+    def show_bag_lid_popup(self, bag_counts, lid_counts, tile_colors, tile_letters):
+        """Show bag and lid statistics in a separate popup window"""
+        # Create popup window if it doesn't exist
+        if not hasattr(self, 'bag_lid_fig') or self.bag_lid_fig is None:
+            self.bag_lid_fig = plt.figure(figsize=(12, 6))
+            self.bag_lid_fig.canvas.manager.set_window_title('Azul - Bag & Lid Statistics')
+            self.bag_lid_fig.patch.set_facecolor('#E6E6FA')
+            
+            # Create subplots for bag and lid
+            self.ax_bag = plt.subplot2grid((2, 1), (0, 0))
+            self.ax_lid = plt.subplot2grid((2, 1), (1, 0))
+            
+            self.ax_bag.set_facecolor('#F0F8FF')
+            self.ax_lid.set_facecolor('#F0F8FF')
+        else:
+            # Clear existing axes
+            self.ax_bag.clear()
+            self.ax_lid.clear()
+            self.ax_bag.set_facecolor('#F0F8FF')
+            self.ax_lid.set_facecolor('#F0F8FF')
+        
+        # Create bag bar chart
+        bars_bag = self.ax_bag.bar(range(5), bag_counts, color=tile_colors, edgecolor='black', linewidth=1.5)
+        bars_bag[4].set_edgecolor('black')
+        bars_bag[4].set_linewidth(2)
+        
+        # Create lid bar chart  
+        bars_lid = self.ax_lid.bar(range(5), lid_counts, color=tile_colors, edgecolor='black', linewidth=1.5)
+        bars_lid[4].set_edgecolor('black')
+        bars_lid[4].set_linewidth(2)
+        
+        # Customize bag plot
+        self.ax_bag.set_title('Bag Statistics', fontsize=14, fontweight='bold', pad=10)
+        self.ax_bag.set_ylabel('Count', fontsize=10)
+        self.ax_bag.set_xticks(range(5))
+        self.ax_bag.set_xticklabels([f'{letter}' for letter in tile_letters], fontsize=10)
+        
+        # Customize lid plot
+        self.ax_lid.set_title('Lid Statistics', fontsize=14, fontweight='bold', pad=10)
+        self.ax_lid.set_ylabel('Count', fontsize=10)
+        self.ax_lid.set_xticks(range(5))
+        self.ax_lid.set_xticklabels([f'{letter}' for letter in tile_letters], fontsize=10)
+        
+        # Add count labels on bag bars
+        for bar, count in zip(bars_bag, bag_counts):
+            height = bar.get_height()
+            if count > 0:  # Only show label if there are tiles
+                self.ax_bag.text(bar.get_x() + bar.get_width()/2., height + 0.05,
+                               f'{count}', ha='center', va='bottom', fontsize=9, fontweight='bold')
+        
+        # Add count labels on lid bars
+        for bar, count in zip(bars_lid, lid_counts):
+            height = bar.get_height()
+            if count > 0:  # Only show label if there are tiles
+                self.ax_lid.text(bar.get_x() + bar.get_width()/2., height + 0.05,
+                               f'{count}', ha='center', va='bottom', fontsize=9, fontweight='bold')
+        
+        # Set y-axis limits
+        self.ax_bag.set_ylim(0, max(bag_counts) + 2 if max(bag_counts) > 0 else 5)
+        self.ax_lid.set_ylim(0, max(lid_counts) + 2 if max(lid_counts) > 0 else 5)
+        
+        # Add grids
+        self.ax_bag.grid(True, alpha=0.3, linestyle='--')
+        self.ax_lid.grid(True, alpha=0.3, linestyle='--')
+        
+        # Update the popup display
+        self.bag_lid_fig.tight_layout()
+        self.bag_lid_fig.canvas.draw()
+        self.bag_lid_fig.canvas.flush_events()
+        plt.show(block=False)
+
     def close(self):
         if self.fig is not None:
             plt.close(self.fig)
             self.fig = None
-            self.ax_bag = None
             self.ax_center = None
-            self.ax_lid = None
             self.ax_scores = None
             self.ax_factories = None
             self.ax_floor = None
+        
+        # Close bag and lid popup if it exists
+        if hasattr(self, 'bag_lid_fig') and self.bag_lid_fig is not None:
+            plt.close(self.bag_lid_fig)
+            self.bag_lid_fig = None
+            self.ax_bag = None
+            self.ax_lid = None
