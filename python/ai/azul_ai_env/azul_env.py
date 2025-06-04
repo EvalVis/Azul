@@ -248,7 +248,7 @@ class AzulEnv(AECEnv):
         self.fig.patch.set_facecolor('#E6E6FA')  # Light lavender background
         
         # Create tab names
-        self.tab_names = ['Main', 'Bag & Lid'] + [f'Player {i+1}' for i in range(num_players)]
+        self.tab_names = ['Main', 'Legend', 'Bag & Lid'] + [f'Player {i+1}' for i in range(num_players)]
         
         # Create tab buttons at the top
         button_width = 0.12
@@ -270,14 +270,19 @@ class AzulEnv(AECEnv):
     
     def create_all_tab_axes(self, num_players):
         """Create axes for all tabs"""
-        # Main tab axes
+        # Main tab axes (no legend anymore)
         main_axes = {
-            'legend': plt.subplot2grid((4, 1), (0, 0)),
-            'scores': plt.subplot2grid((4, 1), (1, 0)),
-            'center': plt.subplot2grid((4, 1), (2, 0)),
-            'factories': plt.subplot2grid((4, 1), (3, 0))
+            'scores': plt.subplot2grid((3, 1), (0, 0)),
+            'center': plt.subplot2grid((3, 1), (1, 0)),
+            'factories': plt.subplot2grid((3, 1), (2, 0))
         }
         self.all_axes['main'] = main_axes
+        
+        # Legend tab axes
+        legend_axes = {
+            'legend': plt.subplot2grid((1, 1), (0, 0))
+        }
+        self.all_axes['legend'] = legend_axes
         
         # Bag & Lid tab axes
         bag_lid_axes = {
@@ -314,11 +319,14 @@ class AzulEnv(AECEnv):
         if tab_index == 0:  # Main tab
             for ax in self.all_axes['main'].values():
                 ax.set_visible(True)
-        elif tab_index == 1:  # Bag & Lid tab
+        elif tab_index == 1:  # Legend tab
+            for ax in self.all_axes['legend'].values():
+                ax.set_visible(True)
+        elif tab_index == 2:  # Bag & Lid tab
             for ax in self.all_axes['bag_lid'].values():
                 ax.set_visible(True)
         else:  # Player tabs
-            player_idx = tab_index - 2
+            player_idx = tab_index - 3
             if f'player_{player_idx}' in self.all_axes:
                 for ax in self.all_axes[f'player_{player_idx}'].values():
                     ax.set_visible(True)
@@ -357,10 +365,12 @@ class AzulEnv(AECEnv):
         
         if self.current_tab == 0:  # Main tab
             self.draw_main_tab(data)
-        elif self.current_tab == 1:  # Bag & Lid tab
+        elif self.current_tab == 1:  # Legend tab
+            self.draw_legend_tab(data)
+        elif self.current_tab == 2:  # Bag & Lid tab
             self.draw_bag_lid_tab(data)
         else:  # Player tabs
-            player_idx = self.current_tab - 2
+            player_idx = self.current_tab - 3
             self.draw_player_tab(player_idx, data)
     
     def draw_main_tab(self, data):
@@ -371,20 +381,6 @@ class AzulEnv(AECEnv):
         for ax in axes.values():
             ax.clear()
             ax.set_facecolor('#F0F8FF')
-        
-        # Draw legend
-        legend_elements = []
-        for i, (color, letter, name) in enumerate(zip(data['tile_colors'], data['tile_letters'], data['tile_names'])):
-            legend_elements.append(plt.Rectangle((0, 0), 1, 1, facecolor=color, edgecolor='black', 
-                                               label=f'{letter} = {name}'))
-        
-        # Add first player marker to legend
-        legend_elements.append(plt.Rectangle((0, 0), 1, 1, facecolor='white', edgecolor='black', 
-                                           label='M = 1st Player Marker'))
-        
-        axes['legend'].axis('off')
-        axes['legend'].legend(handles=legend_elements, loc='center', fontsize=9, 
-                             title='Tile Types', title_fontsize=10)
         
         # Draw scores
         axes['scores'].set_title('Player Scores', fontsize=16, fontweight='bold', pad=25)
@@ -440,6 +436,30 @@ class AzulEnv(AECEnv):
         
         # Draw factories
         self.draw_factories(axes['factories'], data['factories'], data['tile_colors'], data['tile_letters'])
+    
+    def draw_legend_tab(self, data):
+        """Draw content for the legend tab"""
+        axes = self.all_axes['legend']
+        
+        # Clear axes
+        for ax in axes.values():
+            ax.clear()
+            ax.set_facecolor('#F0F8FF')
+        
+        # Draw legend
+        legend_elements = []
+        for i, (color, letter, name) in enumerate(zip(data['tile_colors'], data['tile_letters'], data['tile_names'])):
+            legend_elements.append(plt.Rectangle((0, 0), 1, 1, facecolor=color, edgecolor='black', 
+                                               label=f'{letter} = {name}'))
+        
+        # Add first player marker to legend
+        legend_elements.append(plt.Rectangle((0, 0), 1, 1, facecolor='white', edgecolor='black', 
+                                           label='M = 1st Player Marker'))
+        
+        axes['legend'].axis('off')
+        axes['legend'].legend(handles=legend_elements, loc='center', fontsize=14, 
+                             title='Tiles', title_fontsize=16, 
+                             frameon=True, fancybox=True, shadow=True)
     
     def draw_bag_lid_tab(self, data):
         """Draw content for the bag & lid tab"""
