@@ -578,25 +578,22 @@ class AzulEnv(AECEnv):
             ax.set_title(f'Player {player_idx + 1} Pattern Lines', 
                         fontsize=14, fontweight='bold', pad=15)
             
-            # Draw each pattern line row (1 to 5 tiles)
+            # Draw each pattern line row in triangular formation (1 to 5 tiles)
             for row in range(5):
                 row_length = row + 1  # Row 0 has 1 tile, row 1 has 2 tiles, etc.
                 pattern_row = pattern_lines[row]
                 
-                # Calculate starting position to center the row
-                start_x = (5 - row_length) / 2 + 0.5
+                # Right-align all rows to create proper Azul pattern lines structure
+                right_edge = 4.5  # Right edge position
+                start_x = right_edge - (row_length * 0.8)  # Start position for right alignment
                 y = 4 - row + 0.5  # Row 0 at top, row 4 at bottom
-                
-                # Draw row label
-                ax.text(start_x - 0.7, y, f'Row {row + 1}:',
-                       ha='right', va='center', fontsize=10, fontweight='bold')
                 
                 # Draw tiles for this row
                 for pos in range(row_length):
-                    x = start_x + pos
+                    x = start_x + pos * 0.8
                     
                     # Draw slot background
-                    slot = plt.Rectangle((x, y), 0.8, 0.8, facecolor='lightgray', 
+                    slot = plt.Rectangle((x, y), 0.7, 0.7, facecolor='lightgray', 
                                        edgecolor='black', linewidth=1, alpha=0.3)
                     ax.add_patch(slot)
                     
@@ -607,18 +604,18 @@ class AzulEnv(AECEnv):
                         # Only draw if it's not empty (value 5 means empty)
                         if tile_type != 5:
                             # Draw tile
-                            tile_square = plt.Rectangle((x, y), 0.8, 0.8, 
+                            tile_square = plt.Rectangle((x, y), 0.7, 0.7, 
                                                       facecolor=tile_colors[tile_type],
                                                       edgecolor='black', linewidth=2)
                             ax.add_patch(tile_square)
                             
                             # Add tile letter
-                            ax.text(x + 0.4, y + 0.4, tile_letters[tile_type],
-                                   ha='center', va='center', fontsize=12, fontweight='bold',
+                            ax.text(x + 0.35, y + 0.35, tile_letters[tile_type],
+                                   ha='center', va='center', fontsize=10, fontweight='bold',
                                    color='white' if tile_type != 4 else 'black')
             
             # Set axis limits and styling
-            ax.set_xlim(-1, 6)
+            ax.set_xlim(0, 5)
             ax.set_ylim(0, 6)
             ax.set_xticks([])
             ax.set_yticks([])
@@ -716,13 +713,6 @@ class AzulEnv(AECEnv):
                         ax.text(x + 0.4, y + 0.4, tile_letters[expected_tile_type],
                                ha='center', va='center', fontsize=10, fontweight='bold',
                                color='gray', alpha=0.3)
-            
-            # Add row and column labels
-            for i in range(5):
-                ax.text(-0.2, 4.5 - i + 0.5, f'R{i+1}', ha='center', va='center', 
-                       fontsize=10, fontweight='bold', color='gray')
-                ax.text(i + 0.5, 5.2, f'C{i+1}', ha='center', va='center', 
-                       fontsize=10, fontweight='bold', color='gray')
             
             # Set axis limits and styling
             ax.set_xlim(-0.5, 5.5)
