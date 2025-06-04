@@ -3,6 +3,7 @@ from typing import Dict
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+from matplotlib.widgets import Button
 from azul.action_not_allowed_exception import ActionNotAllowedException
 from azul.board import Board
 from azul.center import Center
@@ -48,6 +49,10 @@ class AzulEnv(AECEnv):
         self.ax_factories = None
         self.ax_floor = None
         self.ax_legend = None
+        self.current_tab = 0  # Track current tab
+        self.tab_buttons = []  # Store tab buttons
+        self.tab_names = []   # Store tab names
+        self.all_axes = {}    # Store all axes for different tabs
         plt.ion()  # Turn on interactive mode
 
         self.observation_spaces: Dict[str, spaces.Space] = {
@@ -220,38 +225,155 @@ class AzulEnv(AECEnv):
         tile_names = ['Blue', 'Yellow', 'Red', 'Black', 'White']
         tile_letters = ['B', 'Y', 'R', 'K', 'W']
         
-        # Create figure with subplots if they don't exist, otherwise reuse
-        if self.fig is None or self.ax_center is None or self.ax_scores is None or self.ax_factories is None or self.ax_legend is None:
-            # Create figure with subplots - legend at top, then scores, center, factories
-            self.fig = plt.figure(figsize=(18, 14))
-            self.fig.patch.set_facecolor('#E6E6FA')  # Light lavender background
-            
-            # Top row: legend
-            self.ax_legend = plt.subplot2grid((4, 1), (0, 0))
-            
-            # Player scores
-            self.ax_scores = plt.subplot2grid((4, 1), (1, 0))
-
-            self.ax_center = plt.subplot2grid((4, 1), (2, 0))
-            
-            # Factories subplot
-            self.ax_factories = plt.subplot2grid((4, 1), (3, 0))
-        else:
-            # Clear existing axes for redrawing
-            self.ax_legend.clear()
-            self.ax_center.clear()
-            self.ax_scores.clear()
-            self.ax_factories.clear()
+        num_players = len(self.state["players"])
         
-        # Set background colors
-        self.ax_legend.set_facecolor('#F0F8FF')
-        self.ax_center.set_facecolor('#F0F8FF')
-        self.ax_scores.set_facecolor('#F0F8FF')
-        self.ax_factories.set_facecolor('#F0F8FF')
+        # Create tabbed interface if it doesn't exist
+        if self.fig is None:
+            self.create_tabbed_interface(num_players)
         
-        # Create legend
+        # Update content based on current tab
+        self.update_current_tab(bag_counts, lid_counts, center_counts, factories, tile_colors, tile_names, tile_letters)
+        
+        # Update the display
+        self.fig.tight_layout()
+        self.fig.canvas.draw()
+        self.fig.canvas.flush_events()
+        plt.show(block=False)
+        plt.pause(0.01)  # Brief pause to ensure the plot updates
+    
+    def create_tabbed_interface(self, num_players):
+        """Create the main figure with tabs"""
+        self.fig = plt.figure(figsize=(18, 14))
+        self.fig.patch.set_facecolor('#E6E6FA')  # Light lavender background
+        
+        # Create tab names
+        self.tab_names = ['Main', 'Bag & Lid'] + [f'Player {i+1}' for i in range(num_players)]
+        
+        # Create tab buttons at the top
+        button_width = 0.12
+        button_height = 0.04
+        button_y = 0.94
+        
+        for i, tab_name in enumerate(self.tab_names):
+            button_x = 0.05 + i * (button_width + 0.01)
+            ax_button = plt.axes([button_x, button_y, button_width, button_height])
+            button = Button(ax_button, tab_name)
+            button.on_clicked(lambda event, tab=i: self.switch_tab(tab))
+            self.tab_buttons.append((ax_button, button))
+        
+        # Create axes for each tab
+        self.create_all_tab_axes(num_players)
+        
+        # Initially show the main tab
+        self.switch_tab(0)
+    
+    def create_all_tab_axes(self, num_players):
+        """Create axes for all tabs"""
+        # Main tab axes
+        main_axes = {
+            'legend': plt.subplot2grid((4, 1), (0, 0)),
+            'scores': plt.subplot2grid((4, 1), (1, 0)),
+            'center': plt.subplot2grid((4, 1), (2, 0)),
+            'factories': plt.subplot2grid((4, 1), (3, 0))
+        }
+        self.all_axes['main'] = main_axes
+        
+        # Bag & Lid tab axes
+        bag_lid_axes = {
+            'bag': plt.subplot2grid((2, 1), (0, 0)),
+            'lid': plt.subplot2grid((2, 1), (1, 0))
+        }
+        self.all_axes['bag_lid'] = bag_lid_axes
+        
+        # Player tab axes
+        for i in range(num_players):
+            player_axes = {
+                'floor': plt.subplot2grid((3, 1), (0, 0)),
+                'pattern': plt.subplot2grid((3, 1), (1, 0)),
+                'wall': plt.subplot2grid((3, 1), (2, 0))
+            }
+            self.all_axes[f'player_{i}'] = player_axes
+        
+        # Set background colors for all axes
+        for tab_key, axes_dict in self.all_axes.items():
+            for ax in axes_dict.values():
+                ax.set_facecolor('#F0F8FF')
+                ax.set_visible(False)  # Hide all initially
+    
+    def switch_tab(self, tab_index):
+        """Switch to the specified tab"""
+        self.current_tab = tab_index
+        
+        # Hide all axes
+        for axes_dict in self.all_axes.values():
+            for ax in axes_dict.values():
+                ax.set_visible(False)
+        
+        # Show current tab axes
+        if tab_index == 0:  # Main tab
+            for ax in self.all_axes['main'].values():
+                ax.set_visible(True)
+        elif tab_index == 1:  # Bag & Lid tab
+            for ax in self.all_axes['bag_lid'].values():
+                ax.set_visible(True)
+        else:  # Player tabs
+            player_idx = tab_index - 2
+            if f'player_{player_idx}' in self.all_axes:
+                for ax in self.all_axes[f'player_{player_idx}'].values():
+                    ax.set_visible(True)
+        
+        # Update button colors to show active tab
+        for i, (ax_button, button) in enumerate(self.tab_buttons):
+            if i == tab_index:
+                ax_button.set_facecolor('#4169E1')  # Active tab color
+            else:
+                ax_button.set_facecolor('#E6E6FA')  # Inactive tab color
+        
+        # Redraw current tab content
+        self.update_current_tab_content()
+    
+    def update_current_tab(self, bag_counts, lid_counts, center_counts, factories, tile_colors, tile_names, tile_letters):
+        """Update content for the current tab"""
+        # Store data for later use
+        self.current_data = {
+            'bag_counts': bag_counts,
+            'lid_counts': lid_counts,
+            'center_counts': center_counts,
+            'factories': factories,
+            'tile_colors': tile_colors,
+            'tile_names': tile_names,
+            'tile_letters': tile_letters
+        }
+        
+        self.update_current_tab_content()
+    
+    def update_current_tab_content(self):
+        """Update the content of the currently visible tab"""
+        if not hasattr(self, 'current_data'):
+            return
+        
+        data = self.current_data
+        
+        if self.current_tab == 0:  # Main tab
+            self.draw_main_tab(data)
+        elif self.current_tab == 1:  # Bag & Lid tab
+            self.draw_bag_lid_tab(data)
+        else:  # Player tabs
+            player_idx = self.current_tab - 2
+            self.draw_player_tab(player_idx, data)
+    
+    def draw_main_tab(self, data):
+        """Draw content for the main tab"""
+        axes = self.all_axes['main']
+        
+        # Clear axes
+        for ax in axes.values():
+            ax.clear()
+            ax.set_facecolor('#F0F8FF')
+        
+        # Draw legend
         legend_elements = []
-        for i, (color, letter, name) in enumerate(zip(tile_colors, tile_letters, tile_names)):
+        for i, (color, letter, name) in enumerate(zip(data['tile_colors'], data['tile_letters'], data['tile_names'])):
             legend_elements.append(plt.Rectangle((0, 0), 1, 1, facecolor=color, edgecolor='black', 
                                                label=f'{letter} = {name}'))
         
@@ -259,32 +381,25 @@ class AzulEnv(AECEnv):
         legend_elements.append(plt.Rectangle((0, 0), 1, 1, facecolor='white', edgecolor='black', 
                                            label='M = 1st Player Marker'))
         
-        self.ax_legend.axis('off')
-        self.ax_legend.legend(handles=legend_elements, loc='center', fontsize=9, 
-                               title='Tile Types', title_fontsize=10)
+        axes['legend'].axis('off')
+        axes['legend'].legend(handles=legend_elements, loc='center', fontsize=9, 
+                             title='Tile Types', title_fontsize=10)
         
-        # Set scores title
-        self.ax_scores.set_title('Player Scores', fontsize=16, fontweight='bold', pad=20)
-        
-        # Create scores table instead of bar chart
+        # Draw scores
+        axes['scores'].set_title('Player Scores', fontsize=16, fontweight='bold', pad=20)
         player_scores = [player["score"] for player in self.state["players"]]
         
-        # Clear the axes and turn off axis
-        self.ax_scores.axis('off')
-        
-        # Create table data
+        axes['scores'].axis('off')
         table_data = []
         for i, score in enumerate(player_scores):
             table_data.append([f'Player {i+1}', str(score)])
         
-        # Create table
-        table = self.ax_scores.table(cellText=table_data,
+        table = axes['scores'].table(cellText=table_data,
                                    colLabels=['Player', 'Score'],
                                    cellLoc='center',
                                    loc='center',
                                    colWidths=[0.3, 0.2])
         
-        # Style the table
         table.auto_set_font_size(False)
         table.set_fontsize(12)
         table.scale(1, 2)
@@ -302,33 +417,97 @@ class AzulEnv(AECEnv):
                 else:
                     table[(i, j)].set_facecolor('#E6E6FA')
                 table[(i, j)].set_text_props(weight='bold')
-
-        # Create center bar chart
-        bars_center = self.ax_center.bar(range(5), center_counts, color=tile_colors, edgecolor='black', linewidth=1.5)
+        
+        # Draw center
+        bars_center = axes['center'].bar(range(5), data['center_counts'], color=data['tile_colors'], edgecolor='black', linewidth=1.5)
         bars_center[4].set_edgecolor('black')
         bars_center[4].set_linewidth(2)
         
-        # Customize center plot
-        self.ax_center.set_title('Center Statistics', fontsize=14, fontweight='bold', pad=10)
-        self.ax_center.set_ylabel('Count', fontsize=10)
-        self.ax_center.set_xticks(range(5))
-        self.ax_center.set_xticklabels([f'{letter}' for letter in tile_letters], fontsize=10)
+        axes['center'].set_title('Center Statistics', fontsize=14, fontweight='bold', pad=10)
+        axes['center'].set_ylabel('Count', fontsize=10)
+        axes['center'].set_xticks(range(5))
+        axes['center'].set_xticklabels([f'{letter}' for letter in data['tile_letters']], fontsize=10)
         
-        # Add count labels on center bars
-        for bar, count in zip(bars_center, center_counts):
+        for bar, count in zip(bars_center, data['center_counts']):
             height = bar.get_height()
-            if count > 0:  # Only show label if there are tiles
-                self.ax_center.text(bar.get_x() + bar.get_width()/2., height + 0.05,
+            if count > 0:
+                axes['center'].text(bar.get_x() + bar.get_width()/2., height + 0.05,
                                   f'{count}', ha='center', va='bottom', fontsize=9, fontweight='bold')
         
-        # Set y-axis limits
-        self.ax_center.set_ylim(0, max(center_counts) + 2 if max(center_counts) > 0 else 5)
+        axes['center'].set_ylim(0, max(data['center_counts']) + 2 if max(data['center_counts']) > 0 else 5)
+        axes['center'].grid(True, alpha=0.3, linestyle='--')
         
-        # Add grids
-        self.ax_center.grid(True, alpha=0.3, linestyle='--')
+        # Draw factories
+        self.draw_factories(axes['factories'], data['factories'], data['tile_colors'], data['tile_letters'])
+    
+    def draw_bag_lid_tab(self, data):
+        """Draw content for the bag & lid tab"""
+        axes = self.all_axes['bag_lid']
         
-        # Set factories title
-        self.ax_factories.set_title('Factory Displays', fontsize=16, fontweight='bold', pad=20)
+        # Clear axes
+        for ax in axes.values():
+            ax.clear()
+            ax.set_facecolor('#F0F8FF')
+        
+        # Draw bag
+        bars_bag = axes['bag'].bar(range(5), data['bag_counts'], color=data['tile_colors'], edgecolor='black', linewidth=1.5)
+        bars_bag[4].set_edgecolor('black')
+        bars_bag[4].set_linewidth(2)
+        
+        axes['bag'].set_title('Bag Statistics', fontsize=14, fontweight='bold', pad=10)
+        axes['bag'].set_ylabel('Count', fontsize=10)
+        axes['bag'].set_xticks(range(5))
+        axes['bag'].set_xticklabels([f'{letter}' for letter in data['tile_letters']], fontsize=10)
+        
+        for bar, count in zip(bars_bag, data['bag_counts']):
+            height = bar.get_height()
+            if count > 0:
+                axes['bag'].text(bar.get_x() + bar.get_width()/2., height + 0.05,
+                               f'{count}', ha='center', va='bottom', fontsize=9, fontweight='bold')
+        
+        axes['bag'].set_ylim(0, max(data['bag_counts']) + 2 if max(data['bag_counts']) > 0 else 5)
+        axes['bag'].grid(True, alpha=0.3, linestyle='--')
+        
+        # Draw lid
+        bars_lid = axes['lid'].bar(range(5), data['lid_counts'], color=data['tile_colors'], edgecolor='black', linewidth=1.5)
+        bars_lid[4].set_edgecolor('black')
+        bars_lid[4].set_linewidth(2)
+        
+        axes['lid'].set_title('Lid Statistics', fontsize=14, fontweight='bold', pad=10)
+        axes['lid'].set_ylabel('Count', fontsize=10)
+        axes['lid'].set_xticks(range(5))
+        axes['lid'].set_xticklabels([f'{letter}' for letter in data['tile_letters']], fontsize=10)
+        
+        for bar, count in zip(bars_lid, data['lid_counts']):
+            height = bar.get_height()
+            if count > 0:
+                axes['lid'].text(bar.get_x() + bar.get_width()/2., height + 0.05,
+                               f'{count}', ha='center', va='bottom', fontsize=9, fontweight='bold')
+        
+        axes['lid'].set_ylim(0, max(data['lid_counts']) + 2 if max(data['lid_counts']) > 0 else 5)
+        axes['lid'].grid(True, alpha=0.3, linestyle='--')
+    
+    def draw_player_tab(self, player_idx, data):
+        """Draw content for a player tab"""
+        if player_idx >= len(self.state["players"]):
+            return
+        
+        axes = self.all_axes[f'player_{player_idx}']
+        player_data = self.state["players"][player_idx]
+        
+        # Clear axes
+        for ax in axes.values():
+            ax.clear()
+            ax.set_facecolor('#F0F8FF')
+        
+        # Draw floor, pattern lines, and wall
+        self.draw_single_player_floor(player_data, axes['floor'], data['tile_colors'], data['tile_letters'], player_idx)
+        self.draw_single_player_pattern_lines(player_data, axes['pattern'], data['tile_colors'], data['tile_letters'], player_idx)
+        self.draw_single_player_wall(player_data, axes['wall'], data['tile_colors'], data['tile_letters'], player_idx)
+    
+    def draw_factories(self, ax, factories, tile_colors, tile_letters):
+        """Draw factories display"""
+        ax.set_title('Factory Displays', fontsize=16, fontweight='bold', pad=20)
         
         # Calculate grid layout for factories
         num_factories = len(factories)
@@ -350,9 +529,9 @@ class AzulEnv(AECEnv):
             start_y = (rows - 1 - row) * (factory_height + margin_y)
             
             # Draw factory label
-            self.ax_factories.text(start_x + factory_width/2, start_y + factory_height + 0.1,
-                                 f'Factory No. {factory_idx + 1}', ha='center', va='bottom',
-                                 fontsize=12, fontweight='bold')
+            ax.text(start_x + factory_width/2, start_y + factory_height + 0.1,
+                   f'Factory No. {factory_idx + 1}', ha='center', va='bottom',
+                   fontsize=12, fontweight='bold')
             
             # Draw tiles in this factory
             tile_pos = 0
@@ -375,167 +554,28 @@ class AzulEnv(AECEnv):
                     square = plt.Rectangle((x, y), 0.8, 0.8, 
                                          facecolor=tile_colors[tile_type],
                                          edgecolor='black', linewidth=2)
-                    self.ax_factories.add_patch(square)
+                    ax.add_patch(square)
                     
                     # Add tile letter
-                    self.ax_factories.text(x + 0.4, y + 0.4, tile_letters[tile_type],
-                                         ha='center', va='center', fontsize=14, fontweight='bold',
-                                         color='white' if tile_type != 4 else 'black')
+                    ax.text(x + 0.4, y + 0.4, tile_letters[tile_type],
+                           ha='center', va='center', fontsize=14, fontweight='bold',
+                           color='white' if tile_type != 4 else 'black')
                 else:
                     # Draw neutral/empty tile
                     square = plt.Rectangle((x, y), 0.8, 0.8, 
                                          facecolor='lightgray',
                                          edgecolor='black', linewidth=1, alpha=0.3)
-                    self.ax_factories.add_patch(square)
+                    ax.add_patch(square)
         
         # Set axis limits and remove ticks
         total_width = cols * (factory_width + margin_x) - margin_x
         total_height = rows * (factory_height + margin_y) + 0.5
         
-        self.ax_factories.set_xlim(-0.5, total_width + 0.5)
-        self.ax_factories.set_ylim(-0.5, total_height)
-        self.ax_factories.set_xticks([])
-        self.ax_factories.set_yticks([])
-        self.ax_factories.set_aspect('equal')
-        
-        # Show bag and lid in separate popup window
-        self.show_bag_lid_popup(bag_counts, lid_counts, tile_colors, tile_letters)
-        
-        # Show individual player windows (floor, pattern lines, wall)
-        self.show_individual_player_windows(tile_colors, tile_letters)
-        
-        # Update the display
-        self.fig.tight_layout()
-        self.fig.canvas.draw()
-        self.fig.canvas.flush_events()
-        plt.show(block=False)
-        plt.pause(0.01)  # Brief pause to ensure the plot updates
-    
-    def show_bag_lid_popup(self, bag_counts, lid_counts, tile_colors, tile_letters):
-        """Show bag and lid statistics in a separate popup window"""
-        # Create popup window if it doesn't exist
-        if not hasattr(self, 'bag_lid_fig') or self.bag_lid_fig is None:
-            self.bag_lid_fig = plt.figure(figsize=(12, 6))
-            self.bag_lid_fig.canvas.manager.set_window_title('Azul - Bag & Lid Statistics')
-            self.bag_lid_fig.patch.set_facecolor('#E6E6FA')
-            
-            # Create subplots for bag and lid
-            self.ax_bag = plt.subplot2grid((2, 1), (0, 0))
-            self.ax_lid = plt.subplot2grid((2, 1), (1, 0))
-            
-            self.ax_bag.set_facecolor('#F0F8FF')
-            self.ax_lid.set_facecolor('#F0F8FF')
-        else:
-            # Clear existing axes
-            self.ax_bag.clear()
-            self.ax_lid.clear()
-            self.ax_bag.set_facecolor('#F0F8FF')
-            self.ax_lid.set_facecolor('#F0F8FF')
-        
-        # Create bag bar chart
-        bars_bag = self.ax_bag.bar(range(5), bag_counts, color=tile_colors, edgecolor='black', linewidth=1.5)
-        bars_bag[4].set_edgecolor('black')
-        bars_bag[4].set_linewidth(2)
-        
-        # Create lid bar chart  
-        bars_lid = self.ax_lid.bar(range(5), lid_counts, color=tile_colors, edgecolor='black', linewidth=1.5)
-        bars_lid[4].set_edgecolor('black')
-        bars_lid[4].set_linewidth(2)
-        
-        # Customize bag plot
-        self.ax_bag.set_title('Bag Statistics', fontsize=14, fontweight='bold', pad=10)
-        self.ax_bag.set_ylabel('Count', fontsize=10)
-        self.ax_bag.set_xticks(range(5))
-        self.ax_bag.set_xticklabels([f'{letter}' for letter in tile_letters], fontsize=10)
-        
-        # Customize lid plot
-        self.ax_lid.set_title('Lid Statistics', fontsize=14, fontweight='bold', pad=10)
-        self.ax_lid.set_ylabel('Count', fontsize=10)
-        self.ax_lid.set_xticks(range(5))
-        self.ax_lid.set_xticklabels([f'{letter}' for letter in tile_letters], fontsize=10)
-        
-        # Add count labels on bag bars
-        for bar, count in zip(bars_bag, bag_counts):
-            height = bar.get_height()
-            if count > 0:  # Only show label if there are tiles
-                self.ax_bag.text(bar.get_x() + bar.get_width()/2., height + 0.05,
-                               f'{count}', ha='center', va='bottom', fontsize=9, fontweight='bold')
-        
-        # Add count labels on lid bars
-        for bar, count in zip(bars_lid, lid_counts):
-            height = bar.get_height()
-            if count > 0:  # Only show label if there are tiles
-                self.ax_lid.text(bar.get_x() + bar.get_width()/2., height + 0.05,
-                               f'{count}', ha='center', va='bottom', fontsize=9, fontweight='bold')
-        
-        # Set y-axis limits
-        self.ax_bag.set_ylim(0, max(bag_counts) + 2 if max(bag_counts) > 0 else 5)
-        self.ax_lid.set_ylim(0, max(lid_counts) + 2 if max(lid_counts) > 0 else 5)
-        
-        # Add grids
-        self.ax_bag.grid(True, alpha=0.3, linestyle='--')
-        self.ax_lid.grid(True, alpha=0.3, linestyle='--')
-        
-        # Update the popup display
-        self.bag_lid_fig.tight_layout()
-        self.bag_lid_fig.canvas.draw()
-        self.bag_lid_fig.canvas.flush_events()
-        plt.show(block=False)
-
-    def show_individual_player_windows(self, tile_colors, tile_letters):
-        """Show individual player windows (floor, pattern lines, wall)"""
-        num_players = len(self.state["players"])
-        
-        # Initialize player windows list if not exists
-        if not hasattr(self, 'player_figs') or self.player_figs is None:
-            self.player_figs = []
-            self.player_axes = []
-            
-            for player_idx in range(num_players):
-                # Create window for each player
-                fig = plt.figure(figsize=(12, 10))
-                fig.canvas.manager.set_window_title(f'Azul - Player {player_idx + 1}')
-                fig.patch.set_facecolor('#E6E6FA')
-                
-                # Create subplots: floor, pattern lines, wall
-                ax_floor = plt.subplot2grid((3, 1), (0, 0))
-                ax_pattern = plt.subplot2grid((3, 1), (1, 0))
-                ax_wall = plt.subplot2grid((3, 1), (2, 0))
-                
-                ax_floor.set_facecolor('#F0F8FF')
-                ax_pattern.set_facecolor('#F0F8FF')
-                ax_wall.set_facecolor('#F0F8FF')
-                
-                self.player_figs.append(fig)
-                self.player_axes.append((ax_floor, ax_pattern, ax_wall))
-        else:
-            # Clear existing axes
-            for ax_floor, ax_pattern, ax_wall in self.player_axes:
-                ax_floor.clear()
-                ax_pattern.clear()
-                ax_wall.clear()
-                ax_floor.set_facecolor('#F0F8FF')
-                ax_pattern.set_facecolor('#F0F8FF')
-                ax_wall.set_facecolor('#F0F8FF')
-        
-        # Draw each player's data
-        for player_idx, player_data in enumerate(self.state["players"]):
-            ax_floor, ax_pattern, ax_wall = self.player_axes[player_idx]
-            
-            # Draw floor for this player
-            self.draw_single_player_floor(player_data, ax_floor, tile_colors, tile_letters, player_idx)
-            
-            # Draw pattern lines for this player
-            self.draw_single_player_pattern_lines(player_data, ax_pattern, tile_colors, tile_letters, player_idx)
-            
-            # Draw wall for this player
-            self.draw_single_player_wall(player_data, ax_wall, tile_colors, tile_letters, player_idx)
-            
-            # Update the display
-            self.player_figs[player_idx].tight_layout()
-            self.player_figs[player_idx].canvas.draw()
-            self.player_figs[player_idx].canvas.flush_events()
-            plt.show(block=False)
+        ax.set_xlim(-0.5, total_width + 0.5)
+        ax.set_ylim(-0.5, total_height)
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_aspect('equal')
 
     def draw_single_player_floor(self, player_data, ax_floor, tile_colors, tile_letters, player_idx):
         """Draw floor for a single player"""
@@ -723,17 +763,10 @@ class AzulEnv(AECEnv):
             self.ax_center = None
             self.ax_scores = None
             self.ax_factories = None
-        
-        # Close bag and lid popup if it exists
-        if hasattr(self, 'bag_lid_fig') and self.bag_lid_fig is not None:
-            plt.close(self.bag_lid_fig)
-            self.bag_lid_fig = None
             self.ax_bag = None
             self.ax_lid = None
-        
-        # Close individual player windows if they exist
-        if hasattr(self, 'player_figs') and self.player_figs is not None:
-            for fig in self.player_figs:
-                plt.close(fig)
-            self.player_figs = None
-            self.player_axes = []
+            self.ax_floor = None
+            self.current_tab = 0
+            self.tab_buttons = []
+            self.tab_names = []
+            self.all_axes = {}
