@@ -336,24 +336,37 @@ class AzulEnv(AECEnv):
             
             # Draw tiles in this factory
             tile_pos = 0
+            # First, place actual tiles
+            actual_tiles = []
             for tile_type, count in enumerate(factory_tiles):
                 for _ in range(count):
                     if tile_pos < 4:  # Max 4 tiles per factory
-                        x = start_x + tile_pos
-                        y = start_y
-                        
-                        # Create colored square for tile
-                        square = plt.Rectangle((x, y), 0.8, 0.8, 
-                                             facecolor=tile_colors[tile_type],
-                                             edgecolor='black', linewidth=2)
-                        self.ax_factories.add_patch(square)
-                        
-                        # Add tile letter
-                        self.ax_factories.text(x + 0.4, y + 0.4, tile_letters[tile_type],
-                                             ha='center', va='center', fontsize=14, fontweight='bold',
-                                             color='white' if tile_type != 4 else 'black')  # White text except on white tiles
-                        
+                        actual_tiles.append(tile_type)
                         tile_pos += 1
+            
+            # Now draw all 4 positions (actual tiles + neutral for empty positions)
+            for pos in range(4):
+                x = start_x + pos
+                y = start_y
+                
+                if pos < len(actual_tiles):
+                    # Draw actual tile
+                    tile_type = actual_tiles[pos]
+                    square = plt.Rectangle((x, y), 0.8, 0.8, 
+                                         facecolor=tile_colors[tile_type],
+                                         edgecolor='black', linewidth=2)
+                    self.ax_factories.add_patch(square)
+                    
+                    # Add tile letter
+                    self.ax_factories.text(x + 0.4, y + 0.4, tile_letters[tile_type],
+                                         ha='center', va='center', fontsize=14, fontweight='bold',
+                                         color='white' if tile_type != 4 else 'black')
+                else:
+                    # Draw neutral/empty tile
+                    square = plt.Rectangle((x, y), 0.8, 0.8, 
+                                         facecolor='lightgray',
+                                         edgecolor='black', linewidth=1, alpha=0.3)
+                    self.ax_factories.add_patch(square)
         
         # Set axis limits and remove ticks
         total_width = cols * (factory_width + margin_x) - margin_x
