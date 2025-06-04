@@ -225,11 +225,10 @@ class AzulEnv(AECEnv):
             self.fig = plt.figure(figsize=(18, 12))
             self.fig.patch.set_facecolor('#E6E6FA')  # Light lavender background
             
-            # Top row: center statistics only
-            self.ax_center = plt.subplot2grid((3, 1), (0, 0))
-            
             # Player scores
-            self.ax_scores = plt.subplot2grid((3, 1), (1, 0))
+            self.ax_scores = plt.subplot2grid((3, 1), (0, 0))
+
+            self.ax_center = plt.subplot2grid((3, 1), (1, 0))
             
             # Factories subplot
             self.ax_factories = plt.subplot2grid((3, 1), (2, 0))
@@ -238,35 +237,6 @@ class AzulEnv(AECEnv):
             self.ax_center.clear()
             self.ax_scores.clear()
             self.ax_factories.clear()
-        
-        # Set background colors
-        self.ax_center.set_facecolor('#F0F8FF')
-        self.ax_scores.set_facecolor('#F0F8FF')
-        self.ax_factories.set_facecolor('#F0F8FF')
-        
-        # Create center bar chart
-        bars_center = self.ax_center.bar(range(5), center_counts, color=tile_colors, edgecolor='black', linewidth=1.5)
-        bars_center[4].set_edgecolor('black')
-        bars_center[4].set_linewidth(2)
-        
-        # Customize center plot
-        self.ax_center.set_title('Center Statistics', fontsize=14, fontweight='bold', pad=10)
-        self.ax_center.set_ylabel('Count', fontsize=10)
-        self.ax_center.set_xticks(range(5))
-        self.ax_center.set_xticklabels([f'{letter}' for letter in tile_letters], fontsize=10)
-        
-        # Add count labels on center bars
-        for bar, count in zip(bars_center, center_counts):
-            height = bar.get_height()
-            if count > 0:  # Only show label if there are tiles
-                self.ax_center.text(bar.get_x() + bar.get_width()/2., height + 0.05,
-                                  f'{count}', ha='center', va='bottom', fontsize=9, fontweight='bold')
-        
-        # Set y-axis limits
-        self.ax_center.set_ylim(0, max(center_counts) + 2 if max(center_counts) > 0 else 5)
-        
-        # Add grids
-        self.ax_center.grid(True, alpha=0.3, linestyle='--')
         
         # Set scores title
         self.ax_scores.set_title('Player Scores', fontsize=16, fontweight='bold', pad=20)
@@ -307,6 +277,35 @@ class AzulEnv(AECEnv):
                 else:
                     table[(i, j)].set_facecolor('#E6E6FA')
                 table[(i, j)].set_text_props(weight='bold')
+
+                # Set background colors
+        self.ax_center.set_facecolor('#F0F8FF')
+        self.ax_scores.set_facecolor('#F0F8FF')
+        self.ax_factories.set_facecolor('#F0F8FF')
+        
+        # Create center bar chart
+        bars_center = self.ax_center.bar(range(5), center_counts, color=tile_colors, edgecolor='black', linewidth=1.5)
+        bars_center[4].set_edgecolor('black')
+        bars_center[4].set_linewidth(2)
+        
+        # Customize center plot
+        self.ax_center.set_title('Center Statistics', fontsize=14, fontweight='bold', pad=10)
+        self.ax_center.set_ylabel('Count', fontsize=10)
+        self.ax_center.set_xticks(range(5))
+        self.ax_center.set_xticklabels([f'{letter}' for letter in tile_letters], fontsize=10)
+        
+        # Add count labels on center bars
+        for bar, count in zip(bars_center, center_counts):
+            height = bar.get_height()
+            if count > 0:  # Only show label if there are tiles
+                self.ax_center.text(bar.get_x() + bar.get_width()/2., height + 0.05,
+                                  f'{count}', ha='center', va='bottom', fontsize=9, fontweight='bold')
+        
+        # Set y-axis limits
+        self.ax_center.set_ylim(0, max(center_counts) + 2 if max(center_counts) > 0 else 5)
+        
+        # Add grids
+        self.ax_center.grid(True, alpha=0.3, linestyle='--')
         
         # Set factories title
         self.ax_factories.set_title('Factory Displays', fontsize=16, fontweight='bold', pad=20)
