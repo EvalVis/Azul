@@ -236,6 +236,7 @@ class AzulEnv(AECEnv):
         
         # Update the display
         self.fig.tight_layout()
+        self.fig.subplots_adjust(hspace=0.4)  # Add more vertical spacing between subplots
         self.fig.canvas.draw()
         self.fig.canvas.flush_events()
         plt.show(block=False)
@@ -386,7 +387,7 @@ class AzulEnv(AECEnv):
                              title='Tile Types', title_fontsize=10)
         
         # Draw scores
-        axes['scores'].set_title('Player Scores', fontsize=16, fontweight='bold', pad=20)
+        axes['scores'].set_title('Player Scores', fontsize=16, fontweight='bold', pad=25)
         player_scores = [player["score"] for player in self.state["players"]]
         
         axes['scores'].axis('off')
@@ -423,7 +424,7 @@ class AzulEnv(AECEnv):
         bars_center[4].set_edgecolor('black')
         bars_center[4].set_linewidth(2)
         
-        axes['center'].set_title('Center Statistics', fontsize=14, fontweight='bold', pad=10)
+        axes['center'].set_title('Center Statistics', fontsize=14, fontweight='bold', pad=15)
         axes['center'].set_ylabel('Count', fontsize=10)
         axes['center'].set_xticks(range(5))
         axes['center'].set_xticklabels([f'{letter}' for letter in data['tile_letters']], fontsize=10)
@@ -507,7 +508,7 @@ class AzulEnv(AECEnv):
     
     def draw_factories(self, ax, factories, tile_colors, tile_letters):
         """Draw factories display"""
-        ax.set_title('Factory Displays', fontsize=16, fontweight='bold', pad=20)
+        ax.set_title('Factory Displays', fontsize=16, fontweight='bold', pad=15)
         
         # Calculate grid layout for factories
         num_factories = len(factories)
