@@ -1,6 +1,8 @@
 from typing import Dict
 
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 from azul.action_not_allowed_exception import ActionNotAllowedException
 from azul.board import Board
 from azul.center import Center
@@ -36,6 +38,13 @@ class AzulEnv(AECEnv):
         self.state = None
         self.current_move = 0
         self.max_moves = player_count * 150 if max_moves is None else max_moves
+        
+        # Add matplotlib figure storage for reusing the same plot
+        self.fig = None
+        self.ax_bag = None
+        self.ax_scores = None
+        self.ax_factories = None
+        plt.ion()  # Turn on interactive mode
 
         self.observation_spaces: Dict[str, spaces.Space] = {
             agent: spaces.Dict({
@@ -192,7 +201,168 @@ class AzulEnv(AECEnv):
         return self.state
 
     def render(self):
-        pass
+        print(self.state)
+        if self.state is None:
+            return
+            
+        # Get tile counts from the bag and factories
+        bag_counts = self.state["bag"]
+        factories = self.state["factories"]
+        
+        # Define tile colors and names
+        tile_colors = ['#4169E1', '#FFD700', '#DC143C', '#000000', '#F5F5F5']  # Blue, Yellow, Red, Black, White
+        tile_names = ['Blue', 'Yellow', 'Red', 'Black', 'White']
+        tile_letters = ['B', 'Y', 'R', 'K', 'W']
+        
+        # Create figure with subplots if they don't exist, otherwise reuse
+        if self.fig is None or self.ax_bag is None or self.ax_scores is None or self.ax_factories is None:
+            # Create figure with subplots - bag at top, scores, then factories below
+            self.fig = plt.figure(figsize=(16, 14))
+            self.fig.patch.set_facecolor('#E6E6FA')  # Light lavender background
+            
+            # Top subplot for bag statistics (smaller)
+            self.ax_bag = plt.subplot2grid((4, 1), (0, 0))
+            
+            # Middle subplot for player scores
+            self.ax_scores = plt.subplot2grid((4, 1), (1, 0))
+            
+            # Bottom subplot for factories
+            self.ax_factories = plt.subplot2grid((4, 1), (2, 0), rowspan=2)
+        else:
+            # Clear existing axes for redrawing
+            self.ax_bag.clear()
+            self.ax_scores.clear()
+            self.ax_factories.clear()
+        
+        # Set background colors
+        self.ax_bag.set_facecolor('#F0F8FF')
+        self.ax_scores.set_facecolor('#F0F8FF')
+        self.ax_factories.set_facecolor('#F0F8FF')
+        
+        # Create bag bar chart
+        bars = self.ax_bag.bar(range(5), bag_counts, color=tile_colors, edgecolor='black', linewidth=1.5)
+        bars[4].set_edgecolor('black')
+        bars[4].set_linewidth(2)
+        
+        # Customize bag plot
+        self.ax_bag.set_title('Bag Statistics', fontsize=14, fontweight='bold', pad=10)
+        self.ax_bag.set_ylabel('Count', fontsize=10)
+        self.ax_bag.set_xticks(range(5))
+        self.ax_bag.set_xticklabels([f'{letter}' for letter in tile_letters], fontsize=10)
+        
+        # Add count labels on bars
+        for bar, count in zip(bars, bag_counts):
+            height = bar.get_height()
+            self.ax_bag.text(bar.get_x() + bar.get_width()/2., height + 0.05,
+                           f'{count}', ha='center', va='bottom', fontsize=10, fontweight='bold')
+        
+        self.ax_bag.set_ylim(0, max(bag_counts) + 2 if max(bag_counts) > 0 else 5)
+        self.ax_bag.grid(True, alpha=0.3, linestyle='--')
+        
+        # Add legend for tile colors and letters
+        legend_elements = []
+        for i, (color, letter, name) in enumerate(zip(tile_colors, tile_letters, tile_names)):
+            legend_elements.append(plt.Rectangle((0, 0), 1, 1, facecolor=color, edgecolor='black', 
+                                               label=f'{letter} = {name}'))
+        
+        self.ax_bag.legend(handles=legend_elements, loc='upper right', fontsize=9, 
+                          title='Tile Types', title_fontsize=10)
+        
+        # Set scores title
+        self.ax_scores.set_title('Player Scores', fontsize=16, fontweight='bold', pad=20)
+        
+        # Draw player scores
+        player_scores = [player["score"] for player in self.state["players"]]
+        player_names = [f'Player {i+1}' for i in range(len(player_scores))]
+        
+        # Use different colors for each player (cycling through available colors)
+        player_colors = [tile_colors[i % len(tile_colors)] for i in range(len(player_scores))]
+        
+        bars = self.ax_scores.bar(range(len(player_scores)), player_scores, 
+                                 color=player_colors, edgecolor='black', linewidth=1.5)
+        
+        # Add score labels on top of bars
+        for i, (bar, score) in enumerate(zip(bars, player_scores)):
+            height = bar.get_height()
+            self.ax_scores.text(bar.get_x() + bar.get_width()/2., height + 0.5,
+                               f'{score}', ha='center', va='bottom', fontsize=12, fontweight='bold')
+        
+        # Customize scores plot
+        self.ax_scores.set_ylabel('Score', fontsize=12, fontweight='bold')
+        self.ax_scores.set_xticks(range(len(player_scores)))
+        self.ax_scores.set_xticklabels(player_names, fontsize=11, fontweight='bold')
+        self.ax_scores.set_ylim(0, max(player_scores) + 5 if max(player_scores) > 0 else 10)
+        self.ax_scores.grid(True, alpha=0.3, linestyle='--')
+        
+        # Set factories title
+        self.ax_factories.set_title('Factory Displays', fontsize=16, fontweight='bold', pad=20)
+        
+        # Calculate grid layout for factories
+        num_factories = len(factories)
+        cols = min(4, num_factories)  # Max 4 factories per row
+        rows = (num_factories + cols - 1) // cols  # Ceiling division
+        
+        factory_width = 4  # Each factory takes 4 tile positions
+        factory_height = 1
+        margin_x = 1
+        margin_y = 0.5
+        
+        # Draw each factory
+        for factory_idx, factory_tiles in enumerate(factories):
+            row = factory_idx // cols
+            col = factory_idx % cols
+            
+            # Calculate factory position
+            start_x = col * (factory_width + margin_x)
+            start_y = (rows - 1 - row) * (factory_height + margin_y)
+            
+            # Draw factory label
+            self.ax_factories.text(start_x + factory_width/2, start_y + factory_height + 0.1,
+                                 f'Factory No. {factory_idx + 1}', ha='center', va='bottom',
+                                 fontsize=12, fontweight='bold')
+            
+            # Draw tiles in this factory
+            tile_pos = 0
+            for tile_type, count in enumerate(factory_tiles):
+                for _ in range(count):
+                    if tile_pos < 4:  # Max 4 tiles per factory
+                        x = start_x + tile_pos
+                        y = start_y
+                        
+                        # Create colored square for tile
+                        square = plt.Rectangle((x, y), 0.8, 0.8, 
+                                             facecolor=tile_colors[tile_type],
+                                             edgecolor='black', linewidth=2)
+                        self.ax_factories.add_patch(square)
+                        
+                        # Add tile letter
+                        self.ax_factories.text(x + 0.4, y + 0.4, tile_letters[tile_type],
+                                             ha='center', va='center', fontsize=14, fontweight='bold',
+                                             color='white' if tile_type != 4 else 'black')  # White text except on white tiles
+                        
+                        tile_pos += 1
+        
+        # Set axis limits and remove ticks
+        total_width = cols * (factory_width + margin_x) - margin_x
+        total_height = rows * (factory_height + margin_y) + 0.5
+        
+        self.ax_factories.set_xlim(-0.5, total_width + 0.5)
+        self.ax_factories.set_ylim(-0.5, total_height)
+        self.ax_factories.set_xticks([])
+        self.ax_factories.set_yticks([])
+        self.ax_factories.set_aspect('equal')
+        
+        # Update the display
+        self.fig.tight_layout()
+        self.fig.canvas.draw()
+        self.fig.canvas.flush_events()
+        plt.show(block=False)
+        plt.pause(0.01)  # Brief pause to ensure the plot updates
 
     def close(self):
-        pass
+        if self.fig is not None:
+            plt.close(self.fig)
+            self.fig = None
+            self.ax_bag = None
+            self.ax_scores = None
+            self.ax_factories = None
