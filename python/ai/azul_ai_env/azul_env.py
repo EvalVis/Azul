@@ -46,6 +46,7 @@ class AzulEnv(AECEnv):
         self.ax_lid = None
         self.ax_scores = None
         self.ax_factories = None
+        self.ax_floor = None
         plt.ion()  # Turn on interactive mode
 
         self.observation_spaces: Dict[str, spaces.Space] = {
@@ -219,21 +220,24 @@ class AzulEnv(AECEnv):
         tile_letters = ['B', 'Y', 'R', 'K', 'W']
         
         # Create figure with subplots if they don't exist, otherwise reuse
-        if self.fig is None or self.ax_bag is None or self.ax_center is None or self.ax_lid is None or self.ax_scores is None or self.ax_factories is None:
-            # Create figure with subplots - bag, center, lid at top, scores, then factories below
-            self.fig = plt.figure(figsize=(18, 16))
+        if self.fig is None or self.ax_bag is None or self.ax_center is None or self.ax_lid is None or self.ax_scores is None or self.ax_factories is None or self.ax_floor is None:
+            # Create figure with subplots - bag, center, lid at top, scores, factories, then floor at bottom
+            self.fig = plt.figure(figsize=(18, 18))
             self.fig.patch.set_facecolor('#E6E6FA')  # Light lavender background
             
             # Top row: bag, center, lid statistics
-            self.ax_bag = plt.subplot2grid((5, 3), (0, 0))
-            self.ax_center = plt.subplot2grid((5, 3), (0, 1))
-            self.ax_lid = plt.subplot2grid((5, 3), (0, 2))
+            self.ax_bag = plt.subplot2grid((6, 3), (0, 0))
+            self.ax_center = plt.subplot2grid((6, 3), (0, 1))
+            self.ax_lid = plt.subplot2grid((6, 3), (0, 2))
             
             # Middle subplot for player scores (spans all columns)
-            self.ax_scores = plt.subplot2grid((5, 3), (1, 0), colspan=3)
+            self.ax_scores = plt.subplot2grid((6, 3), (1, 0), colspan=3)
             
-            # Bottom subplot for factories (spans all columns and multiple rows)
-            self.ax_factories = plt.subplot2grid((5, 3), (2, 0), rowspan=3, colspan=3)
+            # Factories subplot (spans all columns)
+            self.ax_factories = plt.subplot2grid((6, 3), (2, 0), rowspan=2, colspan=3)
+            
+            # Floor statistics for each player (spans all columns)
+            self.ax_floor = plt.subplot2grid((6, 3), (4, 0), rowspan=2, colspan=3)
         else:
             # Clear existing axes for redrawing
             self.ax_bag.clear()
@@ -241,6 +245,7 @@ class AzulEnv(AECEnv):
             self.ax_lid.clear()
             self.ax_scores.clear()
             self.ax_factories.clear()
+            self.ax_floor.clear()
         
         # Set background colors
         self.ax_bag.set_facecolor('#F0F8FF')
@@ -248,6 +253,7 @@ class AzulEnv(AECEnv):
         self.ax_lid.set_facecolor('#F0F8FF')
         self.ax_scores.set_facecolor('#F0F8FF')
         self.ax_factories.set_facecolor('#F0F8FF')
+        self.ax_floor.set_facecolor('#F0F8FF')
         
         # Create bag bar chart
         bars_bag = self.ax_bag.bar(range(5), bag_counts, color=tile_colors, edgecolor='black', linewidth=1.5)
@@ -406,12 +412,92 @@ class AzulEnv(AECEnv):
         self.ax_factories.set_yticks([])
         self.ax_factories.set_aspect('equal')
         
+        # Draw player floors
+        self.draw_player_floors(tile_colors, tile_letters)
+        
         # Update the display
         self.fig.tight_layout()
         self.fig.canvas.draw()
         self.fig.canvas.flush_events()
         plt.show(block=False)
         plt.pause(0.01)  # Brief pause to ensure the plot updates
+    
+    def draw_player_floors(self, tile_colors, tile_letters):
+        """Draw floor displays for each player"""
+        self.ax_floor.set_title('Player Floors (with Penalties)', fontsize=16, fontweight='bold', pad=20)
+        
+        # Floor penalty values (standard Azul penalties)
+        floor_penalties = [-1, -1, -2, -2, -2, -3, -3]
+        
+        num_players = len(self.state["players"])
+        floor_width = 7  # Standard floor has 7 positions
+        player_height = 1.5
+        margin_x = 0.5
+        margin_y = 0.3
+        
+        for player_idx, player_data in enumerate(self.state["players"]):
+            floor_tiles = player_data["floor"]
+            
+            # Calculate player floor position
+            start_y = (num_players - 1 - player_idx) * (player_height + margin_y)
+            
+            # Draw player label
+            self.ax_floor.text(-1, start_y + player_height/2, f'Player {player_idx + 1}',
+                             ha='right', va='center', fontsize=12, fontweight='bold')
+            
+            # Draw floor positions
+            for pos in range(floor_width):
+                x = pos + margin_x
+                y = start_y
+                
+                # Draw floor slot background
+                slot = plt.Rectangle((x, y), 0.8, 0.8, facecolor='lightgray', 
+                                   edgecolor='black', linewidth=1, alpha=0.3)
+                self.ax_floor.add_patch(slot)
+                
+                # Draw penalty value below the slot
+                self.ax_floor.text(x + 0.4, y - 0.2, f'{floor_penalties[pos]}',
+                                 ha='center', va='center', fontsize=10, fontweight='bold',
+                                 color='red')
+                
+                # Draw tile if present
+                if pos < len(floor_tiles):
+                    tile_type = floor_tiles[pos]
+                    
+                    if tile_type == 5:  # First player marker
+                        # Draw first player marker as a special golden square
+                        marker = plt.Rectangle((x, y), 0.8, 0.8, facecolor='gold', 
+                                             edgecolor='black', linewidth=2)
+                        self.ax_floor.add_patch(marker)
+                        
+                        # Add text for first player marker
+                        self.ax_floor.text(x + 0.4, y + 0.4, '1st',
+                                         ha='center', va='center', fontsize=10, fontweight='bold',
+                                         color='black')
+                        self.ax_floor.text(x + 0.4, y + 0.15, 'Player',
+                                         ha='center', va='center', fontsize=8, fontweight='bold',
+                                         color='black')
+                    else:
+                        # Draw regular tile
+                        tile_square = plt.Rectangle((x, y), 0.8, 0.8, 
+                                                  facecolor=tile_colors[tile_type],
+                                                  edgecolor='black', linewidth=2)
+                        self.ax_floor.add_patch(tile_square)
+                        
+                        # Add tile letter
+                        self.ax_floor.text(x + 0.4, y + 0.4, tile_letters[tile_type],
+                                         ha='center', va='center', fontsize=12, fontweight='bold',
+                                         color='white' if tile_type != 4 else 'black')
+        
+        # Set axis limits and remove ticks
+        total_width = floor_width + 1
+        total_height = num_players * (player_height + margin_y) + 0.5
+        
+        self.ax_floor.set_xlim(-1.5, total_width)
+        self.ax_floor.set_ylim(-0.5, total_height)
+        self.ax_floor.set_xticks([])
+        self.ax_floor.set_yticks([])
+        self.ax_floor.set_aspect('equal')
 
     def close(self):
         if self.fig is not None:
@@ -422,3 +508,4 @@ class AzulEnv(AECEnv):
             self.ax_lid = None
             self.ax_scores = None
             self.ax_factories = None
+            self.ax_floor = None
