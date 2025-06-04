@@ -390,11 +390,8 @@ class AzulEnv(AECEnv):
         # Show bag and lid in separate popup window
         self.show_bag_lid_popup(bag_counts, lid_counts, tile_colors, tile_letters)
         
-        # Show pattern lines in separate popup window
-        self.show_pattern_lines_popup(tile_colors, tile_letters)
-        
-        # Show wall in separate popup window
-        self.show_wall_popup(tile_colors, tile_letters)
+        # Show individual player windows (floor, pattern lines, wall)
+        self.show_individual_player_windows(tile_colors, tile_letters)
         
         # Update the display
         self.fig.tight_layout()
@@ -548,108 +545,174 @@ class AzulEnv(AECEnv):
         self.bag_lid_fig.canvas.flush_events()
         plt.show(block=False)
 
-    def show_pattern_lines_popup(self, tile_colors, tile_letters):
-        """Show pattern lines in a separate popup window"""
-        # Create popup window if it doesn't exist
-        if not hasattr(self, 'pattern_lines_fig') or self.pattern_lines_fig is None:
-            num_players = len(self.state["players"])
-            self.pattern_lines_fig = plt.figure(figsize=(12, 6 + num_players * 3))
-            self.pattern_lines_fig.canvas.manager.set_window_title('Azul - Pattern Lines')
-            self.pattern_lines_fig.patch.set_facecolor('#E6E6FA')
+    def show_individual_player_windows(self, tile_colors, tile_letters):
+        """Show individual player windows (floor, pattern lines, wall)"""
+        num_players = len(self.state["players"])
+        
+        # Initialize player windows list if not exists
+        if not hasattr(self, 'player_figs') or self.player_figs is None:
+            self.player_figs = []
+            self.player_axes = []
             
-            # Create subplots for each player's pattern lines
-            self.pattern_axes = []
-            for i in range(num_players):
-                ax = plt.subplot2grid((num_players, 1), (i, 0))
-                ax.set_facecolor('#F0F8FF')
-                self.pattern_axes.append(ax)
+            for player_idx in range(num_players):
+                # Create window for each player
+                fig = plt.figure(figsize=(12, 10))
+                fig.canvas.manager.set_window_title(f'Azul - Player {player_idx + 1}')
+                fig.patch.set_facecolor('#E6E6FA')
+                
+                # Create subplots: floor, pattern lines, wall
+                ax_floor = plt.subplot2grid((3, 1), (0, 0))
+                ax_pattern = plt.subplot2grid((3, 1), (1, 0))
+                ax_wall = plt.subplot2grid((3, 1), (2, 0))
+                
+                ax_floor.set_facecolor('#F0F8FF')
+                ax_pattern.set_facecolor('#F0F8FF')
+                ax_wall.set_facecolor('#F0F8FF')
+                
+                self.player_figs.append(fig)
+                self.player_axes.append((ax_floor, ax_pattern, ax_wall))
         else:
             # Clear existing axes
-            for ax in self.pattern_axes:
-                ax.clear()
-                ax.set_facecolor('#F0F8FF')
+            for ax_floor, ax_pattern, ax_wall in self.player_axes:
+                ax_floor.clear()
+                ax_pattern.clear()
+                ax_wall.clear()
+                ax_floor.set_facecolor('#F0F8FF')
+                ax_pattern.set_facecolor('#F0F8FF')
+                ax_wall.set_facecolor('#F0F8FF')
         
-        # Draw pattern lines for each player
+        # Draw each player's data
         for player_idx, player_data in enumerate(self.state["players"]):
-            pattern_lines = player_data["pattern_lines"]
-            ax = self.pattern_axes[player_idx]
+            ax_floor, ax_pattern, ax_wall = self.player_axes[player_idx]
             
-            # Set title for this player's pattern lines
-            ax.set_title(f'Player {player_idx + 1} Pattern Lines', 
-                        fontsize=14, fontweight='bold', pad=15)
+            # Draw floor for this player
+            self.draw_single_player_floor(player_data, ax_floor, tile_colors, tile_letters, player_idx)
             
-            # Draw each pattern line row in triangular formation (1 to 5 tiles)
-            for row in range(5):
-                row_length = row + 1  # Row 0 has 1 tile, row 1 has 2 tiles, etc.
-                pattern_row = pattern_lines[row]
-                
-                # Right-align all rows to create proper Azul pattern lines structure
-                right_edge = 4.5  # Right edge position
-                start_x = right_edge - (row_length * 0.8)  # Start position for right alignment
-                y = 4 - row + 0.5  # Row 0 at top, row 4 at bottom
-                
-                # Draw tiles for this row
-                for pos in range(row_length):
-                    x = start_x + pos * 0.8
-                    
-                    # Draw slot background
-                    slot = plt.Rectangle((x, y), 0.7, 0.7, facecolor='lightgray', 
-                                       edgecolor='black', linewidth=1, alpha=0.3)
-                    ax.add_patch(slot)
-                    
-                    # Check if there's a tile in this position
-                    if pos < len(pattern_row):
-                        tile_type = pattern_row[pos]
-                        
-                        # Only draw if it's not empty (value 5 means empty)
-                        if tile_type != 5:
-                            # Draw tile
-                            tile_square = plt.Rectangle((x, y), 0.7, 0.7, 
-                                                      facecolor=tile_colors[tile_type],
-                                                      edgecolor='black', linewidth=2)
-                            ax.add_patch(tile_square)
-                            
-                            # Add tile letter
-                            ax.text(x + 0.35, y + 0.35, tile_letters[tile_type],
-                                   ha='center', va='center', fontsize=10, fontweight='bold',
-                                   color='white' if tile_type != 4 else 'black')
+            # Draw pattern lines for this player
+            self.draw_single_player_pattern_lines(player_data, ax_pattern, tile_colors, tile_letters, player_idx)
             
-            # Set axis limits and styling
-            ax.set_xlim(0, 5)
-            ax.set_ylim(0, 6)
-            ax.set_xticks([])
-            ax.set_yticks([])
-            ax.set_aspect('equal')
+            # Draw wall for this player
+            self.draw_single_player_wall(player_data, ax_wall, tile_colors, tile_letters, player_idx)
             
-            # Add a subtle grid
-            ax.grid(True, alpha=0.2, linestyle='--')
-        
-        # Update the popup display
-        self.pattern_lines_fig.tight_layout()
-        self.pattern_lines_fig.canvas.draw()
-        self.pattern_lines_fig.canvas.flush_events()
-        plt.show(block=False)
+            # Update the display
+            self.player_figs[player_idx].tight_layout()
+            self.player_figs[player_idx].canvas.draw()
+            self.player_figs[player_idx].canvas.flush_events()
+            plt.show(block=False)
 
-    def show_wall_popup(self, tile_colors, tile_letters):
-        """Show wall in a separate popup window"""
-        # Create popup window if it doesn't exist
-        if not hasattr(self, 'wall_fig') or self.wall_fig is None:
-            num_players = len(self.state["players"])
-            self.wall_fig = plt.figure(figsize=(12, 6 + num_players * 4))
-            self.wall_fig.canvas.manager.set_window_title('Azul - Wall')
-            self.wall_fig.patch.set_facecolor('#E6E6FA')
+    def draw_single_player_floor(self, player_data, ax_floor, tile_colors, tile_letters, player_idx):
+        """Draw floor for a single player"""
+        ax_floor.set_title(f'Player {player_idx + 1} Floor', fontsize=14, fontweight='bold', pad=15)
+        
+        # Floor penalty values (standard Azul penalties)
+        floor_penalties = [-1, -1, -2, -2, -2, -3, -3]
+        floor_tiles = player_data["floor"]
+        
+        # Draw floor positions
+        for pos in range(7):
+            x = pos + 0.5
+            y = 0.5
             
-            # Create subplots for each player's wall
-            self.wall_axes = []
-            for i in range(num_players):
-                ax = plt.subplot2grid((num_players, 1), (i, 0))
-                ax.set_facecolor('#F0F8FF')
-                self.wall_axes.append(ax)
-        else:
-            # Clear existing axes
-            for ax in self.wall_axes:
-                ax.clear()
-                ax.set_facecolor('#F0F8FF')
+            # Draw floor slot background
+            slot = plt.Rectangle((x, y), 0.8, 0.8, facecolor='lightgray', 
+                               edgecolor='black', linewidth=1, alpha=0.3)
+            ax_floor.add_patch(slot)
+            
+            # Draw penalty value below the slot
+            ax_floor.text(x + 0.4, y - 0.2, f'{floor_penalties[pos]}',
+                         ha='center', va='center', fontsize=10, fontweight='bold',
+                         color='red')
+            
+            # Draw tile if present
+            if pos < len(floor_tiles):
+                tile_type = floor_tiles[pos]
+                
+                if tile_type == 5:  # First player marker
+                    # Draw first player marker as a special white square
+                    marker = plt.Rectangle((x, y), 0.8, 0.8, facecolor='white', 
+                                         edgecolor='black', linewidth=2)
+                    ax_floor.add_patch(marker)
+                    
+                    # Add text for first player marker
+                    ax_floor.text(x + 0.4, y + 0.4, 'M',
+                                 ha='center', va='center', fontsize=14, fontweight='bold',
+                                 color='black')
+                else:
+                    # Draw regular tile
+                    tile_square = plt.Rectangle((x, y), 0.8, 0.8, 
+                                                facecolor=tile_colors[tile_type],
+                                                edgecolor='black', linewidth=2)
+                    ax_floor.add_patch(tile_square)
+                    
+                    # Add tile letter
+                    ax_floor.text(x + 0.4, y + 0.4, tile_letters[tile_type],
+                                 ha='center', va='center', fontsize=12, fontweight='bold',
+                                 color='white' if tile_type != 4 else 'black')
+        
+        # Set axis limits and remove ticks
+        ax_floor.set_xlim(-0.5, 7.5)
+        ax_floor.set_ylim(-0.5, 1.5)
+        ax_floor.set_xticks([])
+        ax_floor.set_yticks([])
+        ax_floor.set_aspect('equal')
+
+    def draw_single_player_pattern_lines(self, player_data, ax_pattern, tile_colors, tile_letters, player_idx):
+        """Draw pattern lines for a single player"""
+        ax_pattern.set_title(f'Player {player_idx + 1} Pattern Lines', fontsize=14, fontweight='bold', pad=15)
+        
+        pattern_lines = player_data["pattern_lines"]
+        
+        # Draw each pattern line row in triangular formation (1 to 5 tiles)
+        for row in range(5):
+            row_length = row + 1  # Row 0 has 1 tile, row 1 has 2 tiles, etc.
+            pattern_row = pattern_lines[row]
+            
+            # Right-align all rows to create proper Azul pattern lines structure
+            right_edge = 4.5  # Right edge position
+            start_x = right_edge - (row_length * 0.8)  # Start position for right alignment
+            y = 4 - row + 0.5  # Row 0 at top, row 4 at bottom
+            
+            # Draw tiles for this row
+            for pos in range(row_length):
+                x = start_x + pos * 0.8
+                
+                # Draw slot background
+                slot = plt.Rectangle((x, y), 0.7, 0.7, facecolor='lightgray', 
+                                   edgecolor='black', linewidth=1, alpha=0.3)
+                ax_pattern.add_patch(slot)
+                
+                # Check if there's a tile in this position
+                if pos < len(pattern_row):
+                    tile_type = pattern_row[pos]
+                    
+                    # Only draw if it's not empty (value 5 means empty)
+                    if tile_type != 5:
+                        # Draw tile
+                        tile_square = plt.Rectangle((x, y), 0.7, 0.7, 
+                                                  facecolor=tile_colors[tile_type],
+                                                  edgecolor='black', linewidth=2)
+                        ax_pattern.add_patch(tile_square)
+                        
+                        # Add tile letter
+                        ax_pattern.text(x + 0.35, y + 0.35, tile_letters[tile_type],
+                                       ha='center', va='center', fontsize=10, fontweight='bold',
+                                       color='white' if tile_type != 4 else 'black')
+        
+        # Set axis limits and styling
+        ax_pattern.set_xlim(0, 5)
+        ax_pattern.set_ylim(0, 6)
+        ax_pattern.set_xticks([])
+        ax_pattern.set_yticks([])
+        ax_pattern.set_aspect('equal')
+        
+        # Add a subtle grid
+        ax_pattern.grid(True, alpha=0.2, linestyle='--')
+
+    def draw_single_player_wall(self, player_data, ax_wall, tile_colors, tile_letters, player_idx):
+        """Draw wall for a single player"""
+        ax_wall.set_title(f'Player {player_idx + 1} Wall', fontsize=14, fontweight='bold', pad=15)
+        
+        wall = player_data["wall"]
         
         # Standard Azul wall pattern (each row has different tile order)
         # Row 0: B Y R K W (0 1 2 3 4)
@@ -665,70 +728,55 @@ class AzulEnv(AECEnv):
             [1, 2, 3, 4, 0]   # Row 4
         ]
         
-        # Draw wall for each player
-        for player_idx, player_data in enumerate(self.state["players"]):
-            wall = player_data["wall"]
-            ax = self.wall_axes[player_idx]
-            
-            # Set title for this player's wall
-            ax.set_title(f'Player {player_idx + 1} Wall', 
-                        fontsize=14, fontweight='bold', pad=15)
-            
-            # Draw 5x5 wall grid
-            for row in range(5):
-                for col in range(5):
-                    x = col + 0.5
-                    y = 4 - row + 0.5  # Row 0 at top, row 4 at bottom
-                    
-                    # Get expected tile type for this position
-                    expected_tile_type = wall_pattern[row][col]
-                    
-                    # Draw slot background with pattern color (very light)
-                    slot = plt.Rectangle((x, y), 0.8, 0.8, 
-                                       facecolor=tile_colors[expected_tile_type], 
-                                       edgecolor='black', linewidth=1, alpha=0.1)
-                    ax.add_patch(slot)
-                    
-                    # Draw border for the slot
-                    border = plt.Rectangle((x, y), 0.8, 0.8, 
-                                         facecolor='none', edgecolor='black', linewidth=1)
-                    ax.add_patch(border)
-                    
-                    # Check if there's a tile placed in this position
-                    placed_tile_type = wall[row][col]
-                    
-                    if placed_tile_type != 5:  # 5 means empty
-                        # Draw placed tile
-                        tile_square = plt.Rectangle((x, y), 0.8, 0.8, 
+        # Draw wall for this player
+        for row in range(5):
+            for col in range(5):
+                x = col + 0.5
+                y = 4 - row + 0.5  # Row 0 at top, row 4 at bottom
+                
+                # Get expected tile type for this position
+                expected_tile_type = wall_pattern[row][col]
+                
+                # Draw slot background with pattern color (very light)
+                slot = plt.Rectangle((x, y), 0.8, 0.8, 
+                                   facecolor=tile_colors[expected_tile_type], 
+                                   edgecolor='black', linewidth=1, alpha=0.1)
+                ax_wall.add_patch(slot)
+                
+                # Draw border for the slot
+                border = plt.Rectangle((x, y), 0.8, 0.8, 
+                                     facecolor='none', edgecolor='black', linewidth=1)
+                ax_wall.add_patch(border)
+                
+                # Check if there's a tile placed in this position
+                placed_tile_type = wall[row][col]
+                
+                if placed_tile_type != 5:  # 5 means empty
+                    # Draw placed tile
+                    tile_square = plt.Rectangle((x, y), 0.8, 0.8, 
                                                   facecolor=tile_colors[placed_tile_type],
                                                   edgecolor='black', linewidth=2)
-                        ax.add_patch(tile_square)
-                        
-                        # Add tile letter
-                        ax.text(x + 0.4, y + 0.4, tile_letters[placed_tile_type],
+                    ax_wall.add_patch(tile_square)
+                    
+                    # Add tile letter
+                    ax_wall.text(x + 0.4, y + 0.4, tile_letters[placed_tile_type],
                                ha='center', va='center', fontsize=12, fontweight='bold',
                                color='white' if placed_tile_type != 4 else 'black')
-                    else:
-                        # Show expected tile letter faintly
-                        ax.text(x + 0.4, y + 0.4, tile_letters[expected_tile_type],
+                else:
+                    # Show expected tile letter faintly
+                    ax_wall.text(x + 0.4, y + 0.4, tile_letters[expected_tile_type],
                                ha='center', va='center', fontsize=10, fontweight='bold',
                                color='gray', alpha=0.3)
-            
-            # Set axis limits and styling
-            ax.set_xlim(-0.5, 5.5)
-            ax.set_ylim(-0.5, 5.5)
-            ax.set_xticks([])
-            ax.set_yticks([])
-            ax.set_aspect('equal')
-            
-            # Add a subtle grid
-            ax.grid(True, alpha=0.2, linestyle='--')
         
-        # Update the popup display
-        self.wall_fig.tight_layout()
-        self.wall_fig.canvas.draw()
-        self.wall_fig.canvas.flush_events()
-        plt.show(block=False)
+        # Set axis limits and styling
+        ax_wall.set_xlim(-0.5, 5.5)
+        ax_wall.set_ylim(-0.5, 5.5)
+        ax_wall.set_xticks([])
+        ax_wall.set_yticks([])
+        ax_wall.set_aspect('equal')
+        
+        # Add a subtle grid
+        ax_wall.grid(True, alpha=0.2, linestyle='--')
 
     def close(self):
         if self.fig is not None:
@@ -746,14 +794,9 @@ class AzulEnv(AECEnv):
             self.ax_bag = None
             self.ax_lid = None
         
-        # Close pattern lines popup if it exists
-        if hasattr(self, 'pattern_lines_fig') and self.pattern_lines_fig is not None:
-            plt.close(self.pattern_lines_fig)
-            self.pattern_lines_fig = None
-            self.pattern_axes = []
-        
-        # Close wall popup if it exists
-        if hasattr(self, 'wall_fig') and self.wall_fig is not None:
-            plt.close(self.wall_fig)
-            self.wall_fig = None
-            self.wall_axes = []
+        # Close individual player windows if they exist
+        if hasattr(self, 'player_figs') and self.player_figs is not None:
+            for fig in self.player_figs:
+                plt.close(fig)
+            self.player_figs = None
+            self.player_axes = []
