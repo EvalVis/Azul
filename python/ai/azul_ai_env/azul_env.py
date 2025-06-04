@@ -375,6 +375,9 @@ class AzulEnv(AECEnv):
         # Show pattern lines in separate popup window
         self.show_pattern_lines_popup(tile_colors, tile_letters)
         
+        # Show wall in separate popup window
+        self.show_wall_popup(tile_colors, tile_letters)
+        
         # Update the display
         self.fig.tight_layout()
         self.fig.canvas.draw()
@@ -615,6 +618,113 @@ class AzulEnv(AECEnv):
         self.pattern_lines_fig.canvas.flush_events()
         plt.show(block=False)
 
+    def show_wall_popup(self, tile_colors, tile_letters):
+        """Show wall in a separate popup window"""
+        # Create popup window if it doesn't exist
+        if not hasattr(self, 'wall_fig') or self.wall_fig is None:
+            num_players = len(self.state["players"])
+            self.wall_fig = plt.figure(figsize=(12, 6 + num_players * 4))
+            self.wall_fig.canvas.manager.set_window_title('Azul - Wall')
+            self.wall_fig.patch.set_facecolor('#E6E6FA')
+            
+            # Create subplots for each player's wall
+            self.wall_axes = []
+            for i in range(num_players):
+                ax = plt.subplot2grid((num_players, 1), (i, 0))
+                ax.set_facecolor('#F0F8FF')
+                self.wall_axes.append(ax)
+        else:
+            # Clear existing axes
+            for ax in self.wall_axes:
+                ax.clear()
+                ax.set_facecolor('#F0F8FF')
+        
+        # Standard Azul wall pattern (each row has different tile order)
+        # Row 0: B Y R K W (0 1 2 3 4)
+        # Row 1: W B Y R K (4 0 1 2 3)  
+        # Row 2: K W B Y R (3 4 0 1 2)
+        # Row 3: R K W B Y (2 3 4 0 1)
+        # Row 4: Y R K W B (1 2 3 4 0)
+        wall_pattern = [
+            [0, 1, 2, 3, 4],  # Row 0
+            [4, 0, 1, 2, 3],  # Row 1
+            [3, 4, 0, 1, 2],  # Row 2
+            [2, 3, 4, 0, 1],  # Row 3
+            [1, 2, 3, 4, 0]   # Row 4
+        ]
+        
+        # Draw wall for each player
+        for player_idx, player_data in enumerate(self.state["players"]):
+            wall = player_data["wall"]
+            ax = self.wall_axes[player_idx]
+            
+            # Set title for this player's wall
+            ax.set_title(f'Player {player_idx + 1} Wall', 
+                        fontsize=14, fontweight='bold', pad=15)
+            
+            # Draw 5x5 wall grid
+            for row in range(5):
+                for col in range(5):
+                    x = col + 0.5
+                    y = 4 - row + 0.5  # Row 0 at top, row 4 at bottom
+                    
+                    # Get expected tile type for this position
+                    expected_tile_type = wall_pattern[row][col]
+                    
+                    # Draw slot background with pattern color (very light)
+                    slot = plt.Rectangle((x, y), 0.8, 0.8, 
+                                       facecolor=tile_colors[expected_tile_type], 
+                                       edgecolor='black', linewidth=1, alpha=0.1)
+                    ax.add_patch(slot)
+                    
+                    # Draw border for the slot
+                    border = plt.Rectangle((x, y), 0.8, 0.8, 
+                                         facecolor='none', edgecolor='black', linewidth=1)
+                    ax.add_patch(border)
+                    
+                    # Check if there's a tile placed in this position
+                    placed_tile_type = wall[row][col]
+                    
+                    if placed_tile_type != 5:  # 5 means empty
+                        # Draw placed tile
+                        tile_square = plt.Rectangle((x, y), 0.8, 0.8, 
+                                                  facecolor=tile_colors[placed_tile_type],
+                                                  edgecolor='black', linewidth=2)
+                        ax.add_patch(tile_square)
+                        
+                        # Add tile letter
+                        ax.text(x + 0.4, y + 0.4, tile_letters[placed_tile_type],
+                               ha='center', va='center', fontsize=12, fontweight='bold',
+                               color='white' if placed_tile_type != 4 else 'black')
+                    else:
+                        # Show expected tile letter faintly
+                        ax.text(x + 0.4, y + 0.4, tile_letters[expected_tile_type],
+                               ha='center', va='center', fontsize=10, fontweight='bold',
+                               color='gray', alpha=0.3)
+            
+            # Add row and column labels
+            for i in range(5):
+                ax.text(-0.2, 4.5 - i + 0.5, f'R{i+1}', ha='center', va='center', 
+                       fontsize=10, fontweight='bold', color='gray')
+                ax.text(i + 0.5, 5.2, f'C{i+1}', ha='center', va='center', 
+                       fontsize=10, fontweight='bold', color='gray')
+            
+            # Set axis limits and styling
+            ax.set_xlim(-0.5, 5.5)
+            ax.set_ylim(-0.5, 5.5)
+            ax.set_xticks([])
+            ax.set_yticks([])
+            ax.set_aspect('equal')
+            
+            # Add a subtle grid
+            ax.grid(True, alpha=0.2, linestyle='--')
+        
+        # Update the popup display
+        self.wall_fig.tight_layout()
+        self.wall_fig.canvas.draw()
+        self.wall_fig.canvas.flush_events()
+        plt.show(block=False)
+
     def close(self):
         if self.fig is not None:
             plt.close(self.fig)
@@ -636,3 +746,9 @@ class AzulEnv(AECEnv):
             plt.close(self.pattern_lines_fig)
             self.pattern_lines_fig = None
             self.pattern_axes = []
+        
+        # Close wall popup if it exists
+        if hasattr(self, 'wall_fig') and self.wall_fig is not None:
+            plt.close(self.wall_fig)
+            self.wall_fig = None
+            self.wall_axes = []
