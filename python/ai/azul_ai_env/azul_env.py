@@ -47,6 +47,7 @@ class AzulEnv(AECEnv):
         self.ax_scores = None
         self.ax_factories = None
         self.ax_floor = None
+        self.ax_legend = None
         plt.ion()  # Turn on interactive mode
 
         self.observation_spaces: Dict[str, spaces.Space] = {
@@ -220,23 +221,47 @@ class AzulEnv(AECEnv):
         tile_letters = ['B', 'Y', 'R', 'K', 'W']
         
         # Create figure with subplots if they don't exist, otherwise reuse
-        if self.fig is None or self.ax_center is None or self.ax_scores is None or self.ax_factories is None:
-            # Create figure with subplots - center at top, scores, factories
-            self.fig = plt.figure(figsize=(18, 12))
+        if self.fig is None or self.ax_center is None or self.ax_scores is None or self.ax_factories is None or self.ax_legend is None:
+            # Create figure with subplots - legend at top, then scores, center, factories
+            self.fig = plt.figure(figsize=(18, 14))
             self.fig.patch.set_facecolor('#E6E6FA')  # Light lavender background
             
+            # Top row: legend
+            self.ax_legend = plt.subplot2grid((4, 1), (0, 0))
+            
             # Player scores
-            self.ax_scores = plt.subplot2grid((3, 1), (0, 0))
+            self.ax_scores = plt.subplot2grid((4, 1), (1, 0))
 
-            self.ax_center = plt.subplot2grid((3, 1), (1, 0))
+            self.ax_center = plt.subplot2grid((4, 1), (2, 0))
             
             # Factories subplot
-            self.ax_factories = plt.subplot2grid((3, 1), (2, 0))
+            self.ax_factories = plt.subplot2grid((4, 1), (3, 0))
         else:
             # Clear existing axes for redrawing
+            self.ax_legend.clear()
             self.ax_center.clear()
             self.ax_scores.clear()
             self.ax_factories.clear()
+        
+        # Set background colors
+        self.ax_legend.set_facecolor('#F0F8FF')
+        self.ax_center.set_facecolor('#F0F8FF')
+        self.ax_scores.set_facecolor('#F0F8FF')
+        self.ax_factories.set_facecolor('#F0F8FF')
+        
+        # Create legend
+        legend_elements = []
+        for i, (color, letter, name) in enumerate(zip(tile_colors, tile_letters, tile_names)):
+            legend_elements.append(plt.Rectangle((0, 0), 1, 1, facecolor=color, edgecolor='black', 
+                                               label=f'{letter} = {name}'))
+        
+        # Add first player marker to legend
+        legend_elements.append(plt.Rectangle((0, 0), 1, 1, facecolor='white', edgecolor='black', 
+                                           label='M = 1st Player Marker'))
+        
+        self.ax_legend.axis('off')
+        self.ax_legend.legend(handles=legend_elements, loc='center', fontsize=9, 
+                               title='Tile Types', title_fontsize=10)
         
         # Set scores title
         self.ax_scores.set_title('Player Scores', fontsize=16, fontweight='bold', pad=20)
@@ -278,11 +303,6 @@ class AzulEnv(AECEnv):
                     table[(i, j)].set_facecolor('#E6E6FA')
                 table[(i, j)].set_text_props(weight='bold')
 
-                # Set background colors
-        self.ax_center.set_facecolor('#F0F8FF')
-        self.ax_scores.set_facecolor('#F0F8FF')
-        self.ax_factories.set_facecolor('#F0F8FF')
-        
         # Create center bar chart
         bars_center = self.ax_center.bar(range(5), center_counts, color=tile_colors, edgecolor='black', linewidth=1.5)
         bars_center[4].set_edgecolor('black')
@@ -377,19 +397,6 @@ class AzulEnv(AECEnv):
         self.ax_factories.set_xticks([])
         self.ax_factories.set_yticks([])
         self.ax_factories.set_aspect('equal')
-        
-        # Add legend for tile colors and letters
-        legend_elements = []
-        for i, (color, letter, name) in enumerate(zip(tile_colors, tile_letters, tile_names)):
-            legend_elements.append(plt.Rectangle((0, 0), 1, 1, facecolor=color, edgecolor='black', 
-                                               label=f'{letter} = {name}'))
-        
-        # Add first player marker to legend
-        legend_elements.append(plt.Rectangle((0, 0), 1, 1, facecolor='white', edgecolor='black', 
-                                           label='M = 1st Player Marker'))
-        
-        self.ax_factories.legend(handles=legend_elements, loc='upper right', fontsize=9, 
-                               title='Tile Types', title_fontsize=10)
         
         # Show bag and lid in separate popup window
         self.show_bag_lid_popup(bag_counts, lid_counts, tile_colors, tile_letters)
@@ -712,6 +719,7 @@ class AzulEnv(AECEnv):
         if self.fig is not None:
             plt.close(self.fig)
             self.fig = None
+            self.ax_legend = None
             self.ax_center = None
             self.ax_scores = None
             self.ax_factories = None
