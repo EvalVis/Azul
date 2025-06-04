@@ -276,37 +276,42 @@ class AzulEnv(AECEnv):
         # Set scores title
         self.ax_scores.set_title('Player Scores', fontsize=16, fontweight='bold', pad=20)
         
-        # Draw player scores
+        # Create scores table instead of bar chart
         player_scores = [player["score"] for player in self.state["players"]]
-        player_names = [f'Player {i+1}' for i in range(len(player_scores))]
         
-        # Use different colors for each player (cycling through available colors)
-        player_colors = [tile_colors[i % len(tile_colors)] for i in range(len(player_scores))]
+        # Clear the axes and turn off axis
+        self.ax_scores.axis('off')
         
-        bars = self.ax_scores.bar(range(len(player_scores)), player_scores, 
-                                 color=player_colors, edgecolor='black', linewidth=1.5)
+        # Create table data
+        table_data = []
+        for i, score in enumerate(player_scores):
+            table_data.append([f'Player {i+1}', str(score)])
         
-        # Add score labels on top of bars
-        for i, (bar, score) in enumerate(zip(bars, player_scores)):
-            height = bar.get_height()
-            self.ax_scores.text(bar.get_x() + bar.get_width()/2., height + 0.5,
-                               f'{score}', ha='center', va='bottom', fontsize=12, fontweight='bold')
+        # Create table
+        table = self.ax_scores.table(cellText=table_data,
+                                   colLabels=['Player', 'Score'],
+                                   cellLoc='center',
+                                   loc='center',
+                                   colWidths=[0.3, 0.2])
         
-        # Customize scores plot
-        self.ax_scores.set_ylabel('Score', fontsize=12, fontweight='bold')
-        self.ax_scores.set_xticks(range(len(player_scores)))
-        self.ax_scores.set_xticklabels(player_names, fontsize=11, fontweight='bold')
-        self.ax_scores.set_ylim(0, max(player_scores) + 5 if max(player_scores) > 0 else 10)
-        self.ax_scores.grid(True, alpha=0.3, linestyle='--')
+        # Style the table
+        table.auto_set_font_size(False)
+        table.set_fontsize(12)
+        table.scale(1, 2)
         
-        # Add legend for tile colors and letters
-        legend_elements = []
-        for i, (color, letter, name) in enumerate(zip(tile_colors, tile_letters, tile_names)):
-            legend_elements.append(plt.Rectangle((0, 0), 1, 1, facecolor=color, edgecolor='black', 
-                                               label=f'{letter} = {name}'))
+        # Style header row
+        for i in range(2):
+            table[(0, i)].set_facecolor('#4169E1')
+            table[(0, i)].set_text_props(weight='bold', color='white')
         
-        self.ax_scores.legend(handles=legend_elements, loc='upper right', fontsize=9, 
-                             title='Tile Types', title_fontsize=10)
+        # Style data rows with alternating colors
+        for i in range(1, len(table_data) + 1):
+            for j in range(2):
+                if i % 2 == 0:
+                    table[(i, j)].set_facecolor('#F0F8FF')
+                else:
+                    table[(i, j)].set_facecolor('#E6E6FA')
+                table[(i, j)].set_text_props(weight='bold')
         
         # Set factories title
         self.ax_factories.set_title('Factory Displays', fontsize=16, fontweight='bold', pad=20)
@@ -366,6 +371,19 @@ class AzulEnv(AECEnv):
         self.ax_factories.set_yticks([])
         self.ax_factories.set_aspect('equal')
         
+        # Add legend for tile colors and letters
+        legend_elements = []
+        for i, (color, letter, name) in enumerate(zip(tile_colors, tile_letters, tile_names)):
+            legend_elements.append(plt.Rectangle((0, 0), 1, 1, facecolor=color, edgecolor='black', 
+                                               label=f'{letter} = {name}'))
+        
+        # Add first player marker to legend
+        legend_elements.append(plt.Rectangle((0, 0), 1, 1, facecolor='white', edgecolor='black', 
+                                           label='M = 1st Player Marker'))
+        
+        self.ax_factories.legend(handles=legend_elements, loc='upper right', fontsize=9, 
+                               title='Tile Types', title_fontsize=10)
+        
         # Draw player floors
         self.draw_player_floors(tile_colors, tile_letters)
         
@@ -387,7 +405,7 @@ class AzulEnv(AECEnv):
     
     def draw_player_floors(self, tile_colors, tile_letters):
         """Draw floor displays for each player"""
-        self.ax_floor.set_title('Player Floors (with Penalties)', fontsize=16, fontweight='bold', pad=20)
+        self.ax_floor.set_title('Player Floors', fontsize=16, fontweight='bold', pad=20)
         
         # Floor penalty values (standard Azul penalties)
         floor_penalties = [-1, -1, -2, -2, -2, -3, -3]
@@ -428,17 +446,14 @@ class AzulEnv(AECEnv):
                     tile_type = floor_tiles[pos]
                     
                     if tile_type == 5:  # First player marker
-                        # Draw first player marker as a special golden square
-                        marker = plt.Rectangle((x, y), 0.8, 0.8, facecolor='gold', 
+                        # Draw first player marker as a special white square
+                        marker = plt.Rectangle((x, y), 0.8, 0.8, facecolor='white', 
                                              edgecolor='black', linewidth=2)
                         self.ax_floor.add_patch(marker)
                         
                         # Add text for first player marker
-                        self.ax_floor.text(x + 0.4, y + 0.4, '1st',
-                                         ha='center', va='center', fontsize=10, fontweight='bold',
-                                         color='black')
-                        self.ax_floor.text(x + 0.4, y + 0.15, 'Player',
-                                         ha='center', va='center', fontsize=8, fontweight='bold',
+                        self.ax_floor.text(x + 0.4, y + 0.4, 'M',
+                                         ha='center', va='center', fontsize=14, fontweight='bold',
                                          color='black')
                     else:
                         # Draw regular tile
