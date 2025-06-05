@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+from typing import Dict
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -78,96 +78,15 @@ class AzulEnv(AECEnv):
     def action_space(self, agent):
         return self.action_spaces[agent]
 
-    def calculate_valid_moves(self, player_index: int) -> List[Tuple[int, int, int, int]]:
-        """
-        Calculate all valid move combinations for a player.
-        
-        Returns:
-            List of tuples (factory_index, tile_color, tiles_to_floor, pattern_line_index)
-            where:
-            - factory_index: 0 for center, 1+ for factories
-            - tile_color: 0-4 representing tile colors
-            - tiles_to_floor: number of tiles to place on floor
-            - pattern_line_index: 0-4 representing pattern lines
-        """
-        
-        valid_moves = []
-        player_state = self.state["players"][player_index]
-        pattern_lines = player_state["pattern_lines"]
-        wall = player_state["wall"]
-        
-        def can_place_on_pattern_line(pattern_line_idx: int, tile_color: int) -> bool: 
-            if wall[pattern_line_idx][tile_color] != 5:
-                return False
-            
-            pattern_line = pattern_lines[pattern_line_idx]
-            max_capacity = pattern_line_idx + 1
-            current_tiles = pattern_line[pattern_line != 5]
-
-            return len(current_tiles) < max_capacity
-        
-        # Check center (factory_index = 0)
-        center_tiles = self.state["center"]
-        for tile_color in range(5):
-            if center_tiles[tile_color] > 0:
-                tiles_available = center_tiles[tile_color]
-                
-                # For each pattern line
-                for pattern_line_idx in range(5):
-                    if can_place_on_pattern_line(pattern_line_idx, tile_color):
-                        max_capacity = pattern_line_idx + 1
-                        current_count = len(pattern_lines[pattern_line_idx][pattern_lines[pattern_line_idx] != 5])
-                        can_place = min(tiles_available, max_capacity - current_count)
-                        tiles_to_floor = max(0, tiles_available - can_place)
-                        
-                        # Ensure tiles_to_floor doesn't exceed action space limit
-                        if tiles_to_floor < 20:
-                            valid_moves.append((0, tile_color, tiles_to_floor, pattern_line_idx))
-                
-                # Option to place all tiles on floor (pattern_line can be any value when all go to floor)
-                if tiles_available < 20:
-                    valid_moves.append((0, tile_color, tiles_available, 0))  # Use pattern_line 0 as dummy
-        
-        # Check factories (factory_index = 1+)
-        for factory_idx in range(len(self.state["factories"])):
-            factory_tiles = self.state["factories"][factory_idx]
-            for tile_color in range(5):
-                if factory_tiles[tile_color] > 0:
-                    tiles_available = factory_tiles[tile_color]
-                    
-                    # For each pattern line
-                    for pattern_line_idx in range(5):
-                        if can_place_on_pattern_line(pattern_line_idx, tile_color):
-                            max_capacity = pattern_line_idx + 1
-                            current_count = len(pattern_lines[pattern_line_idx][pattern_lines[pattern_line_idx] != 5])
-                            can_place = min(tiles_available, max_capacity - current_count)
-                            tiles_to_floor = max(0, tiles_available - can_place)
-                            
-                            # Ensure tiles_to_floor doesn't exceed action space limit
-                            if tiles_to_floor < 20:
-                                valid_moves.append((factory_idx + 1, tile_color, tiles_to_floor, pattern_line_idx))
-                    
-                    # Option to place all tiles on floor
-                    if tiles_available < 20:
-                        valid_moves.append((factory_idx + 1, tile_color, tiles_available, 0))  # Use pattern_line 0 as dummy
-        
-        return valid_moves
-
     def reset(self, seed=None, options=None):
         self.game = self.create_game()
         self.set_state()
         self._cumulative_rewards = {agent: 0 for agent in self.agents}
         self.truncations = {agent: False for agent in self.agents}
         self.terminations = {agent: False for agent in self.agents}
-        
-        # Calculate valid moves for each agent and add to infos
-        self.infos = {}
-        for i, agent in enumerate(self.agents):
-            valid_moves = self.calculate_valid_moves(i)
-            self.infos[agent] = {"valid_moves": valid_moves}
-        
+        self.infos = {agent: {} for agent in self.agents}
         self.agent_selection = self._agent_selector.reset()
-        return self.state, self.infos[self.agent_selection]
+        return self.state, {}
 
     @staticmethod
     def __convert_tile_dict_to_array__(tile_dict):
@@ -249,7 +168,7 @@ class AzulEnv(AECEnv):
         except ActionNotAllowedException:
             reward = -2
             self._cumulative_rewards[self.agent_selection] += reward
-            return self.state, reward, False, False, self.infos.get(self.agent_selection, {})
+            return self.state, reward, False, False, {}
 
         self.set_state()
         self.agent_selection = self._agent_selector.next()
@@ -268,13 +187,7 @@ class AzulEnv(AECEnv):
             self.truncations = {agent: True for agent in self.agents}
             self.add_score()
 
-        # Calculate valid moves for the next agent
-        current_agent_index = self.agents.index(self.agent_selection)
-        valid_moves = self.calculate_valid_moves(current_agent_index)
-        info = {"valid_moves": valid_moves}
-        self.infos[self.agent_selection] = info
-
-        return self.state, reward, terminated, truncated, info
+        return self.state, reward, terminated, truncated, {}
 
     def add_score(self):
         for i, a in enumerate(self.agents):
