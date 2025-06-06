@@ -1,12 +1,8 @@
 from typing import Dict
 
 import numpy as np
-import matplotlib.pyplot as plt
-from azul.action_not_allowed_exception import ActionNotAllowedException
 from azul.board import Board
 from azul.center import Center
-from azul.center_taking_request import CenterTakingRequest
-from azul.factory_taking_request import FactoryTakingRequest
 from azul.floor import Floor
 from azul.game import Game
 from azul.lid import Lid
@@ -299,14 +295,13 @@ class AzulEnv(AECEnv):
             return self.state, reward, False, False, {"valid_moves": valid_moves}
 
         if factory_index == 0:
-            CenterTakingRequest(tile_to_take, tiles_to_place_floor, pattern_line_index).validate(self.game)
-            self.game.execute_factory_offer_phase_with_center(tile_to_take, tiles_to_place_floor,
-                                                                pattern_line_index)
+            self.game.execute_factory_offer_phase_with_center(
+                tile_to_take, tiles_to_place_floor, pattern_line_index
+            )
         else:
-            FactoryTakingRequest(factory_index - 1, tile_to_take, tiles_to_place_floor,
-                                    pattern_line_index).validate(self.game)
-            self.game.execute_factory_offer_phase_with_factory(factory_index - 1, tile_to_take,
-                                                                tiles_to_place_floor, pattern_line_index)
+            self.game.execute_factory_offer_phase_with_factory(
+                factory_index - 1, tile_to_take, tiles_to_place_floor, pattern_line_index
+            )
 
         self.set_state()
         self.agent_selection = f"player_{self.game.current_player}"
