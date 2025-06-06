@@ -18,6 +18,8 @@ class Floor:
         self.first_player_marker_position = len(self.tiles)
 
     def add(self, tile, amount):
+        if amount < 1:
+            return
         tile_count_on_floor = self.tile_count_on_floor()
         overfill = tile_count_on_floor + amount - 7
         for _ in range(overfill):

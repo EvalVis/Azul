@@ -7,6 +7,8 @@ class PatternLine:
         self.tile = None
 
     def add(self, tile, count):
+        if count < 1:
+            return
         if self.is_colour_invalid(tile):
             raise ActionNotAllowedException(
                 f"Tile(s) with {self.tile} colour is on the pattern line. Can't add a tile with {tile} colour."

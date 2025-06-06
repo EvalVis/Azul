@@ -26,8 +26,6 @@ class CenterTakingRequest:
             raise ActionNotAllowedException("Pattern line index must be between 0 and 5")
         if pattern_lines[self.pattern_line_index].is_colour_invalid(self.tile_to_take):
             raise ActionNotAllowedException(f"{self.tile_to_take} tile colour is invalid to put on pattern line")
-        if pattern_lines[self.pattern_line_index].is_pattern_line_going_to_overflow(matching_tile_count - self.tiles_to_put_on_floor):
-            raise ActionNotAllowedException("Pattern line will overflow. Put more tiles on the floor.")
         if wall.already_has(self.tile_to_take, self.pattern_line_index):
             raise ActionNotAllowedException(f"Wall already has {self.tile_to_take} tile.")
 
